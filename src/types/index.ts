@@ -8,7 +8,10 @@ export type ViewMode =
   | 'profile' 
   | 'admin' 
   | 'blog'
-  | 'community';
+  | 'community'
+  | 'bookmarks'
+  | 'downloads'
+  | 'updates';
 
 export type UserRole = 'Guest' | 'Free Member' | 'Pro Member' | 'Admin';
 
