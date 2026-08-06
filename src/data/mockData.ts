@@ -37,7 +37,7 @@ export const MOCK_COURSES: Course[] = [
         title: 'Episode 1: Pengenalan Omni Flash',
         duration: '12:45',
         completed: true,
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        videoUrl: 'https://drive.google.com/file/d/1jg0t4FgM25ei0JdJPmowjqQeimtx9rGT/view?usp=sharing',
         description: 'Memahami arsitektur Omni Flash, perbandingan dengan model lain, dan pengaturan workspace dasar.',
         keyTopics: ['Omni Flash Architecture', 'Model Parameters', 'Prompt Base Setup']
       },
@@ -317,7 +317,7 @@ export const MOCK_ASSETS: DownloadAsset[] = [
   },
   {
     id: 'asset-4',
-    title: 'Character Consistency Sheet Mockup',
+    title: 'Character Consistency biar bisa konsisten',
     thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
     format: 'Mockups',
     size: '88.4 MB',

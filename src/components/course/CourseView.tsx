@@ -30,7 +30,7 @@ export const CourseView: React.FC = () => {
     showToast 
   } = useApp();
 
-  const [activeEpisodeIndex, setActiveEpisodeIndex] = useState(2); // Ep 3 by default as in screenshot
+  const [activeEpisodeIndex, setActiveEpisodeIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'materi' | 'overview' | 'resources' | 'notes' | 'discussion'>('overview');
   const [isPlaying, setIsPlaying] = useState(false);
   const [userNote, setUserNote] = useState('');
@@ -41,6 +41,13 @@ export const CourseView: React.FC = () => {
 
   const currentEpisode = activeCourse.episodes[activeEpisodeIndex] || activeCourse.episodes[0];
   const isEpCompleted = !!completedEpisodes[`${activeCourse.id}-${currentEpisode?.id}`];
+
+  const getDriveEmbedUrl = (url: string) => {
+    if (url.includes('drive.google.com')) {
+      return url.replace(/\/view(\?.*)?$/, '/preview');
+    }
+    return url;
+  };
 
   const handleSaveNote = () => {
     if (!userNote.trim()) return;
@@ -187,27 +194,39 @@ export const CourseView: React.FC = () => {
           
           {/* Custom Futuristic HTML5 Video Player */}
           <GlassCard glow className="p-0 overflow-hidden flex flex-col">
-            <div className="relative aspect-video bg-black flex items-center justify-center group">
-              <video
-                key={currentEpisode?.videoUrl}
-                src={currentEpisode?.videoUrl}
-                controls={false}
-                className="w-full h-full object-cover"
-                poster={activeCourse.thumbnail}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-              />
+              {currentEpisode?.videoUrl?.includes('drive.google.com') ? (
+                <iframe
+                  key={currentEpisode.videoUrl}
+                  src={getDriveEmbedUrl(currentEpisode.videoUrl)}
+                  className="w-full h-full border-0"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                  title={currentEpisode.title}
+                />
+              ) : (
+                <>
+                  <video
+                    key={currentEpisode?.videoUrl}
+                    src={currentEpisode?.videoUrl}
+                    controls={false}
+                    className="w-full h-full object-cover"
+                    poster={activeCourse.thumbnail}
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                  />
 
-              {/* Play Overlay Button */}
-              {!isPlaying && (
-                <div 
-                  onClick={() => setIsPlaying(true)}
-                  className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center cursor-pointer"
-                >
-                  <div className="w-16 h-16 rounded-3xl bg-gradient-accent flex items-center justify-center text-white shadow-2xl shadow-accent-purple/60 hover:scale-110 transition-transform">
-                    <Play className="w-8 h-8 fill-white ml-1" />
-                  </div>
-                </div>
+                  {/* Play Overlay Button */}
+                  {!isPlaying && (
+                    <div 
+                      onClick={() => setIsPlaying(true)}
+                      className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center cursor-pointer"
+                    >
+                      <div className="w-16 h-16 rounded-3xl bg-gradient-accent flex items-center justify-center text-white shadow-2xl shadow-accent-purple/60 hover:scale-110 transition-transform">
+                        <Play className="w-8 h-8 fill-white ml-1" />
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Bottom Video Controls Overlay Bar */}
