@@ -194,6 +194,7 @@ export const CourseView: React.FC = () => {
           
           {/* Custom Futuristic HTML5 Video Player */}
           <GlassCard glow className="p-0 overflow-hidden flex flex-col">
+            <div className="relative aspect-video bg-black flex items-center justify-center group">
               {currentEpisode?.videoUrl?.includes('drive.google.com') ? (
                 <iframe
                   key={currentEpisode.videoUrl}
