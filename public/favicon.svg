@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="fiksiTopGrad" x1="20" y1="20" x2="180" y2="90" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22D3EE" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+
+    <linearGradient id="fiksiBottomGrad" x1="30" y1="90" x2="160" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E879F9" />
+      <stop offset="40%" stop-color="#C084FC" />
+      <stop offset="85%" stop-color="#7C3AED" />
+      <stop offset="100%" stop-color="#4C1D95" />
+    </linearGradient>
+
+    <linearGradient id="fiksiGloss" x1="50" y1="20" x2="150" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <rect width="200" height="200" rx="44" fill="#060816"/>
+
+  <!-- Top Swoosh -->
+  <path
+    d="M 62,32 C 85,28 135,28 172,28 C 178,28 182,34 179,40 C 172,52 145,62 105,62 C 85,62 68,75 62,94 C 62,75 62,48 62,32 Z"
+    fill="url(#fiksiTopGrad)"
+  />
+
+  <!-- Top Gloss -->
+  <path
+    d="M 64,32 C 90,29 135,29 168,29 C 160,38 135,45 105,45 C 80,45 68,39 64,32 Z"
+    fill="url(#fiksiGloss)"
+  />
+
+  <!-- Bottom Swoosh -->
+  <path
+    d="M 62,92 C 70,80 92,80 128,80 C 134,80 138,86 134,92 C 126,104 105,114 78,114 C 66,114 62,126 62,142 C 62,156 56,170 42,176 C 52,155 62,118 62,92 Z"
+    fill="url(#fiksiBottomGrad)"
+  />
+
+  <!-- Inner Highlight -->
+  <path
+    d="M 62,92 C 75,82 100,82 126,82 C 112,92 90,100 75,100 C 65,100 62,95 62,92 Z"
+    fill="#FFFFFF"
+    fill-opacity="0.25"
+  />
+</svg>
