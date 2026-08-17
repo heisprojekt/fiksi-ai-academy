@@ -22,6 +22,7 @@ import {
   MOCK_WEEKLY_UPDATES,
   MOCK_EXTERNAL_TOOLS 
 } from '../data/mockData';
+import { api } from '../services/api';
 
 export const ADMIN_EMAILS = ['heisprojekt@gmail.com', 'fiksiaiai@gmail.com'];
 
@@ -409,9 +410,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.COMPLETED_EPISODES, JSON.stringify(completedEpisodes));
   }, [completedEpisodes]);
 
+  // Sync from MongoDB API on initial startup
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(paymentTransactions));
-  }, [paymentTransactions]);
+    const syncFromMongoDB = async () => {
+      try {
+        const [dbCourses, dbPrompts, dbAssets, dbTools, dbUsers, dbTrxs] = await Promise.all([
+          api.getCourses(),
+          api.getPrompts({ limit: 1000 }),
+          api.getAssets(),
+          api.getTools(),
+          api.getUsers(),
+          api.getTransactions()
+        ]);
+
+        if (dbCourses && dbCourses.length > 0) setCourses(dbCourses);
+        if (dbPrompts && dbPrompts.data && dbPrompts.data.length > 0) setPrompts(dbPrompts.data);
+        if (dbAssets && dbAssets.length > 0) setAssets(dbAssets);
+        if (dbTools && dbTools.length > 0) setExternalTools(dbTools);
+        if (dbUsers && dbUsers.length > 0) setUsersList(dbUsers);
+        if (dbTrxs && dbTrxs.length > 0) setPaymentTransactions(dbTrxs);
+      } catch {
+        // Fallback to local cache gracefully
+      }
+    };
+    syncFromMongoDB();
+  }, []);
 
   const activeCourse = courses.find(c => c.id === activeCourseId || c.slug === activeCourseId) || courses[0] || MOCK_COURSES[0];
 
@@ -544,17 +567,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       resources: courseData.resources || []
     };
     setCourses(prev => [newCourse, ...prev]);
+    api.createCourse(courseData).catch(() => {});
     showToast('success', 'Kursus Ditambahkan', `"${newCourse.title}" sekarang live dan dapat diakses public.`);
     return newCourse;
   };
 
   const updateCourse = (id: string, updated: Partial<Course>) => {
     setCourses(prev => prev.map(c => c.id === id ? { ...c, ...updated } : c));
+    api.updateCourse(id, updated).catch(() => {});
     showToast('success', 'Kursus Diperbarui', 'Perubahan kursus berhasil disimpan.');
   };
 
   const deleteCourse = (id: string) => {
     setCourses(prev => prev.filter(c => c.id !== id));
+    api.deleteCourse(id).catch(() => {});
     showToast('info', 'Kursus Dihapus', 'Kursus berhasil dihapus dari sistem.');
   };
 
@@ -569,18 +595,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       tags: promptData.tags || ['AI', 'Prompt']
     };
     setPrompts(prev => [newPrompt, ...prev]);
-    showToast('success', 'Prompt Ditambahkan', `"${newPrompt.title}" sekarang live di Prompt Library.`);
+    api.createPrompt(promptData).catch(() => {});
+    showToast('success', 'Prompt Ditambahkan', `"${newPrompt.title}" berhasil diterbitkan.`);
     return newPrompt;
   };
 
   const updatePrompt = (id: string, updated: Partial<PromptPack>) => {
     setPrompts(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
+    api.updatePrompt(id, updated).catch(() => {});
     showToast('success', 'Prompt Diperbarui', 'Perubahan prompt berhasil disimpan.');
   };
 
   const deletePrompt = (id: string) => {
     setPrompts(prev => prev.filter(p => p.id !== id));
-    showToast('info', 'Prompt Dihapus', 'Prompt berhasil dihapus dari library.');
+    api.deletePrompt(id).catch(() => {});
+    showToast('info', 'Prompt Dihapus', 'Prompt dihapus dari katalog.');
   };
 
   const incrementPromptUsage = (id: string) => {

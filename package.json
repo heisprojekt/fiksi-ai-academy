@@ -8,6 +8,7 @@
     "build": "node ./node_modules/vite/bin/vite.js build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "node ./node_modules/vite/bin/vite.js preview",
+    "server": "tsx src/server/index.ts",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts"
   },
@@ -15,14 +16,19 @@
     "@prisma/client": "^6.4.1",
     "caniuse-lite": "^1.0.30001807",
     "clsx": "^2.1.1",
+    "cors": "^2.8.6",
     "dotenv": "^16.4.7",
+    "express": "^5.2.1",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.395.0",
+    "mongodb": "^7.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^20.14.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

@@ -27,6 +27,7 @@ model User {
   savedPrompts      Int      @default(0)
   totalDownloads    Int      @default(0)
   streakDays        Int      @default(1)
+  status            String?  @default("Active")
   bookmarks         String[] @default([])
   completedEpisodes String[] @default([])
   createdAt         DateTime @default(now())
@@ -42,13 +43,14 @@ type Instructor {
 }
 
 type Episode {
-  id          String
-  title       String
-  duration    String
-  completed   Boolean  @default(false)
-  videoUrl    String
-  description String
-  keyTopics   String[]
+  id             String
+  title          String
+  duration       String
+  completed      Boolean  @default(false)
+  videoUrl       String
+  description    String
+  keyTopics      String[]
+  articleContent String?
 }
 
 type Resource {
@@ -85,13 +87,15 @@ model PromptPack {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   title          String
   thumbnail      String
-  category       String   // Character | UGC | Product | Storyboard | Lighting | Camera | Motion | Lainnya
-  aiModel        String   // Omni Flash | Nano Banana | Midjourney v6 | Flux.1 Pro | Kling AI | Veed AI
+  category       String   // Karakter AI | Video Prompt | Visual Style | UGC | dll
+  subCategory    String?
+  aiModel        String   // Omni Flash | Nano Banana | Midjourney v6 | Flux.1 Pro | Kling AI | dll
   usageCount     Int      @default(0)
   isNew          Boolean  @default(false)
   isPopular      Boolean  @default(false)
-  difficulty     String   // Mudah | Sedang | Ahli
-  aspectRatio    String   // 16:9 | 9:16 | 1:1 | 4:5
+  isPremium      Boolean  @default(false)
+  difficulty     String   @default("Mudah") // Mudah | Sedang | Ahli
+  aspectRatio    String   @default("16:9")  // 16:9 | 9:16 | 1:1 | 4:5
   tags           String[]
   promptText     String
   negativePrompt String?
@@ -125,6 +129,39 @@ model DownloadAsset {
   updatedAt      DateTime @updatedAt
 
   @@map("download_assets")
+}
+
+model ExternalTool {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  category    String   // Image Gen | Video AI | Audio & Voice | LLM & Writing | Productivity | Automation | 3D & VFX
+  url         String
+  thumbnail   String
+  pricingType String   // Free | Freemium | Paid | Free Trial
+  isPremium   Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  tags        String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("external_tools")
+}
+
+model QRISPaymentTransaction {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String
+  userName   String
+  userEmail  String
+  planName   String
+  amount     Int
+  qrisRef    String
+  proofImage String?
+  status     String   @default("Pending") // Pending | Approved | Rejected
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("qris_transactions")
 }
 
 type BlogAuthor {
