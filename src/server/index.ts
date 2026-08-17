@@ -25,6 +25,25 @@ const getIdParam = (req: Request): string => {
   return Array.isArray(id) ? id[0] : (id || '');
 };
 
+// Root route
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    message: '🚀 FIKSI AI Academy API Backend is running!',
+    database: 'MongoDB Atlas',
+    status: 'online',
+    endpoints: {
+      health: '/api/health',
+      prompts: '/api/prompts',
+      courses: '/api/courses',
+      assets: '/api/assets',
+      tools: '/api/tools',
+      users: '/api/users',
+      blogs: '/api/blogs',
+      updates: '/api/weekly-updates'
+    }
+  });
+});
+
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', database: 'mongodb', timestamp: new Date().toISOString() });

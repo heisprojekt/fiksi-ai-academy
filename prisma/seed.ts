@@ -9,6 +9,14 @@ import {
   MOCK_WEEKLY_UPDATES 
 } from '../src/data/mockData';
 import { NOTION_PROMPTS } from '../src/data/notionPrompts';
+import dns from 'dns';
+
+// Fix for Windows Node DNS querySrv on Atlas
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {
+  // ignore
+}
 
 dotenv.config();
 

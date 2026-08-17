@@ -12,7 +12,9 @@ try {
 
 dotenv.config();
 
-const directUri = `mongodb://heisprojekt_db_user:SuhPduKrX1067sQz@ac-il1dscg-shard-00-00.yvlj7w3.mongodb.net:27017,ac-il1dscg-shard-00-01.yvlj7w3.mongodb.net:27017,ac-il1dscg-shard-00-02.yvlj7w3.mongodb.net:27017/fiksi_ai_academy?ssl=true&replicaSet=atlas-6kj9ds-shard-0&authSource=admin&retryWrites=true&w=majority`;
+const user = process.env.MONGODB_USERNAME || 'heisprojekt_db_user';
+const pass = encodeURIComponent(process.env.MONGODB_PASSWORD || '');
+const directUri = `mongodb://${user}:${pass}@ac-il1dscg-shard-00-00.yvlj7w3.mongodb.net:27017,ac-il1dscg-shard-00-01.yvlj7w3.mongodb.net:27017,ac-il1dscg-shard-00-02.yvlj7w3.mongodb.net:27017/fiksi_ai_academy?ssl=true&replicaSet=atlas-6kj9ds-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
 console.log('Testing SRV connection...');
 async function testSrv() {
