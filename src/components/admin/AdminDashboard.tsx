@@ -31,7 +31,8 @@ import {
   Wallet,
   ArrowUpRight,
   Cpu,
-  Download
+  Download,
+  RefreshCw
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { GradientButton } from '../ui/GradientButton';
@@ -129,6 +130,7 @@ export const AdminDashboard: React.FC = () => {
     updateUserRole,
     updateUserTier,
     deleteUser,
+    refreshUsers,
     paymentTransactions,
     approveQRISPayment,
     rejectQRISPayment,
@@ -142,6 +144,7 @@ export const AdminDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [trxFilter, setTrxFilter] = useState<'all' | 'Pending' | 'Approved' | 'Rejected'>('all');
   const [previewProofUrl, setPreviewProofUrl] = useState<string | null>(null);
+  const [isRefreshingUsers, setIsRefreshingUsers] = useState(false);
 
   // Course Modal States
   const [courseModalOpen, setCourseModalOpen] = useState(false);
@@ -1131,12 +1134,26 @@ export const AdminDashboard: React.FC = () => {
       {/* TAB CONTENT: ATUR TIER MEMBER (USERS CMS) */}
       {activeTab === 'users' && (
         <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/10">
             <div className="flex items-center gap-2 text-xs text-slate-300">
-              <Crown className="w-4 h-4 text-accent-cyan" />
+              <Crown className="w-4 h-4 text-violet-400" />
               <span>Admin dapat mengatur Role, Masa Berlaku (*Valid Until*), dan Status setiap member secara *real-time*.</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                disabled={isRefreshingUsers}
+                onClick={async () => {
+                  setIsRefreshingUsers(true);
+                  await refreshUsers();
+                  setIsRefreshingUsers(false);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/30 text-xs font-semibold transition-all disabled:opacity-50 hover:border-violet-500/50 shadow-sm"
+                title="Sinkronkan data user langsung dari MongoDB Atlas"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshingUsers ? 'animate-spin' : ''}`} />
+                <span>{isRefreshingUsers ? 'Menyinkronkan...' : 'Refresh Database User'}</span>
+              </button>
               <span className="text-xs text-slate-400 font-mono">Total: {filteredUsers.length} Member</span>
             </div>
           </div>

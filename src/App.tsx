@@ -21,9 +21,15 @@ const BlogView = lazy(() => import('./components/blog/BlogView').then(m => ({ de
 const ToolsView = lazy(() => import('./components/tools/ToolsView').then(m => ({ default: m.ToolsView })));
 
 const ViewLoadingFallback = () => (
-  <div className="w-full min-h-[360px] flex flex-col items-center justify-center gap-3 p-8 animate-in fade-in duration-150">
-    <div className="w-8 h-8 rounded-full border-2 border-accent-purple border-t-accent-cyan animate-spin" />
-    <span className="text-xs text-slate-400 font-mono tracking-wider">Memuat workspace...</span>
+  <div className="w-full min-h-[400px] flex flex-col items-center justify-center gap-4 p-8 animate-in fade-in duration-200">
+    <div className="relative flex items-center justify-center">
+      <div className="w-10 h-10 rounded-full border-2 border-violet-500/20 border-t-violet-500 animate-spin" />
+      <div className="absolute w-4 h-4 rounded-full bg-violet-600/30 animate-pulse" />
+    </div>
+    <div className="flex flex-col items-center gap-1">
+      <span className="text-xs font-semibold text-slate-300 tracking-wider">Memuat workspace...</span>
+      <span className="text-[11px] text-slate-400 font-mono">FIKSI AI Academy</span>
+    </div>
   </div>
 );
 
@@ -71,7 +77,7 @@ export const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#060816] text-slate-100 selection:bg-accent-purple/30 selection:text-accent-cyan">
+    <div className="min-h-screen flex flex-col bg-[#08090E] text-slate-100 selection:bg-violet-600/30 selection:text-violet-200">
       
       {/* Sticky Top Navbar */}
       <Navbar />
@@ -85,7 +91,9 @@ export const MainContent: React.FC = () => {
           {/* Main Workspace Area */}
           <main className="flex-1 min-w-0 py-6">
             <Suspense fallback={<ViewLoadingFallback />}>
-              {renderCurrentView()}
+              <div key={currentView} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                {renderCurrentView()}
+              </div>
             </Suspense>
           </main>
         </div>
@@ -93,7 +101,9 @@ export const MainContent: React.FC = () => {
         /* Full Width Landing & Blog Area */
         <main className="flex-1 w-full">
           <Suspense fallback={<ViewLoadingFallback />}>
-            {renderCurrentView()}
+            <div key={currentView} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              {renderCurrentView()}
+            </div>
           </Suspense>
         </main>
       )}

@@ -13,6 +13,12 @@ try {
 
 dotenv.config();
 
+// Default fallback for MongoDB Atlas to ensure connection works on Vercel deployment
+const DEFAULT_DATABASE_URL = "mongodb+srv://heisprojekt_db_user:nirvana1998@fiksiai.yvlj7w3.mongodb.net/fiksi_ai_academy?retryWrites=true&w=majority&appName=fiksiai";
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = DEFAULT_DATABASE_URL;
+}
+
 const app = express();
 const port = process.env.PORT || 3001;
 const prisma = new PrismaClient();
@@ -432,7 +438,7 @@ app.get('/api/weekly-updates', async (_req: Request, res: Response) => {
   }
 });
 
-if (process.env.NODE_ENV !== 'test') {
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
     console.log(`🚀 FIKSI AI Academy API Server running at http://localhost:${port}`);
   });

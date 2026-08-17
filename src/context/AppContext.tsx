@@ -89,6 +89,9 @@ interface AppContextType {
   approveQRISPayment: (transactionId: string) => void;
   rejectQRISPayment: (transactionId: string, reason?: string) => void;
 
+  // Refresh Users from DB
+  refreshUsers: () => Promise<void>;
+
   // Blogs & Updates
   selectedBlog: BlogArticle;
   setSelectedBlog: (blog: BlogArticle) => void;
@@ -168,8 +171,51 @@ const INITIAL_TRANSACTIONS: QRISPaymentTransaction[] = [
   }
 ];
 
+// URL Path helpers for lightweight and bookmarkable routing
+const getViewFromPathname = (): { view: ViewMode; extraId?: string } => {
+  if (typeof window === 'undefined') return { view: 'dashboard' };
+  const path = window.location.pathname.toLowerCase();
+  
+  if (path === '' || path === '/' || path === '/dashboard') return { view: 'dashboard' };
+  if (path === '/landing') return { view: 'landing' };
+  if (path === '/courses') return { view: 'courses' };
+  if (path.startsWith('/course/')) {
+    const slugOrId = window.location.pathname.replace(/^\/course\//i, '').trim();
+    return { view: 'course-detail', extraId: slugOrId || 'omni-flash-masterclass' };
+  }
+  if (path === '/prompts') return { view: 'prompts' };
+  if (path === '/assets') return { view: 'assets' };
+  if (path === '/tools') return { view: 'tools' };
+  if (path === '/profile' || path === '/settings') return { view: 'profile' };
+  if (path === '/admin') return { view: 'admin' };
+  if (path === '/bookmarks') return { view: 'bookmarks' };
+  if (path.startsWith('/blog')) {
+    const blogId = window.location.pathname.replace(/^\/blog\/?/i, '').trim();
+    return { view: 'blog', extraId: blogId || undefined };
+  }
+  return { view: 'dashboard' };
+};
+
+const getPathFromView = (view: ViewMode, extraId?: string): string => {
+  switch (view) {
+    case 'dashboard': return '/';
+    case 'landing': return '/landing';
+    case 'courses': return '/courses';
+    case 'course-detail': return `/course/${extraId || 'omni-flash-masterclass'}`;
+    case 'prompts': return '/prompts';
+    case 'assets': return '/assets';
+    case 'tools': return '/tools';
+    case 'profile': return '/profile';
+    case 'admin': return '/admin';
+    case 'bookmarks': return '/bookmarks';
+    case 'blog': return extraId ? `/blog/${extraId}` : '/blog';
+    default: return '/';
+  }
+};
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentView, setCurrentView] = useState<ViewMode>('landing');
+  const initialRoute = getViewFromPathname();
+  const [currentView, setCurrentView] = useState<ViewMode>(initialRoute.view);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState<boolean>(false);
 
   // Load persistent transactions or fallback
@@ -361,7 +407,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const [activeCourseId, setActiveCourseIdState] = useState<string>('omni-flash-masterclass');
+  const [activeCourseId, setActiveCourseIdState] = useState<string>(initialRoute.extraId || 'omni-flash-masterclass');
   const [selectedPrompt, setSelectedPromptState] = useState<PromptPack | null>(null);
 
   const setSelectedPrompt = (prompt: PromptPack | null) => {
@@ -1041,8 +1087,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  // Handle browser Back / Forward navigation (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const { view, extraId } = getViewFromPathname();
+      setCurrentView(view);
+      if (view === 'course-detail' && extraId) {
+        setActiveCourseIdState(extraId);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const refreshUsers = async () => {
+    try {
+      const dbUsers = await api.getUsers();
+      if (dbUsers && dbUsers.length > 0) {
+        setUsersList(dbUsers);
+        showToast('success', 'Database User Disinkronkan', `Berhasil memuat ${dbUsers.length} user langsung dari MongoDB Atlas.`);
+      } else {
+        showToast('info', 'Sinkronisasi Selesai', 'Tidak ada data user tambahan di MongoDB Atlas.');
+      }
+    } catch {
+      showToast('warning', 'Gagal Memuat User', 'Tidak dapat terhubung ke MongoDB Atlas.');
+    }
+  };
+
   const navigateTo = (view: ViewMode, extraId?: string) => {
     setCurrentView(view);
+    const newPath = getPathFromView(view, extraId);
+    if (typeof window !== 'undefined' && window.location.pathname !== newPath) {
+      window.history.pushState({ view, extraId }, '', newPath);
+    }
+
     if (view === 'course-detail' && extraId) {
       setActiveCourseId(extraId);
       const foundCourse = courses.find(c => c.id === extraId || c.slug === extraId);
@@ -1135,6 +1213,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateUserRole,
       updateUserTier,
       deleteUser,
+      refreshUsers,
       paymentTransactions,
       isUpgradeModalOpen,
       setIsUpgradeModalOpen,
