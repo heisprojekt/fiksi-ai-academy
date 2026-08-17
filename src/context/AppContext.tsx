@@ -450,15 +450,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const activeCourse = courses.find(c => c.id === activeCourseId || c.slug === activeCourseId) || courses[0] || MOCK_COURSES[0];
 
-  // Actions
-  const navigateTo = (view: ViewMode, extraId?: string) => {
-    if (extraId) {
-      if (view === 'course-detail') setActiveCourseIdState(extraId);
-    }
-    setCurrentView(view);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const setActiveCourseId = (id: string) => {
     setActiveCourseIdState(id);
     setCurrentView('course-detail');
