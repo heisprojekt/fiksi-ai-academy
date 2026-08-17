@@ -20,7 +20,7 @@ import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
 
 export const AssetsView: React.FC = () => {
-  const { assets, showToast, userRole, bookmarks, toggleBookmark } = useApp();
+  const { assets, showToast, userRole, bookmarks, toggleBookmark, trackRecentActivity } = useApp();
   const [selectedFormat, setSelectedFormat] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
@@ -39,6 +39,18 @@ export const AssetsView: React.FC = () => {
       showToast('warning', 'Akses Terbatas Pro', 'Upgrade ke Pro Member untuk mengunduh aset premium ini.');
       return;
     }
+
+    trackRecentActivity({
+      id: asset.id,
+      type: 'asset',
+      title: asset.title,
+      subtitle: `${asset.format} • ${asset.size}`,
+      category: asset.category,
+      thumbnail: asset.thumbnail,
+      targetView: 'assets',
+      targetId: asset.id,
+      badge: asset.format
+    });
 
     setDownloadingId(asset.id);
     setTimeout(() => {

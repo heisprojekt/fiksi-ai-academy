@@ -28,7 +28,8 @@ export const ToolsView: React.FC = () => {
     navigateTo,
     showToast,
     bookmarks,
-    toggleBookmark
+    toggleBookmark,
+    trackRecentActivity
   } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,7 +63,19 @@ export const ToolsView: React.FC = () => {
       e.preventDefault();
       setIsUpgradeModalOpen(true);
       showToast('info', 'Konten Khusus Pro Member', `Tool "${tool.name}" merupakan rekomendasi eksklusif Pro Member.`);
+      return;
     }
+    trackRecentActivity({
+      id: tool.id,
+      type: 'tool',
+      title: tool.name,
+      subtitle: tool.description,
+      category: tool.category,
+      thumbnail: tool.thumbnail,
+      targetView: 'tools',
+      targetId: tool.id,
+      badge: tool.pricingType
+    });
   };
 
   return (

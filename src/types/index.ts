@@ -29,6 +29,21 @@ export interface ExternalTool {
 
 export type UserRole = 'Guest' | 'Free Member' | 'Pro Member' | 'Admin';
 
+export interface RecentActivityItem {
+  id: string;
+  type: 'course' | 'prompt' | 'tool' | 'asset' | 'blog';
+  title: string;
+  subtitle?: string;
+  category?: string;
+  thumbnail: string;
+  targetView: ViewMode;
+  targetId?: string;
+  timestamp: number;
+  progressPercentage?: number;
+  badge?: string;
+  aiModel?: string;
+}
+
 export interface Episode {
   id: string;
   title: string;

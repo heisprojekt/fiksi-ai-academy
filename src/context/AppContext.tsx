@@ -11,7 +11,8 @@ import {
   LoginCredentials, 
   RegisterData,
   QRISPaymentTransaction,
-  ExternalTool 
+  ExternalTool,
+  RecentActivityItem
 } from '../types';
 import { 
   MOCK_COURSES, 
@@ -92,11 +93,14 @@ interface AppContextType {
   selectedBlog: BlogArticle;
   setSelectedBlog: (blog: BlogArticle) => void;
 
-  // User Interaction State
+  // User Interaction & Recent History
   bookmarks: string[];
   toggleBookmark: (promptId: string) => void;
   completedEpisodes: Record<string, boolean>;
   toggleEpisodeCompletion: (courseId: string, episodeId: string) => void;
+  recentActivity: RecentActivityItem[];
+  trackRecentActivity: (item: Omit<RecentActivityItem, 'timestamp'>) => void;
+  clearRecentActivity: () => void;
 
   // Toast & Utilities
   toast: ToastMessage | null;
@@ -126,6 +130,7 @@ const STORAGE_KEYS = {
   BOOKMARKS: 'fiksi_academy_bookmarks',
   COMPLETED_EPISODES: 'fiksi_academy_completed_episodes',
   TRANSACTIONS: 'fiksi_academy_transactions',
+  RECENT_ACTIVITY: 'fiksi_academy_recent_activity',
 };
 
 const INITIAL_TRANSACTIONS: QRISPaymentTransaction[] = [
@@ -357,7 +362,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const [activeCourseId, setActiveCourseIdState] = useState<string>('omni-flash-masterclass');
-  const [selectedPrompt, setSelectedPrompt] = useState<PromptPack | null>(null);
+  const [selectedPrompt, setSelectedPromptState] = useState<PromptPack | null>(null);
+
+  const setSelectedPrompt = (prompt: PromptPack | null) => {
+    setSelectedPromptState(prompt);
+    if (prompt) {
+      trackRecentActivity({
+        id: prompt.id,
+        type: 'prompt',
+        title: prompt.title,
+        category: prompt.category,
+        aiModel: prompt.aiModel,
+        thumbnail: prompt.thumbnail,
+        targetView: 'prompts',
+        targetId: prompt.id,
+        badge: prompt.difficulty
+      });
+    }
+  };
+
   const [selectedBlog, setSelectedBlog] = useState<BlogArticle>(MOCK_BLOGS[0]);
 
   const [bookmarks, setBookmarks] = useState<string[]>(() => {
@@ -382,6 +405,52 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return {};
     }
   });
+
+  const [recentActivity, setRecentActivity] = useState<RecentActivityItem[]>(() => {
+    try {
+      const userKey = initialUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${initialUser.id}` : STORAGE_KEYS.RECENT_ACTIVITY;
+      const saved = localStorage.getItem(userKey);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Reload recent activity on user login/switch
+  useEffect(() => {
+    try {
+      const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : STORAGE_KEYS.RECENT_ACTIVITY;
+      const saved = localStorage.getItem(userKey);
+      setRecentActivity(saved ? JSON.parse(saved) : []);
+    } catch {
+      setRecentActivity([]);
+    }
+  }, [currentUser?.id]);
+
+  const trackRecentActivity = (item: Omit<RecentActivityItem, 'timestamp'>) => {
+    setRecentActivity(prev => {
+      const filtered = prev.filter(i => !(i.id === item.id && i.type === item.type));
+      const newItem: RecentActivityItem = { ...item, timestamp: Date.now() };
+      const updated = [newItem, ...filtered].slice(0, 10);
+      try {
+        const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : STORAGE_KEYS.RECENT_ACTIVITY;
+        localStorage.setItem(userKey, JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
+
+  const clearRecentActivity = () => {
+    setRecentActivity([]);
+    try {
+      const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : STORAGE_KEYS.RECENT_ACTIVITY;
+      localStorage.removeItem(userKey);
+    } catch {
+      // ignore
+    }
+  };
 
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -453,6 +522,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setActiveCourseId = (id: string) => {
     setActiveCourseIdState(id);
     setCurrentView('course-detail');
+    const foundCourse = courses.find(c => c.id === id || c.slug === id);
+    if (foundCourse) {
+      trackRecentActivity({
+        id: foundCourse.id,
+        type: 'course',
+        title: foundCourse.title,
+        subtitle: foundCourse.subtitle,
+        category: foundCourse.category,
+        thumbnail: foundCourse.thumbnail,
+        targetView: 'course-detail',
+        targetId: foundCourse.id,
+        progressPercentage: foundCourse.progressPercentage,
+        badge: foundCourse.level
+      });
+    }
   };
 
   // Auth Operations
@@ -866,10 +950,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentView(view);
     if (view === 'course-detail' && extraId) {
       setActiveCourseId(extraId);
+      const foundCourse = courses.find(c => c.id === extraId || c.slug === extraId);
+      if (foundCourse) {
+        trackRecentActivity({
+          id: foundCourse.id,
+          type: 'course',
+          title: foundCourse.title,
+          subtitle: foundCourse.subtitle,
+          category: foundCourse.category,
+          thumbnail: foundCourse.thumbnail,
+          targetView: 'course-detail',
+          targetId: foundCourse.id,
+          progressPercentage: foundCourse.progressPercentage,
+          badge: foundCourse.level
+        });
+      }
     }
     if (view === 'blog' && extraId) {
       const foundBlog = MOCK_BLOGS.find(b => b.id === extraId);
-      if (foundBlog) setSelectedBlog(foundBlog);
+      if (foundBlog) {
+        setSelectedBlog(foundBlog);
+        trackRecentActivity({
+          id: foundBlog.id,
+          type: 'blog',
+          title: foundBlog.title,
+          category: foundBlog.category,
+          thumbnail: foundBlog.coverImage,
+          targetView: 'blog',
+          targetId: foundBlog.id,
+          badge: foundBlog.readTime
+        });
+      }
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -883,6 +994,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.removeItem(STORAGE_KEYS.PROMPTS);
     localStorage.removeItem(STORAGE_KEYS.ASSETS);
     localStorage.removeItem(STORAGE_KEYS.TOOLS);
+    localStorage.removeItem(STORAGE_KEYS.RECENT_ACTIVITY);
+    setRecentActivity([]);
     showToast('info', 'Data Direset', 'Semua data telah dikembalikan ke standar awal.');
   };
 
@@ -939,6 +1052,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       toggleBookmark,
       completedEpisodes,
       toggleEpisodeCompletion,
+      recentActivity,
+      trackRecentActivity,
+      clearRecentActivity,
       toast,
       showToast,
       hideToast,
