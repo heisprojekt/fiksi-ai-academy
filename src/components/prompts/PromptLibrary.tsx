@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { PromptPack, buildFullPromptFormula } from '../../types';
 import { 
@@ -8,18 +8,31 @@ import {
   Copy, 
   Bookmark, 
   Eye, 
-  Flame, 
-  SlidersHorizontal,
-  Crown,
-  Lock,
-  CheckCircle2,
-  Zap,
-  Layers
+  Crown, 
+  Lock, 
+  Layers,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
 import { PromptDetailModal } from './PromptDetailModal';
+
+const ITEMS_PER_PAGE = 18;
+
+// Optimize image URL for faster loading & lower bandwidth
+const getOptimizedThumbnail = (url: string): string => {
+  if (!url) return '';
+  if (url.includes('images.unsplash.com')) {
+    // Replace width and quality parameters for compact yet sharp web cards
+    const cleanUrl = url.split('?')[0];
+    return `${cleanUrl}?auto=format&fit=crop&w=500&q=75`;
+  }
+  return url;
+};
 
 export const PromptLibrary: React.FC = () => {
   const { 
@@ -38,7 +51,10 @@ export const PromptLibrary: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<string>('All');
   const [selectedTier, setSelectedTier] = useState<string>('All'); // 'All' | 'Free' | 'Pro'
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [activePromptForModal, setActivePromptForModal] = useState<PromptPack | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const categories = [
     'All',
@@ -57,6 +73,7 @@ export const PromptLibrary: React.FC = () => {
     'Konsistensi AI'
   ];
 
+  // AI Models extraction (memoized)
   const aiModels = useMemo(() => {
     const set = new Set<string>();
     prompts.forEach(p => {
@@ -87,21 +104,56 @@ export const PromptLibrary: React.FC = () => {
     return `${count} dipakai`;
   };
 
-  const filteredPrompts = prompts.filter(p => {
-    const matchesCat = selectedCategory === 'All' || p.category === selectedCategory;
-    const matchesSubCat = selectedSubCategory === 'All' || p.subCategory === selectedSubCategory;
-    const matchesModel = selectedModel === 'All' || p.aiModel === selectedModel;
-    const matchesTier = selectedTier === 'All' 
-      ? true 
-      : selectedTier === 'Pro' 
-        ? !!p.isPremium 
-        : !p.isPremium;
-    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          p.promptText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          p.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                          (p.subCategory && p.subCategory.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCat && matchesSubCat && matchesModel && matchesTier && matchesSearch;
-  });
+  // Reset page to 1 whenever any filter/search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedSubCategory, selectedModel, selectedTier, searchQuery]);
+
+  // Memoized Filtered Prompts calculation
+  const filteredPrompts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return prompts.filter(p => {
+      const matchesCat = selectedCategory === 'All' || p.category === selectedCategory;
+      const matchesSubCat = selectedSubCategory === 'All' || p.subCategory === selectedSubCategory;
+      const matchesModel = selectedModel === 'All' || p.aiModel === selectedModel;
+      const matchesTier = selectedTier === 'All' 
+        ? true 
+        : selectedTier === 'Pro' 
+          ? !!p.isPremium 
+          : !p.isPremium;
+
+      if (!matchesCat || !matchesSubCat || !matchesModel || !matchesTier) {
+        return false;
+      }
+
+      if (!query) return true;
+
+      return (
+        p.title.toLowerCase().includes(query) ||
+        p.promptText.toLowerCase().includes(query) ||
+        (p.subCategory && p.subCategory.toLowerCase().includes(query)) ||
+        p.tags.some(t => t.toLowerCase().includes(query))
+      );
+    });
+  }, [prompts, selectedCategory, selectedSubCategory, selectedModel, selectedTier, searchQuery]);
+
+  // Pagination calculation
+  const totalPages = Math.max(1, Math.ceil(filteredPrompts.length / ITEMS_PER_PAGE));
+  const validCurrentPage = Math.min(currentPage, totalPages);
+
+  const paginatedPrompts = useMemo(() => {
+    const startIndex = (validCurrentPage - 1) * ITEMS_PER_PAGE;
+    return filteredPrompts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredPrompts, validCurrentPage]);
+
+  const handlePageChange = (page: number) => {
+    const targetPage = Math.max(1, Math.min(page, totalPages));
+    setCurrentPage(targetPage);
+    if (containerRef.current) {
+      containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const handleCopyPrompt = (prompt: PromptPack) => {
     const isLocked = prompt.isPremium && (userRole === 'Free Member' || userRole === 'Guest');
@@ -119,8 +171,41 @@ export const PromptLibrary: React.FC = () => {
     setSelectedSubCategory('All');
   };
 
+  // Generate pagination buttons with smart ellipsis
+  const getPaginationNumbers = () => {
+    const delta = 1;
+    const range: (number | string)[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= validCurrentPage - delta && i <= validCurrentPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    for (const i of range) {
+      if (typeof i === 'number') {
+        if (l) {
+          if (i - l === 2) {
+            rangeWithDots.push(l + 1);
+          } else if (i - l !== 1) {
+            rangeWithDots.push('...');
+          }
+        }
+        rangeWithDots.push(i);
+        l = i;
+      }
+    }
+
+    return rangeWithDots;
+  };
+
+  const startCount = filteredPrompts.length === 0 ? 0 : (validCurrentPage - 1) * ITEMS_PER_PAGE + 1;
+  const endCount = Math.min(validCurrentPage * ITEMS_PER_PAGE, filteredPrompts.length);
+
   return (
-    <div className="flex flex-col gap-8 py-4 animate-in fade-in duration-200">
+    <div ref={containerRef} className="flex flex-col gap-8 py-4 animate-in fade-in duration-200">
 
       {/* Header Title */}
       <div className="flex flex-col gap-2">
@@ -253,6 +338,18 @@ export const PromptLibrary: React.FC = () => {
 
       </div>
 
+      {/* Info Count & Pagination Top Bar */}
+      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+        <span>
+          Menampilkan <strong className="text-white">{startCount}-{endCount}</strong> dari <strong className="text-accent-cyan">{filteredPrompts.length}</strong> formula prompt
+        </span>
+        {totalPages > 1 && (
+          <span className="font-mono">
+            Halaman <strong className="text-white">{validCurrentPage}</strong> dari <strong className="text-white">{totalPages}</strong>
+          </span>
+        )}
+      </div>
+
       {/* PROMPT CARDS GRID */}
       {filteredPrompts.length === 0 ? (
         <GlassCard className="p-12 flex flex-col items-center justify-center text-center gap-3">
@@ -269,22 +366,25 @@ export const PromptLibrary: React.FC = () => {
         </GlassCard>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPrompts.map((prompt) => {
+          {paginatedPrompts.map((prompt) => {
             const isBookmarked = bookmarks.includes(prompt.id);
             const isProPrompt = !!prompt.isPremium;
             const isLockedForUser = isProPrompt && (userRole === 'Free Member' || userRole === 'Guest');
+            const optimizedThumb = getOptimizedThumbnail(prompt.thumbnail);
 
             return (
               <GlassCard key={prompt.id} hoverable className="p-4 flex flex-col justify-between gap-4 group relative overflow-hidden transition-all duration-300">
                 
-                {/* Thumbnail Header */}
+                {/* Thumbnail Header with Native Lazy Loading */}
                 <div 
                   onClick={() => setActivePromptForModal(prompt)}
-                  className="relative aspect-video rounded-2xl overflow-hidden cursor-pointer border border-white/10 group-hover:border-accent-cyan/40 transition-colors"
+                  className="relative aspect-video rounded-2xl overflow-hidden cursor-pointer border border-white/10 group-hover:border-accent-cyan/40 transition-colors bg-slate-900"
                 >
                   <img
-                    src={prompt.thumbnail}
+                    src={optimizedThumb}
                     alt={prompt.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#060816] via-transparent to-black/30 p-3 flex flex-col justify-between">
@@ -404,6 +504,86 @@ export const PromptLibrary: React.FC = () => {
               </GlassCard>
             );
           })}
+        </div>
+      )}
+
+      {/* Bottom Pagination Navigation */}
+      {totalPages > 1 && (
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-6 pb-2 border-t border-white/[0.06]">
+          {/* First Page */}
+          <button
+            type="button"
+            onClick={() => handlePageChange(1)}
+            disabled={validCurrentPage === 1}
+            className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            title="Halaman Pertama"
+          >
+            <ChevronsLeft className="w-4 h-4" />
+          </button>
+
+          {/* Prev Page */}
+          <button
+            type="button"
+            onClick={() => handlePageChange(validCurrentPage - 1)}
+            disabled={validCurrentPage === 1}
+            className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 transition-all"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Sebelumnya</span>
+          </button>
+
+          {/* Number Buttons */}
+          <div className="flex items-center gap-1.5">
+            {getPaginationNumbers().map((num, idx) => {
+              if (num === '...') {
+                return (
+                  <span key={`dots-${idx}`} className="px-2 text-slate-600 text-xs font-mono select-none">
+                    ...
+                  </span>
+                );
+              }
+
+              const pageNum = num as number;
+              const isActive = pageNum === validCurrentPage;
+
+              return (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`w-9 h-9 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-center ${
+                    isActive
+                      ? 'bg-gradient-accent text-white shadow-lg shadow-accent-purple/30 border border-accent-purple/40 scale-105'
+                      : 'bg-white/[0.04] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08]'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Next Page */}
+          <button
+            type="button"
+            onClick={() => handlePageChange(validCurrentPage + 1)}
+            disabled={validCurrentPage === totalPages}
+            className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 transition-all"
+          >
+            <span className="hidden sm:inline">Berikutnya</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          {/* Last Page */}
+          <button
+            type="button"
+            onClick={() => handlePageChange(totalPages)}
+            disabled={validCurrentPage === totalPages}
+            className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            title="Halaman Terakhir"
+          >
+            <ChevronsRight className="w-4 h-4" />
+          </button>
         </div>
       )}
 

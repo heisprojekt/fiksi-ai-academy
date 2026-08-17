@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { useApp } from './context/AppContext';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
@@ -8,17 +8,24 @@ import { SearchModal } from './components/ui/SearchModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { UpgradeModal } from './components/payment/UpgradeModal';
 
-// Views
-import { LandingView } from './components/landing/LandingView';
-import { DashboardView } from './components/dashboard/DashboardView';
-import { CourseView } from './components/course/CourseView';
-import { PromptLibrary } from './components/prompts/PromptLibrary';
-import { AssetsView } from './components/assets/AssetsView';
-import { BookmarksView } from './components/bookmarks/BookmarksView';
-import { ProfileView } from './components/profile/ProfileView';
-import { AdminDashboard } from './components/admin/AdminDashboard';
-import { BlogView } from './components/blog/BlogView';
-import { ToolsView } from './components/tools/ToolsView';
+// Views - Code Split with lazy loading for instant tab switching & lighter initial bundle
+const LandingView = lazy(() => import('./components/landing/LandingView').then(m => ({ default: m.LandingView })));
+const DashboardView = lazy(() => import('./components/dashboard/DashboardView').then(m => ({ default: m.DashboardView })));
+const CourseView = lazy(() => import('./components/course/CourseView').then(m => ({ default: m.CourseView })));
+const PromptLibrary = lazy(() => import('./components/prompts/PromptLibrary').then(m => ({ default: m.PromptLibrary })));
+const AssetsView = lazy(() => import('./components/assets/AssetsView').then(m => ({ default: m.AssetsView })));
+const BookmarksView = lazy(() => import('./components/bookmarks/BookmarksView').then(m => ({ default: m.BookmarksView })));
+const ProfileView = lazy(() => import('./components/profile/ProfileView').then(m => ({ default: m.ProfileView })));
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const BlogView = lazy(() => import('./components/blog/BlogView').then(m => ({ default: m.BlogView })));
+const ToolsView = lazy(() => import('./components/tools/ToolsView').then(m => ({ default: m.ToolsView })));
+
+const ViewLoadingFallback = () => (
+  <div className="w-full min-h-[360px] flex flex-col items-center justify-center gap-3 p-8 animate-in fade-in duration-150">
+    <div className="w-8 h-8 rounded-full border-2 border-accent-purple border-t-accent-cyan animate-spin" />
+    <span className="text-xs text-slate-400 font-mono tracking-wider">Memuat workspace...</span>
+  </div>
+);
 
 export const MainContent: React.FC = () => {
   const { currentView } = useApp();
@@ -77,13 +84,17 @@ export const MainContent: React.FC = () => {
           
           {/* Main Workspace Area */}
           <main className="flex-1 min-w-0 py-6">
-            {renderCurrentView()}
+            <Suspense fallback={<ViewLoadingFallback />}>
+              {renderCurrentView()}
+            </Suspense>
           </main>
         </div>
       ) : (
         /* Full Width Landing & Blog Area */
         <main className="flex-1 w-full">
-          {renderCurrentView()}
+          <Suspense fallback={<ViewLoadingFallback />}>
+            {renderCurrentView()}
+          </Suspense>
         </main>
       )}
 

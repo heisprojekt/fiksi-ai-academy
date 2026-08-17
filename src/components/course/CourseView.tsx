@@ -127,6 +127,8 @@ export const CourseView: React.FC = () => {
                   <img
                     src={c.thumbnail}
                     alt={c.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 flex items-center gap-1.5">
@@ -152,6 +154,8 @@ export const CourseView: React.FC = () => {
                     <img
                       src={c.instructor.avatar}
                       alt={c.instructor.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-6 h-6 rounded-full object-cover"
                     />
                     <span className="text-[11px] text-slate-300 font-medium">{c.instructor.name}</span>

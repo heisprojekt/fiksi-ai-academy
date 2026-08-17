@@ -198,6 +198,8 @@ export const ToolsView: React.FC = () => {
                     <img
                       src={tool.thumbnail}
                       alt={tool.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     

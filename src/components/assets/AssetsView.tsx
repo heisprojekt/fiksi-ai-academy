@@ -104,6 +104,8 @@ export const AssetsView: React.FC = () => {
                 <img
                   src={asset.thumbnail}
                   alt={asset.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute top-2 left-2 flex items-center gap-1.5">
