@@ -6,48 +6,54 @@ import {
   CheckCircle2, 
   Download, 
   FileText, 
-  MessageSquare, 
-  Share2, 
   ChevronLeft, 
   Volume2, 
   Maximize, 
-  Clock, 
   Check, 
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  BookOpen,
+  Search,
+  SlidersHorizontal,
+  Clock,
+  Bookmark
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
-import { MOCK_COURSES } from '../../data/mockData';
+import { parseVideoUrl } from '../../utils/videoEmbed';
 
 export const CourseView: React.FC = () => {
   const { 
+    currentView,
+    courses,
     activeCourse, 
+    setActiveCourseId,
     completedEpisodes, 
     toggleEpisodeCompletion, 
     navigateTo, 
-    showToast 
+    showToast,
+    bookmarks,
+    toggleBookmark
   } = useApp();
 
   const [activeEpisodeIndex, setActiveEpisodeIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<'materi' | 'overview' | 'resources' | 'notes' | 'discussion'>('overview');
+  const [activeTab, setActiveTab] = useState<'materi' | 'overview' | 'resources' | 'notes'>('overview');
   const [isPlaying, setIsPlaying] = useState(false);
+  const [searchCategory, setSearchCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [userNote, setUserNote] = useState('');
   const [savedNotes, setSavedNotes] = useState<string[]>([
     'Omni Flash v3 butuh reference image minimal resolution 1024x1024.',
     'Gunakan seed yang sama untuk mempertahankan raut wajah di episode 3.'
   ]);
 
-  const currentEpisode = activeCourse.episodes[activeEpisodeIndex] || activeCourse.episodes[0];
-  const isEpCompleted = !!completedEpisodes[`${activeCourse.id}-${currentEpisode?.id}`];
+  const categories = ['All', 'AI Video & Visual', 'Commercial AI', '3D Animation', 'Character Design'];
 
-  const getDriveEmbedUrl = (url: string) => {
-    if (url.includes('drive.google.com')) {
-      return url.replace(/\/view(\?.*)?$/, '/preview');
-    }
-    return url;
-  };
+  const currentCourse = activeCourse || courses[0];
+  const currentEpisode = currentCourse?.episodes?.[activeEpisodeIndex] || currentCourse?.episodes?.[0];
+  const isEpCompleted = currentEpisode ? !!completedEpisodes[`${currentCourse.id}-${currentEpisode.id}`] : false;
+  const parsedVideo = parseVideoUrl(currentEpisode?.videoUrl || '');
 
   const handleSaveNote = () => {
     if (!userNote.trim()) return;
@@ -56,6 +62,135 @@ export const CourseView: React.FC = () => {
     showToast('success', 'Catatan Disimpan', 'Catatan belajar berhasil ditambahkan ke akunmu.');
   };
 
+  // If in 'courses' overview list mode
+  if (currentView === 'courses') {
+    const filteredCourses = courses.filter(c => {
+      const matchCat = searchCategory === 'All' || c.category === searchCategory;
+      const matchQuery = c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCat && matchQuery;
+    });
+
+    return (
+      <div className="flex flex-col gap-8 py-4">
+        {/* Header */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Badge variant="cyan" icon={<BookOpen className="w-3.5 h-3.5" />}>ACADEMY COURSES</Badge>
+          </div>
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">Katalog Masterclass AI</h1>
+          <p className="text-xs sm:text-sm text-slate-400">
+            Pelajari workflow AI profesional dari dasar hingga advance bersama mentor industri terkemuka.
+          </p>
+        </div>
+
+        {/* Filter Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-3 rounded-3xl bg-[#101827]/70 border border-white/[0.08] backdrop-blur-xl">
+          <div className="relative w-full sm:w-80">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari kursus masterclass..."
+              className="w-full pl-10 pr-4 py-2 rounded-2xl bg-[#060816] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-accent-cyan"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setSearchCategory(cat)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  searchCategory === cat
+                    ? 'bg-accent-blue/20 text-accent-cyan border border-accent-blue/40'
+                    : 'bg-white/5 text-slate-400 hover:text-white'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Courses Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCourses.map((c) => (
+            <GlassCard key={c.id} hoverable className="p-5 flex flex-col justify-between gap-4 group">
+              <div className="flex flex-col gap-3">
+                <div 
+                  onClick={() => navigateTo('course-detail', c.id)}
+                  className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 cursor-pointer"
+                >
+                  <img
+                    src={c.thumbnail}
+                    alt={c.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <Badge variant="cyan" size="sm">{c.level}</Badge>
+                    <Badge variant="dark" size="sm">{c.category}</Badge>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <h3 
+                    onClick={() => navigateTo('course-detail', c.id)}
+                    className="text-base font-bold text-white group-hover:text-accent-cyan transition-colors cursor-pointer line-clamp-1"
+                  >
+                    {c.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                    {c.subtitle}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={c.instructor.avatar}
+                      alt={c.instructor.name}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                    <span className="text-[11px] text-slate-300 font-medium">{c.instructor.name}</span>
+                  </div>
+                  <span className="text-[11px] font-mono text-accent-cyan font-bold">
+                    {c.episodes?.length || c.totalEpisodes || 0} Episode
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => toggleBookmark(c.id)}
+                  className={`p-2.5 rounded-2xl border transition-all ${
+                    bookmarks.includes(c.id)
+                      ? 'bg-accent-purple/20 border-accent-purple text-accent-pink'
+                      : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                  }`}
+                  title={bookmarks.includes(c.id) ? 'Hapus Bookmark' : 'Simpan Kursus'}
+                >
+                  <Bookmark className={`w-4 h-4 ${bookmarks.includes(c.id) ? 'fill-accent-pink' : ''}`} />
+                </button>
+
+                <GradientButton
+                  size="sm"
+                  icon={<Play className="w-3.5 h-3.5 fill-white" />}
+                  onClick={() => navigateTo('course-detail', c.id)}
+                  className="flex-1"
+                >
+                  Mulai Belajar
+                </GradientButton>
+              </div>
+            </GlassCard>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Course Detail / Masterclass Player View
   return (
     <div className="flex flex-col gap-6 py-4">
 
@@ -66,35 +201,35 @@ export const CourseView: React.FC = () => {
           className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span>Kembali ke Courses</span>
+          <span>Kembali ke Katalog Courses</span>
         </button>
 
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-slate-400">Instruktur: <strong className="text-white">{activeCourse.instructor.name}</strong></span>
-          <Badge variant="cyan" size="sm">{activeCourse.level}</Badge>
+          <span className="text-slate-400">Instruktur: <strong className="text-white">{currentCourse?.instructor?.name}</strong></span>
+          <Badge variant="cyan" size="sm">{currentCourse?.level}</Badge>
         </div>
       </div>
 
       {/* Course Title Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{activeCourse.title}</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">{activeCourse.subtitle}</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{currentCourse?.title}</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">{currentCourse?.subtitle}</p>
         </div>
 
         {/* Course Progress Indicator */}
         <div className="flex items-center gap-3 bg-[#101827] px-4 py-2.5 rounded-2xl border border-white/10 shrink-0">
           <div className="flex flex-col">
             <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Progres Belajar</span>
-            <span className="text-sm font-extrabold text-accent-cyan">{activeCourse.progressPercentage}% Selesai</span>
+            <span className="text-sm font-extrabold text-accent-cyan">{currentCourse?.progressPercentage}% Selesai</span>
           </div>
           <div className="w-24 bg-white/10 h-2 rounded-full overflow-hidden ml-2">
-            <div className="bg-gradient-accent h-full" style={{ width: `${activeCourse.progressPercentage}%` }} />
+            <div className="bg-gradient-accent h-full" style={{ width: `${currentCourse?.progressPercentage}%` }} />
           </div>
         </div>
       </div>
 
-      {/* MAIN MASTERCLASS PLAYER GRID (Matching design screenshot) */}
+      {/* MAIN MASTERCLASS PLAYER GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* Left Column (4 cols): Episode Playlist Sidebar */}
@@ -111,7 +246,7 @@ export const CourseView: React.FC = () => {
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Materi Episode
+                Materi ({currentCourse?.episodes?.length || 0})
               </button>
               <button
                 onClick={() => setActiveTab('resources')}
@@ -121,20 +256,20 @@ export const CourseView: React.FC = () => {
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Resources ({activeCourse.resources.length})
+                Resources ({currentCourse?.resources?.length || 0})
               </button>
             </div>
 
             {/* Episode List */}
             {activeTab !== 'resources' ? (
               <div className="flex flex-col gap-2 max-h-[480px] overflow-y-auto pr-1">
-                {activeCourse.episodes.map((ep, idx) => {
+                {currentCourse?.episodes?.map((ep, idx) => {
                   const isCurrent = idx === activeEpisodeIndex;
-                  const isDone = !!completedEpisodes[`${activeCourse.id}-${ep.id}`] || ep.completed;
+                  const isDone = !!completedEpisodes[`${currentCourse.id}-${ep.id}`] || ep.completed;
 
                   return (
                     <button
-                      key={ep.id}
+                      key={ep.id || idx}
                       onClick={() => setActiveEpisodeIndex(idx)}
                       className={`w-full flex items-center justify-between p-3 rounded-2xl text-left transition-all ${
                         isCurrent
@@ -166,7 +301,7 @@ export const CourseView: React.FC = () => {
             ) : (
               /* Resources Download List */
               <div className="flex flex-col gap-3">
-                {activeCourse.resources.map((res, idx) => (
+                {currentCourse?.resources?.map((res, idx) => (
                   <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                     <div className="flex items-center gap-2.5">
                       <FileText className="w-4 h-4 text-accent-cyan" />
@@ -192,65 +327,37 @@ export const CourseView: React.FC = () => {
         {/* Right Column (8 cols): Video Player & Episode Controls */}
         <div className="lg:col-span-8 flex flex-col gap-6 order-1 lg:order-2">
           
-          {/* Custom Futuristic HTML5 Video Player */}
+          {/* Custom Futuristic Video Player */}
           <GlassCard glow className="p-0 overflow-hidden flex flex-col">
-            <div className="relative aspect-video bg-black flex items-center justify-center group">
-              {currentEpisode?.videoUrl?.includes('drive.google.com') ? (
+            <div className="relative aspect-video bg-black flex items-center justify-center group overflow-hidden">
+              {parsedVideo.isIframe ? (
                 <iframe
-                  key={currentEpisode.videoUrl}
-                  src={getDriveEmbedUrl(currentEpisode.videoUrl)}
+                  key={parsedVideo.embedUrl}
+                  src={parsedVideo.embedUrl}
                   className="w-full h-full border-0"
-                  allow="autoplay; encrypted-media"
+                  allow="autoplay; encrypted-media; fullscreen"
                   allowFullScreen
-                  title={currentEpisode.title}
+                  title={currentEpisode?.title || 'Course Video'}
                 />
               ) : (
                 <>
                   <video
-                    key={currentEpisode?.videoUrl}
-                    src={currentEpisode?.videoUrl}
-                    controls={false}
+                    key={parsedVideo.embedUrl}
+                    src={parsedVideo.embedUrl}
+                    controls={true}
                     className="w-full h-full object-cover"
-                    poster={activeCourse.thumbnail}
+                    poster={currentCourse?.thumbnail}
                     onPlay={() => setIsPlaying(true)}
                     onPause={() => setIsPlaying(false)}
                   />
-
-                  {/* Play Overlay Button */}
-                  {!isPlaying && (
-                    <div 
-                      onClick={() => setIsPlaying(true)}
-                      className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center cursor-pointer"
-                    >
-                      <div className="w-16 h-16 rounded-3xl bg-gradient-accent flex items-center justify-center text-white shadow-2xl shadow-accent-purple/60 hover:scale-110 transition-transform">
-                        <Play className="w-8 h-8 fill-white ml-1" />
-                      </div>
-                    </div>
-                  )}
                 </>
               )}
 
-              {/* Bottom Video Controls Overlay Bar */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col gap-2 opacity-90 group-hover:opacity-100 transition-opacity">
-                {/* Progress bar line */}
-                <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden cursor-pointer">
-                  <div className="bg-gradient-accent h-full w-[45%]" />
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-white pt-1">
-                  <div className="flex items-center gap-3">
-                    <button onClick={() => setIsPlaying(!isPlaying)} className="hover:text-accent-cyan">
-                      {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-white" />}
-                    </button>
-                    <span className="font-mono text-[11px] text-slate-300">08:24 / {currentEpisode?.duration}</span>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Volume2 className="w-4 h-4 hover:text-accent-cyan cursor-pointer" />
-                    <span className="text-[11px] font-mono px-1.5 py-0.5 bg-white/10 rounded">1080p 60fps</span>
-                    <Maximize className="w-4 h-4 hover:text-accent-cyan cursor-pointer" />
-                  </div>
-                </div>
+              {/* Top Source Badge */}
+              <div className="absolute top-3 right-3 flex items-center gap-1.5 pointer-events-none">
+                <Badge variant="dark" size="sm">
+                  {parsedVideo.type === 'gdrive' ? 'Google Drive Stream' : parsedVideo.type === 'youtube' ? 'YouTube HD' : 'HD 1080p'}
+                </Badge>
               </div>
             </div>
 
@@ -262,28 +369,32 @@ export const CourseView: React.FC = () => {
                   <p className="text-xs text-slate-400 mt-1">{currentEpisode?.description}</p>
                 </div>
 
-                <GradientButton
-                  variant={isEpCompleted ? 'secondary' : 'gradient'}
-                  icon={<CheckCircle2 className="w-4 h-4" />}
-                  onClick={() => toggleEpisodeCompletion(activeCourse.id, currentEpisode?.id)}
-                  className="shrink-0"
-                >
-                  {isEpCompleted ? 'Sudah Selesai ✓' : 'Tandai Selesai'}
-                </GradientButton>
+                {currentEpisode && (
+                  <GradientButton
+                    variant={isEpCompleted ? 'secondary' : 'gradient'}
+                    icon={<CheckCircle2 className="w-4 h-4" />}
+                    onClick={() => toggleEpisodeCompletion(currentCourse.id, currentEpisode.id)}
+                    className="shrink-0"
+                  >
+                    {isEpCompleted ? 'Sudah Selesai ✓' : 'Tandai Selesai'}
+                  </GradientButton>
+                )}
               </div>
 
               {/* Key Topics List */}
-              <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Topik Yang Dibahas:</span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {currentEpisode?.keyTopics.map((topic, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-slate-300">
-                      <Check className="w-3.5 h-3.5 text-accent-cyan" />
-                      <span>{topic}</span>
-                    </div>
-                  ))}
+              {currentEpisode?.keyTopics && currentEpisode.keyTopics.length > 0 && (
+                <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Topik Yang Dibahas:</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {currentEpisode.keyTopics.map((topic, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs text-slate-300">
+                        <Check className="w-3.5 h-3.5 text-accent-cyan" />
+                        <span>{topic}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
             </div>
           </GlassCard>

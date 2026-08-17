@@ -5,6 +5,8 @@ import { Sidebar } from './components/layout/Sidebar';
 import { Footer } from './components/layout/Footer';
 import { Toast } from './components/ui/Toast';
 import { SearchModal } from './components/ui/SearchModal';
+import { AuthModal } from './components/auth/AuthModal';
+import { UpgradeModal } from './components/payment/UpgradeModal';
 
 // Views
 import { LandingView } from './components/landing/LandingView';
@@ -12,9 +14,11 @@ import { DashboardView } from './components/dashboard/DashboardView';
 import { CourseView } from './components/course/CourseView';
 import { PromptLibrary } from './components/prompts/PromptLibrary';
 import { AssetsView } from './components/assets/AssetsView';
+import { BookmarksView } from './components/bookmarks/BookmarksView';
 import { ProfileView } from './components/profile/ProfileView';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { BlogView } from './components/blog/BlogView';
+import { ToolsView } from './components/tools/ToolsView';
 
 export const MainContent: React.FC = () => {
   const { currentView } = useApp();
@@ -25,10 +29,8 @@ export const MainContent: React.FC = () => {
     'course-detail', 
     'prompts', 
     'assets', 
+    'tools',
     'bookmarks', 
-    'downloads',
-    'community',
-    'updates',
     'profile', 
     'admin'
   ].includes(currentView);
@@ -43,11 +45,13 @@ export const MainContent: React.FC = () => {
       case 'course-detail':
         return <CourseView />;
       case 'prompts':
-      case 'bookmarks':
         return <PromptLibrary />;
+      case 'bookmarks':
+        return <BookmarksView />;
       case 'assets':
-      case 'downloads':
         return <AssetsView />;
+      case 'tools':
+        return <ToolsView />;
       case 'profile':
         return <ProfileView />;
       case 'admin':
@@ -91,6 +95,12 @@ export const MainContent: React.FC = () => {
 
       {/* Command-K Search Modal */}
       <SearchModal />
+
+      {/* Google & Email Authentication Modal */}
+      <AuthModal />
+
+      {/* QRIS Membership Upgrade Modal */}
+      <UpgradeModal />
 
     </div>
   );

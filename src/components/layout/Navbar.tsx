@@ -1,5 +1,5 @@
-import React from 'react';
-import { useApp } from '../../context/AppContext';
+import React, { useState } from 'react';
+import { useApp, ADMIN_EMAILS } from '../../context/AppContext';
 import { ViewMode, UserRole } from '../../types';
 import { 
   Sparkles, 
@@ -7,12 +7,11 @@ import {
   Bell, 
   User, 
   ShieldCheck, 
-  BookOpen, 
-  FolderDown, 
-  Layers, 
-  Newspaper,
+  LogOut, 
+  Crown, 
+  KeyRound,
   LayoutDashboard,
-  LogOut
+  ChevronDown
 } from 'lucide-react';
 import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
@@ -22,159 +21,211 @@ export const Navbar: React.FC = () => {
   const { 
     currentView, 
     navigateTo, 
+    currentUser, 
     userRole, 
     setUserRole, 
     setIsSearchModalOpen,
-    bookmarks 
+    setIsAuthModalOpen,
+    setIsUpgradeModalOpen,
+    setAuthMode,
+    logout 
   } = useApp();
 
-  const isDashboardView = ['dashboard', 'courses', 'course-detail', 'prompts', 'assets', 'profile', 'admin'].includes(currentView);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+
+  // Check if current logged-in account is an authorized Admin email
+  const isAdminAccount = !!currentUser && ADMIN_EMAILS.includes(currentUser.email.trim().toLowerCase());
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/[0.08] bg-[#060816]/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-white/[0.08] bg-[#060816]/90 backdrop-blur-xl transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
         
-        {/* Brand Logo */}
-        <Logo size="md" onClick={() => navigateTo('landing')} />
+        {/* Left: Official FIKSI AI Logo */}
+        <div className="flex items-center gap-4 shrink-0">
+          <Logo size="md" onClick={() => navigateTo('landing')} />
+        </div>
 
-        {/* Center Nav Links (Landing / General) */}
-        {!isDashboardView ? (
-          <nav className="hidden md:flex items-center gap-1 bg-[#101827]/60 p-1.5 rounded-full border border-white/[0.08] backdrop-blur-md">
-            <button
-              onClick={() => navigateTo('landing')}
-              className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${
-                currentView === 'landing' 
-                  ? 'bg-white/10 text-white shadow-sm border border-white/10' 
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Beranda
-            </button>
-            <button
-              onClick={() => navigateTo('courses')}
-              className="px-4 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all"
-            >
-              Kursus
-            </button>
-            <button
-              onClick={() => navigateTo('prompts')}
-              className="px-4 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all"
-            >
-              Prompt Library
-            </button>
-            <button
-              onClick={() => navigateTo('assets')}
-              className="px-4 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all"
-            >
-              Assets
-            </button>
-            <button
-              onClick={() => navigateTo('blog')}
-              className="px-4 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all"
-            >
-              Blog
-            </button>
-          </nav>
-        ) : (
-          /* Dashboard Top Search Bar */
-          <div className="flex-1 max-w-md hidden sm:block">
-            <button
-              onClick={() => setIsSearchModalOpen(true)}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-2xl bg-[#101827]/70 border border-white/[0.08] text-slate-400 hover:border-white/20 hover:bg-[#172238]/60 transition-all text-xs"
-            >
-              <div className="flex items-center gap-2.5">
-                <Search className="w-4 h-4 text-slate-400" />
-                <span>Cari kursus, prompt formula, atau aset 3D...</span>
-              </div>
-              <kbd className="hidden lg:inline-block px-2 py-0.5 text-[10px] font-mono bg-white/10 text-slate-300 rounded-md border border-white/10">
-                ⌘K
-              </kbd>
-            </button>
-          </div>
-        )}
+        {/* Center: Clean, Uniform Search Bar Across ALL Views */}
+        <div className="flex-1 max-w-lg hidden sm:block mx-2">
+          <button
+            type="button"
+            onClick={() => setIsSearchModalOpen(true)}
+            className="w-full flex items-center justify-between px-4 py-2.5 rounded-2xl bg-[#0e1328]/80 border border-white/[0.08] text-slate-400 hover:border-accent-cyan/40 hover:bg-[#141b38] hover:text-slate-200 transition-all text-xs shadow-inner group"
+          >
+            <div className="flex items-center gap-2.5">
+              <Search className="w-4 h-4 text-slate-400 group-hover:text-accent-cyan transition-colors" />
+              <span className="line-clamp-1">Cari kursus masterclass, formula prompt, atau aset 3D...</span>
+            </div>
+            <kbd className="hidden md:inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-mono bg-white/10 text-slate-300 rounded-lg border border-white/10">
+              ⌘K
+            </kbd>
+          </button>
+        </div>
 
         {/* Right Section / Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
 
-          {/* Quick Role Switcher Simulation */}
-          <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs">
-            <span className="text-slate-400 text-[11px] font-medium">Role:</span>
-            <select
-              value={userRole}
-              onChange={(e) => setUserRole(e.target.value as UserRole)}
-              className="bg-transparent text-accent-cyan font-bold focus:outline-none cursor-pointer"
-            >
-              <option value="Guest" className="bg-[#101827] text-slate-200">Guest / Public</option>
-              <option value="Free Member" className="bg-[#101827] text-slate-200">Free Member</option>
-              <option value="Pro Member" className="bg-[#101827] text-slate-200">Pro Member</option>
-              <option value="Admin" className="bg-[#101827] text-slate-200">Admin Portal</option>
-            </select>
-          </div>
-
-          {/* Search Icon Trigger for Mobile */}
+          {/* Search Trigger for Mobile View */}
           <button
             onClick={() => setIsSearchModalOpen(true)}
             className="sm:hidden p-2.5 rounded-2xl bg-[#101827] border border-white/10 text-slate-300 hover:text-white"
+            title="Cari konten"
           >
             <Search className="w-4 h-4" />
           </button>
 
-          {/* Dashboard Notifications */}
-          {userRole !== 'Guest' && (
-            <button className="relative p-2.5 rounded-2xl bg-[#101827] border border-white/[0.08] text-slate-300 hover:text-white hover:border-white/20 transition-all">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-accent-cyan animate-ping" />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-accent-cyan" />
+          {/* ========================================================================= */}
+          {/* ADMIN POWERS: ALWAYS ALLOW SIMULATION AND 1-CLICK INSTANT RESTORE         */}
+          {/* ========================================================================= */}
+          {isAdminAccount && (
+            <div className="flex items-center gap-2">
+              {/* Role Simulator Dropdown */}
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent-purple/15 border border-accent-purple/40 text-xs shadow-sm">
+                <Crown className="w-3.5 h-3.5 text-accent-pink shrink-0" />
+                <select
+                  value={userRole}
+                  onChange={(e) => setUserRole(e.target.value as UserRole)}
+                  className="bg-transparent text-accent-cyan font-bold focus:outline-none cursor-pointer text-xs"
+                >
+                  <option value="Admin" className="bg-[#101827] text-white">👑 Mode: Admin Portal (CMS)</option>
+                  <option value="Pro Member" className="bg-[#101827] text-accent-cyan">⚡ Simulasi Pro Member</option>
+                  <option value="Free Member" className="bg-[#101827] text-slate-300">🔒 Simulasi Free Member</option>
+                </select>
+              </div>
+
+              {/* Instant "Kembali ke Admin" Button if in Simulation */}
+              {userRole !== 'Admin' && (
+                <button
+                  type="button"
+                  onClick={() => setUserRole('Admin')}
+                  className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink hover:opacity-90 text-white text-xs font-bold shadow-md shadow-accent-purple/30 transition-all active:scale-95 animate-pulse"
+                  title="Kembalikan mode ke Admin penuh tanpa perlu relog"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Kembali ke Admin</span>
+                </button>
+              )}
+
+              {/* Dedicated Admin Portal CMS Button when in Admin Role */}
+              {userRole === 'Admin' && (
+                <button
+                  onClick={() => navigateTo('admin')}
+                  className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                    currentView === 'admin'
+                      ? 'bg-gradient-accent text-white shadow-lg shadow-accent-purple/30'
+                      : 'bg-accent-purple/20 text-accent-cyan border border-accent-purple/40 hover:bg-accent-purple/30'
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4 text-accent-cyan" />
+                  <span>Admin CMS</span>
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Upgrade to Pro Button for Non-Admin Free Members */}
+          {!isAdminAccount && userRole === 'Free Member' && (
+            <button
+              onClick={() => setIsUpgradeModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-accent-cyan/20 via-accent-purple/20 to-accent-blue/20 hover:from-accent-cyan/30 hover:to-accent-purple/30 text-accent-cyan border border-accent-cyan/40 text-xs font-bold shadow-md shadow-accent-cyan/10 transition-all active:scale-95 group"
+            >
+              <Crown className="w-3.5 h-3.5 text-accent-cyan group-hover:scale-110 transition-transform" />
+              <span>Upgrade Pro (QRIS)</span>
             </button>
           )}
 
-          {/* CTA / User Profile Switch */}
-          {userRole === 'Guest' ? (
+          {/* ========================================================================= */}
+          {/* GUEST VS LOGGED IN MEMBER CONTROLS                                        */}
+          {/* ========================================================================= */}
+          {userRole === 'Guest' || !currentUser ? (
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setUserRole('Pro Member')}
-                className="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+                onClick={() => {
+                  setAuthMode('login');
+                  setIsAuthModalOpen(true);
+                }}
+                className="px-3.5 py-2 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
               >
                 Masuk
               </button>
               <GradientButton
                 size="sm"
                 onClick={() => {
-                  setUserRole('Pro Member');
-                  navigateTo('dashboard');
+                  setAuthMode('register');
+                  setIsAuthModalOpen(true);
                 }}
               >
-                Mulai Berlangganan
+                Daftar Member
               </GradientButton>
             </div>
           ) : (
-            <div className="flex items-center gap-2.5">
+            <div className="relative">
               <button
-                onClick={() => navigateTo('dashboard')}
-                className={`hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-                  isDashboardView 
-                    ? 'bg-accent-blue/15 text-accent-cyan border border-accent-blue/30' 
-                    : 'bg-white/5 text-slate-300 hover:bg-white/10'
-                }`}
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Dashboard</span>
-              </button>
-
-              <button
-                onClick={() => navigateTo('profile')}
-                className="flex items-center gap-2.5 pl-1.5 pr-3 py-1.5 rounded-2xl bg-[#101827] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer group"
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#101827] border border-white/[0.08] hover:border-white/20 transition-all"
               >
                 <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                  alt="Heisy Avatar"
-                  className="w-8 h-8 rounded-xl object-cover ring-2 ring-accent-purple/50 group-hover:scale-105 transition-transform"
+                  src={currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+                  alt={currentUser.name}
+                  className="w-8 h-8 rounded-xl object-cover ring-1 ring-white/20"
                 />
-                <div className="hidden md:flex flex-col text-left">
-                  <span className="text-xs font-bold text-white leading-tight">Heisy</span>
-                  <span className="text-[10px] text-accent-cyan font-medium">{userRole}</span>
+                <div className="hidden lg:flex flex-col text-left pr-1">
+                  <span className="text-xs font-bold text-white line-clamp-1">{currentUser.name}</span>
+                  <span className="text-[10px] text-accent-cyan font-semibold">{userRole}</span>
                 </div>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
               </button>
+
+              {/* Profile Dropdown Menu */}
+              {isProfileMenuOpen && (
+                <div 
+                  className="absolute right-0 mt-2 w-56 p-2 rounded-2xl bg-[#0e1328] border border-white/15 shadow-2xl backdrop-blur-2xl flex flex-col gap-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                  onMouseLeave={() => setIsProfileMenuOpen(false)}
+                >
+                  <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] mb-1">
+                    <span className="text-xs font-bold text-white block">{currentUser.name}</span>
+                    <span className="text-[11px] text-slate-400 font-mono block truncate">{currentUser.email}</span>
+                    <Badge variant={userRole === 'Admin' ? 'purple' : userRole === 'Pro Member' ? 'pro' : 'outline'} size="sm" className="mt-1.5">
+                      {userRole}
+                    </Badge>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      navigateTo('profile');
+                      setIsProfileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-white/5 transition-colors text-left"
+                  >
+                    <User className="w-4 h-4 text-accent-cyan" />
+                    <span>Profil & Pengaturan</span>
+                  </button>
+
+                  {isAdminAccount && (
+                    <button
+                      onClick={() => {
+                        navigateTo('admin');
+                        setIsProfileMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-accent-cyan hover:bg-accent-blue/15 transition-colors text-left font-semibold"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      <span>Admin CMS Portal</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsProfileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-rose-400 hover:bg-rose-500/10 transition-colors text-left border-t border-white/5 mt-1 pt-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Keluar (Logout)</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

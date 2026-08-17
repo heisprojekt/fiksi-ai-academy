@@ -1,4 +1,5 @@
-import { Course, PromptPack, DownloadAsset, UserProfile, BlogArticle } from '../types';
+import { Course, PromptPack, DownloadAsset, UserProfile, BlogArticle, ExternalTool } from '../types';
+import { NOTION_PROMPTS } from './notionPrompts';
 
 export const MOCK_USER: UserProfile = {
   name: 'Heisy',
@@ -168,6 +169,7 @@ export const MOCK_PROMPTS: PromptPack[] = [
     isPopular: true,
     difficulty: 'Mudah',
     aspectRatio: '9:16',
+    isPremium: false,
     tags: ['Skincare', 'UGC', 'TikTok Ads', 'Realism'],
     promptText: 'Cinematic 9:16 portrait of a young Indonesian woman holding a serum glass bottle in a modern minimalist bathroom, soft morning sunlight through frosted window, natural skin texture, bokeh background, 8k resolution, photorealistic, shallow depth of field --ar 9:16 --v 6.0',
     negativePrompt: 'blurry, oversaturated, deformed hands, plastic skin, bad anatomy, low quality, noise',
@@ -193,6 +195,7 @@ export const MOCK_PROMPTS: PromptPack[] = [
     isPopular: true,
     difficulty: 'Sedang',
     aspectRatio: '9:16',
+    isPremium: true,
     tags: ['Fashion', 'OOTD', 'Streetwear', 'Tokyo Style'],
     promptText: 'Full body shot of male model wearing oversize vintage black hoodie with futuristic cyberpunk holographic embroidery, Shibuya crossing Tokyo backdrop at blue hour, wet neon reflections, shot on Hasselblad H6D-100c --ar 9:16',
     negativePrompt: 'overexposed, blurry logo, low-res texture, bad proportion',
@@ -213,6 +216,7 @@ export const MOCK_PROMPTS: PromptPack[] = [
     isPopular: true,
     difficulty: 'Ahli',
     aspectRatio: '16:9',
+    isPremium: true,
     tags: ['B-Roll', 'Coffee', 'Atmosphere', '4K'],
     promptText: 'Extreme close up micro shot of hot dark espresso pouring smoothly into a ceramic white cup, steam rising softly, dramatic moody side lighting, golden ratio composition, 120fps slow motion --ar 16:9',
     negativePrompt: 'splash artifact, unnatural steam, jitter, frame drops',
@@ -232,6 +236,7 @@ export const MOCK_PROMPTS: PromptPack[] = [
     isPopular: true,
     difficulty: 'Sedang',
     aspectRatio: '1:1',
+    isPremium: false,
     tags: ['Cyberpunk', 'Character', 'Portrait', 'Glow'],
     promptText: 'Detailed headshot of futuristic female cyborg, glowing translucent circuitry lines on cheeks, violet neon eyes, dark slicked back hair, sharp focus, 8k Unreal Engine 5 render style --ar 1:1 --stylize 250',
     negativePrompt: 'cartoon, drawing, anime style, flat color, low contrast',
@@ -250,6 +255,7 @@ export const MOCK_PROMPTS: PromptPack[] = [
     isNew: false,
     difficulty: 'Mudah',
     aspectRatio: '16:9',
+    isPremium: false,
     tags: ['Interior', 'Architecture', 'Japandi', 'Minimalist'],
     promptText: 'Architectural digest photograph of modern Japandi style living room with light oak wood panelling, beige linen sofa, large Monstera plant in terracotta pot, sunbeams filtering through bamboo blinds, photorealistic interior design --ar 16:9',
     negativePrompt: 'cluttered, dark, distorted furniture, cartoonish',
@@ -268,6 +274,7 @@ export const MOCK_PROMPTS: PromptPack[] = [
     isPopular: true,
     difficulty: 'Ahli',
     aspectRatio: '16:9',
+    isPremium: true,
     tags: ['Watch', 'Luxury', 'Commercial', 'Product'],
     promptText: '3D luxury smartwatch floating in zero gravity surrounded by metallic chrome liquid droplets, smooth metallic surface reflections, dark gradient backdrop, high key studio rim light --ar 16:9',
     negativePrompt: 'cheap plastic texture, low detail, noise, static',
@@ -275,7 +282,8 @@ export const MOCK_PROMPTS: PromptPack[] = [
     lighting: 'Studio 3-Point softbox lighting + Rim light',
     motion: 'Slow 360 degree product spin with floating liquid effect',
     author: 'FIKSI Team'
-  }
+  },
+  ...NOTION_PROMPTS
 ];
 
 export const MOCK_ASSETS: DownloadAsset[] = [
@@ -392,5 +400,104 @@ export const MOCK_WEEKLY_UPDATES = [
       '+ Integration Filter Model AI Kling & Flux.1',
       '+ Pembaharuan Player Masterclass 4K'
     ]
+  }
+];
+
+export const MOCK_EXTERNAL_TOOLS: ExternalTool[] = [
+  {
+    id: 'tool-midjourney',
+    name: 'Midjourney v6.1',
+    description: 'Model AI Image Generation terpopuler untuk menghasilkan visual sinematik, fotorealistis, dan konsep seni berkualitas studio.',
+    category: 'Image Gen',
+    url: 'https://www.midjourney.com',
+    thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
+    pricingType: 'Paid',
+    isPremium: false,
+    isFeatured: true,
+    tags: ['Image Gen', 'Discord', 'Photorealistic', 'v6.1']
+  },
+  {
+    id: 'tool-kling',
+    name: 'Kling AI Video Generator',
+    description: 'Platform AI text-to-video dan image-to-video dengan simulasi fisika realistis dan gerakan kamera sinematik hingga 1080p 30fps.',
+    category: 'Video AI',
+    url: 'https://klingai.com',
+    thumbnail: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80',
+    pricingType: 'Freemium',
+    isPremium: false,
+    isFeatured: true,
+    tags: ['Video AI', 'Motion', 'Cinematic', 'HD Video']
+  },
+  {
+    id: 'tool-elevenlabs',
+    name: 'ElevenLabs Voice & Dubbing',
+    description: 'Teknologi kloning suara AI paling alami di dunia dengan emosi realistis, text-to-speech multibahasa, dan automatic video dubbing.',
+    category: 'Audio & Voice',
+    url: 'https://elevenlabs.io',
+    thumbnail: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=600&q=80',
+    pricingType: 'Freemium',
+    isPremium: true,
+    isFeatured: true,
+    tags: ['Voice AI', 'Dubbing', 'Text to Speech', 'Voice Clone']
+  },
+  {
+    id: 'tool-flux',
+    name: 'Flux.1 by Black Forest Labs',
+    description: 'Model open-weight generasi terbaru dengan prompt adherence superior dan typography rendering teks dalam gambar yang tajam.',
+    category: 'Image Gen',
+    url: 'https://blackforestlabs.ai',
+    thumbnail: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80',
+    pricingType: 'Free',
+    isPremium: false,
+    isFeatured: false,
+    tags: ['Open Weight', 'Image Gen', 'Typography', 'Dev / Schnell']
+  },
+  {
+    id: 'tool-runway',
+    name: 'Runway Gen-3 Alpha',
+    description: 'Model video AI generasi mutakhir untuk kreator film, visual effects, dan kontrol motion brush ultra presisi.',
+    category: 'Video AI',
+    url: 'https://runwayml.com',
+    thumbnail: 'https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=600&q=80',
+    pricingType: 'Paid',
+    isPremium: true,
+    isFeatured: true,
+    tags: ['Gen-3', 'VFX', 'Cinematic', 'Motion Brush']
+  },
+  {
+    id: 'tool-claude',
+    name: 'Claude 3.5 Sonnet (Anthropic)',
+    description: 'Asisten AI cerdas untuk crafting formula prompt Midjourney, penulisan script video YouTube/TikTok, dan coding otomatis.',
+    category: 'LLM & Writing',
+    url: 'https://claude.ai',
+    thumbnail: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80',
+    pricingType: 'Freemium',
+    isPremium: false,
+    isFeatured: false,
+    tags: ['Writing', 'Prompt Crafting', 'Scripting', 'LLM']
+  },
+  {
+    id: 'tool-magnific',
+    name: 'Magnific AI Upscaler & Relighter',
+    description: 'Tool AI image upscaling tercanggih yang dapat meningkatkan resolusi visual hingga 8K sambil menambahkan detail mikro yang menakjubkan.',
+    category: 'Productivity',
+    url: 'https://magnific.ai',
+    thumbnail: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80',
+    pricingType: 'Paid',
+    isPremium: true,
+    isFeatured: false,
+    tags: ['Upscaler', '8K', 'Detail Enhancer', 'Relight']
+  },
+  {
+    id: 'tool-suno',
+    name: 'Suno AI Music Generator',
+    description: 'Platform AI text-to-music yang dapat menciptakan lagu lengkap dengan vokal, instrumen, dan genre apapun dalam hitungan detik.',
+    category: 'Audio & Voice',
+    url: 'https://suno.com',
+    thumbnail: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+    pricingType: 'Freemium',
+    isPremium: false,
+    isFeatured: false,
+    tags: ['Music AI', 'Audio', 'Vocal', 'BGM Soundtrack']
   }
 ];

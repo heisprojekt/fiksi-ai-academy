@@ -18,7 +18,7 @@ export const Footer: React.FC = () => {
           
           {/* Col 1 & 2: Brand Info */}
           <div className="md:col-span-2 flex flex-col gap-4">
-            <Logo size="lg" onClick={() => navigateTo('landing')} />
+            <Logo size="md" onClick={() => navigateTo('landing')} />
 
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
               Platform edukasi AI generasi terbaru untuk kreator konten modern. Kuasai prompt engineering, animasi video, dan produksi visual AI tanpa batas.

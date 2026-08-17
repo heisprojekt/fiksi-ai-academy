@@ -24,7 +24,7 @@ import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
 
 export const LandingView: React.FC = () => {
-  const { navigateTo, setUserRole } = useApp();
+  const { navigateTo, userRole, setUserRole, setIsAuthModalOpen, setAuthMode } = useApp();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const features = [
@@ -174,8 +174,12 @@ export const LandingView: React.FC = () => {
                 size="lg"
                 icon={<ArrowRight className="w-4 h-4" />}
                 onClick={() => {
-                  setUserRole('Pro Member');
-                  navigateTo('dashboard');
+                  if (userRole === 'Guest') {
+                    setAuthMode('register');
+                    setIsAuthModalOpen(true);
+                  } else {
+                    navigateTo('dashboard');
+                  }
                 }}
               >
                 Mulai Sekarang

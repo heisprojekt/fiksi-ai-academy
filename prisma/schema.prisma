@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  Guest
+  Free_Member  @map("Free Member")
+  Pro_Member   @map("Pro Member")
+  Admin
+}
+
+model User {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  email             String   @unique
+  avatar            String?
+  role              String   @default("Pro Member") // "Admin" | "Pro Member" | "Free Member" | "Guest"
+  password          String?
+  joinedDate        String   @default("12 Mar 2025")
+  validUntil        String   @default("12 Mar 2026")
+  coursesCompleted  Int      @default(0)
+  savedPrompts      Int      @default(0)
+  totalDownloads    Int      @default(0)
+  streakDays        Int      @default(1)
+  bookmarks         String[] @default([])
+  completedEpisodes String[] @default([])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("users")
+}
+
+type Instructor {
+  name   String
+  avatar String
+  role   String
+}
+
+type Episode {
+  id          String
+  title       String
+  duration    String
+  completed   Boolean  @default(false)
+  videoUrl    String
+  description String
+  keyTopics   String[]
+}
+
+type Resource {
+  title       String
+  type        String
+  size        String
+  downloadUrl String
+}
+
+model Course {
+  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+  slug               String       @unique
+  title              String
+  subtitle           String
+  thumbnail          String
+  bannerImage        String
+  category           String
+  level              String       // Pemula | Menengah | Lanjutan
+  progressPercentage Int          @default(0)
+  totalEpisodes      Int          @default(0)
+  completedEpisodes  Int          @default(0)
+  instructor         Instructor
+  episodes           Episode[]
+  resources          Resource[]
+  description        String
+  isPublished        Boolean      @default(true)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@map("courses")
+}
+
+model PromptPack {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  thumbnail      String
+  category       String   // Character | UGC | Product | Storyboard | Lighting | Camera | Motion | Lainnya
+  aiModel        String   // Omni Flash | Nano Banana | Midjourney v6 | Flux.1 Pro | Kling AI | Veed AI
+  usageCount     Int      @default(0)
+  isNew          Boolean  @default(false)
+  isPopular      Boolean  @default(false)
+  difficulty     String   // Mudah | Sedang | Ahli
+  aspectRatio    String   // 16:9 | 9:16 | 1:1 | 4:5
+  tags           String[]
+  promptText     String
+  negativePrompt String?
+  cameraSettings String?
+  lighting       String?
+  motion         String?
+  voice          String?
+  environment    String?
+  tips           String[] @default([])
+  author         String   @default("FIKSI Team")
+  isPublished    Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("prompt_packs")
+}
+
+model DownloadAsset {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  thumbnail      String
+  format         String   // PSD | PNG | LUT | Templates | Mockups | Icons | Storyboards
+  size           String
+  category       String
+  downloadsCount Int      @default(0)
+  tags           String[]
+  fileUrl        String
+  isPremium      Boolean  @default(false)
+  isPublished    Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("download_assets")
+}
+
+type BlogAuthor {
+  name   String
+  avatar String
+}
+
+type TocItem {
+  id    String
+  title String
+}
+
+model BlogArticle {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  slug            String       @unique
+  title           String
+  coverImage      String
+  category        String
+  readTime        String
+  publishedAt     String
+  author          BlogAuthor
+  excerpt         String
+  content         String
+  tags            String[]
+  tableOfContents TocItem[]
+  isPublished     Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@map("blog_articles")
+}
+
+model WeeklyUpdate {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  version    String
+  date       String
+  title      String
+  highlights String[]
+  createdAt  DateTime @default(now())
+
+  @@map("weekly_updates")
+}

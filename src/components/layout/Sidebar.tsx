@@ -6,9 +6,8 @@ import {
   GraduationCap, 
   Sparkles, 
   FolderDown, 
-  Download, 
   Bookmark, 
-  Users, 
+  Wrench, 
   RefreshCw, 
   Settings, 
   ShieldCheck, 
@@ -26,10 +25,8 @@ export const Sidebar: React.FC = () => {
     { id: 'courses' as ViewMode, label: 'Courses', icon: GraduationCap },
     { id: 'prompts' as ViewMode, label: 'Prompt Library', icon: Sparkles },
     { id: 'assets' as ViewMode, label: 'Assets', icon: FolderDown },
-    { id: 'downloads' as ViewMode, label: 'Downloads', icon: Download },
+    { id: 'tools' as ViewMode, label: 'AI Tools', icon: Wrench, badge: 'DIRECTORY' },
     { id: 'bookmarks' as ViewMode, label: 'Bookmarks', icon: Bookmark, badge: bookmarks.length },
-    { id: 'community' as ViewMode, label: 'Community', icon: Users },
-    { id: 'updates' as ViewMode, label: 'Updates', icon: RefreshCw, badge: 'v1.8' },
   ];
 
   if (userRole === 'Admin') {

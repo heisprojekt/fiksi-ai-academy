@@ -5,14 +5,14 @@ import { MOCK_COURSES, MOCK_PROMPTS, MOCK_ASSETS } from '../../data/mockData';
 import { Search, GraduationCap, Sparkles, FolderDown, ArrowRight } from 'lucide-react';
 
 export const SearchModal: React.FC = () => {
-  const { isSearchModalOpen, setIsSearchModalOpen, navigateTo } = useApp();
+  const { courses, prompts, assets, isSearchModalOpen, setIsSearchModalOpen, navigateTo } = useApp();
   const [query, setQuery] = useState('');
 
   if (!isSearchModalOpen) return null;
 
-  const matchedCourses = MOCK_COURSES.filter(c => c.title.toLowerCase().includes(query.toLowerCase()));
-  const matchedPrompts = MOCK_PROMPTS.filter(p => p.title.toLowerCase().includes(query.toLowerCase()));
-  const matchedAssets = MOCK_ASSETS.filter(a => a.title.toLowerCase().includes(query.toLowerCase()));
+  const matchedCourses = courses.filter(c => c.title.toLowerCase().includes(query.toLowerCase()));
+  const matchedPrompts = prompts.filter(p => p.title.toLowerCase().includes(query.toLowerCase()));
+  const matchedAssets = assets.filter(a => a.title.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <Modal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} maxWidth="2xl">

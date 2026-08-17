@@ -12,21 +12,22 @@ import {
   Layout, 
   Box, 
   Check, 
-  Crown 
+  Crown,
+  Bookmark
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
 
 export const AssetsView: React.FC = () => {
-  const { showToast, userRole } = useApp();
+  const { assets, showToast, userRole, bookmarks, toggleBookmark } = useApp();
   const [selectedFormat, setSelectedFormat] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const formats = ['All', 'PSD', 'PNG', 'LUT', 'Templates', 'Mockups'];
 
-  const filteredAssets = MOCK_ASSETS.filter(asset => {
+  const filteredAssets = assets.filter(asset => {
     const matchesFormat = selectedFormat === 'All' || asset.format === selectedFormat;
     const matchesSearch = asset.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           asset.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -120,17 +121,32 @@ export const AssetsView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Download Action Button */}
-              <GradientButton
-                size="sm"
-                variant={asset.isPremium && userRole === 'Free Member' ? 'secondary' : 'gradient'}
-                icon={isDownloading ? <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                onClick={() => handleDownload(asset)}
-                disabled={isDownloading}
-                className="w-full"
-              >
-                {isDownloading ? 'Mengunduh...' : 'Download File'}
-              </GradientButton>
+              {/* Download Action Button & Bookmark */}
+              <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => toggleBookmark(asset.id)}
+                  className={`p-2.5 rounded-2xl border transition-all ${
+                    bookmarks.includes(asset.id)
+                      ? 'bg-accent-purple/20 border-accent-purple text-accent-pink'
+                      : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                  }`}
+                  title={bookmarks.includes(asset.id) ? 'Hapus Bookmark' : 'Simpan Aset'}
+                >
+                  <Bookmark className={`w-4 h-4 ${bookmarks.includes(asset.id) ? 'fill-accent-pink' : ''}`} />
+                </button>
+
+                <GradientButton
+                  size="sm"
+                  variant={asset.isPremium && userRole === 'Free Member' ? 'secondary' : 'gradient'}
+                  icon={isDownloading ? <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                  onClick={() => handleDownload(asset)}
+                  disabled={isDownloading}
+                  className="flex-1"
+                >
+                  {isDownloading ? 'Mengunduh...' : 'Download File'}
+                </GradientButton>
+              </div>
 
             </GlassCard>
           );

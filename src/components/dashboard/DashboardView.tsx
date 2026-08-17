@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { MOCK_COURSES, MOCK_PROMPTS, MOCK_WEEKLY_UPDATES } from '../../data/mockData';
+import { MOCK_WEEKLY_UPDATES } from '../../data/mockData';
+import { buildFullPromptFormula } from '../../types';
 import { 
   Play, 
   ArrowRight, 
@@ -18,8 +19,19 @@ import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
 
 export const DashboardView: React.FC = () => {
-  const { navigateTo, copyToClipboard, bookmarks, toggleBookmark } = useApp();
+  const { 
+    currentUser, 
+    userRole, 
+    courses, 
+    prompts, 
+    navigateTo, 
+    copyToClipboard, 
+    bookmarks, 
+    toggleBookmark 
+  } = useApp();
   const latestUpdate = MOCK_WEEKLY_UPDATES[0];
+
+  const userName = currentUser?.name || 'Kreator AI';
 
   return (
     <div className="flex flex-col gap-8 py-4">
@@ -28,11 +40,15 @@ export const DashboardView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/[0.08]">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Halo, Heisy</h1>
-            <Badge variant="pro" size="sm">PRO MEMBER</Badge>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Halo, {userName}
+            </h1>
+            <Badge variant={userRole === 'Admin' ? 'purple' : userRole === 'Pro Member' ? 'pro' : 'outline'} size="sm">
+              {userRole.toUpperCase()}
+            </Badge>
           </div>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Selamat datang kembali di FIKSI AI Academy. Lanjutkan perjalanan belajarmu.
+            Selamat datang di FIKSI AI Academy. Lanjutkan perjalanan belajarmu.
           </p>
         </div>
 
@@ -62,7 +78,7 @@ export const DashboardView: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {MOCK_COURSES.map((course) => (
+          {courses.slice(0, 3).map((course) => (
             <GlassCard key={course.id} hoverable className="p-5 flex flex-col justify-between gap-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
@@ -81,12 +97,12 @@ export const DashboardView: React.FC = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-400 text-[11px]">Progres</span>
-                  <span className="font-bold text-accent-cyan text-[11px]">{course.progressPercentage}%</span>
+                  <span className="font-bold text-accent-cyan text-[11px]">{course.progressPercentage || 0}%</span>
                 </div>
                 <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
                   <div 
                     className="bg-gradient-accent h-full transition-all duration-500" 
-                    style={{ width: `${course.progressPercentage}%` }}
+                    style={{ width: `${course.progressPercentage || 0}%` }}
                   />
                 </div>
               </div>
@@ -133,7 +149,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-3">
-              {MOCK_PROMPTS.slice(0, 3).map((prompt) => {
+              {prompts.slice(0, 3).map((prompt) => {
                 const isBookmarked = bookmarks.includes(prompt.id);
                 return (
                   <GlassCard key={prompt.id} hoverable className="p-3.5 flex items-center justify-between gap-4">
@@ -169,7 +185,7 @@ export const DashboardView: React.FC = () => {
                       </button>
 
                       <button
-                        onClick={() => copyToClipboard(prompt.promptText, prompt.title)}
+                        onClick={() => copyToClipboard(buildFullPromptFormula(prompt), prompt.title)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent-blue/10 border border-accent-blue/30 text-accent-cyan hover:bg-accent-blue/20 text-xs font-semibold transition-colors"
                       >
                         <Copy className="w-3.5 h-3.5" />
@@ -198,7 +214,7 @@ export const DashboardView: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {MOCK_PROMPTS.filter(p => p.isPopular).slice(0, 4).map((prompt) => (
+              {prompts.filter(p => p.isPopular).slice(0, 4).map((prompt) => (
                 <GlassCard key={prompt.id} hoverable className="p-4 flex flex-col justify-between gap-3">
                   <div className="flex items-start gap-3">
                     <img
@@ -213,7 +229,7 @@ export const DashboardView: React.FC = () => {
                   </div>
 
                   <button
-                    onClick={() => copyToClipboard(prompt.promptText, prompt.title)}
+                    onClick={() => copyToClipboard(buildFullPromptFormula(prompt), prompt.title)}
                     className="w-full py-1.5 rounded-xl bg-white/5 border border-white/10 hover:border-accent-cyan/40 text-[11px] font-semibold text-slate-200 hover:text-accent-cyan transition-colors flex items-center justify-center gap-1.5"
                   >
                     <Copy className="w-3 h-3" />
@@ -229,7 +245,7 @@ export const DashboardView: React.FC = () => {
         {/* Right Column (4 cols): Update Mingguan Widget & Stats */}
         <div className="lg:col-span-4 flex flex-col gap-6">
           
-          {/* Weekly Updates Widget (Matching screenshot) */}
+          {/* Weekly Updates Widget */}
           <GlassCard glow className="p-5 flex flex-col gap-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2">
@@ -257,19 +273,23 @@ export const DashboardView: React.FC = () => {
               size="sm"
               variant="secondary"
               className="w-full mt-1"
-              onClick={() => navigateTo('updates')}
+              onClick={() => navigateTo('prompts')}
             >
-              Lihat Patch Notes Lengkap
+              Jelajahi Prompt & Materi Terbaru
             </GradientButton>
           </GlassCard>
 
           {/* Quick Learning Stats */}
           <GlassCard className="p-5 flex flex-col gap-4">
-            <h3 className="text-sm font-bold text-white border-b border-white/10 pb-3">Statistik Belajar Heisy</h3>
+            <h3 className="text-sm font-bold text-white border-b border-white/10 pb-3">
+              Statistik Belajar {userName.split(' ')[0]}
+            </h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                 <span className="text-xs text-slate-400">Streak Belajar</span>
-                <span className="text-xl font-extrabold text-amber-400 mt-1">24 Hari 🔥</span>
+                <span className="text-xl font-extrabold text-amber-400 mt-1">
+                  {currentUser?.streakDays || 1} Hari 🔥
+                </span>
               </div>
               <div className="flex flex-col p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                 <span className="text-xs text-slate-400">Saved Prompts</span>
