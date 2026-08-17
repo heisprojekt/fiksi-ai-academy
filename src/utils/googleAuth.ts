@@ -32,13 +32,15 @@ export function parseGoogleJwt(token: string): GoogleJwtPayload | null {
   }
 }
 
+export const DEFAULT_GOOGLE_CLIENT_ID = '1047310856147-9ovt6h51ijdq9ipcguo10gei3ij66cck.apps.googleusercontent.com';
+
 /**
- * Gets configured Google Client ID from environment variables or localStorage
+ * Gets configured Google Client ID from environment variables, localStorage, or default fallback
  */
 export function getGoogleClientId(): string {
   const envId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  const customId = localStorage.getItem('fiksi_custom_google_client_id');
-  return customId || envId || '';
+  const customId = typeof window !== 'undefined' ? localStorage.getItem('fiksi_custom_google_client_id') : null;
+  return envId || customId || DEFAULT_GOOGLE_CLIENT_ID;
 }
 
 /**
