@@ -502,7 +502,7 @@ export const DashboardView: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <h4 className="text-sm font-bold text-white truncate">{prompt.title}</h4>
                           {prompt.isNew && <Badge variant="new" size="sm">NEW</Badge>}
-                          {prompt.isPopular && <Badge variant="hot" size="sm">HOT</Badge>}
+                          {prompt.isPopular && <Badge variant="amber" size="sm">HOT</Badge>}
                         </div>
                         <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
                           <span className="text-accent-cyan font-medium">{prompt.aiModel}</span>
