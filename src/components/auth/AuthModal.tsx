@@ -37,6 +37,7 @@ export const AuthModal: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [rememberMe, setRememberMe] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState(false);
 
   // 6-digit OTP State
@@ -90,7 +91,7 @@ export const AuthModal: React.FC = () => {
                   email: payload.email,
                   name: payload.name,
                   avatar: payload.picture
-                });
+                }, rememberMe);
                 showToast('success', 'Google Login Sukses', `Selamat datang, ${payload.name}!`);
               }
             }
@@ -208,14 +209,15 @@ export const AuthModal: React.FC = () => {
       const isAdmin = ADMIN_EMAILS.includes(emailClean);
 
       if (authMode === 'login') {
-        await loginWithEmail({ email, password });
+        await loginWithEmail({ email, password, rememberMe }, rememberMe);
       } else {
         await registerWithEmail({ 
           name: name || (isAdmin ? 'Admin FIKSI' : 'Kreator AI'), 
           email, 
           password, 
-          role: isAdmin ? 'Admin' : 'Free Member' 
-        });
+          role: isAdmin ? 'Admin' : 'Free Member',
+          rememberMe
+        }, rememberMe);
       }
     } finally {
       setIsLoading(false);
@@ -229,7 +231,7 @@ export const AuthModal: React.FC = () => {
         (window as any).google.accounts.id.prompt((notification: any) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             // If prompt was blocked by browser popup blocker, trigger client fallback
-            loginWithGoogle('kreator.ai@gmail.com');
+            loginWithGoogle('kreator.ai@gmail.com', rememberMe);
           }
         });
         return;
@@ -238,7 +240,7 @@ export const AuthModal: React.FC = () => {
       }
     }
     // Fallback if GIS is blocked by adblock
-    loginWithGoogle('kreator.ai@gmail.com');
+    loginWithGoogle('kreator.ai@gmail.com', rememberMe);
   };
 
   return (
@@ -453,11 +455,25 @@ export const AuthModal: React.FC = () => {
                 />
               </div>
 
+              {/* Remember Me Option */}
+              <div className="flex items-center justify-between text-xs py-0.5 px-0.5">
+                <label className="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white select-none transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded border-white/20 bg-[#060816] text-accent-cyan focus:ring-accent-cyan/30 accent-accent-cyan cursor-pointer"
+                  />
+                  <span className="text-xs font-medium">Ingat saya</span>
+                </label>
+                <span className="text-[11px] text-slate-500 font-mono">Simpan sesi login</span>
+              </div>
+
               <GradientButton
                 size="md"
                 type="submit"
                 disabled={isLoading}
-                className="w-full mt-2"
+                className="w-full mt-1"
                 icon={<ArrowRight className="w-4 h-4" />}
               >
                 {isLoading ? (

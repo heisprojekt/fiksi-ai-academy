@@ -40,9 +40,9 @@ interface AppContextType {
   setIsAuthModalOpen: (open: boolean) => void;
   authMode: 'login' | 'register';
   setAuthMode: (mode: 'login' | 'register') => void;
-  loginWithGoogle: (googleData?: string | { email: string; name?: string; avatar?: string }) => Promise<void>;
-  loginWithEmail: (creds: LoginCredentials) => Promise<boolean>;
-  registerWithEmail: (data: RegisterData) => Promise<boolean>;
+  loginWithGoogle: (googleData?: string | { email: string; name?: string; avatar?: string }, rememberMe?: boolean) => Promise<void>;
+  loginWithEmail: (creds: LoginCredentials, rememberMe?: boolean) => Promise<boolean>;
+  registerWithEmail: (data: RegisterData, rememberMe?: boolean) => Promise<boolean>;
   logout: () => void;
 
   // Courses (CMS & Public)
@@ -305,30 +305,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     ];
   });
 
-  // Current Logged In User
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
+  // Helper to load persistent user session (supports Remember Me via localStorage vs sessionStorage)
+  const getInitialUser = (): UserProfile | null => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
-      if (saved) return JSON.parse(saved);
+      const savedLocal = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+      if (savedLocal) return JSON.parse(savedLocal);
+      const savedSession = sessionStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+      if (savedSession) return JSON.parse(savedSession);
     } catch {
       // ignore
     }
-    // Default logged in as Heisprojekt Admin so user can experience Admin CMS immediately or switch
-    return {
-      id: 'u-1',
-      name: 'Heisprojekt Admin',
-      email: 'heisprojekt@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-      role: 'Admin',
-      joinedDate: '01 Jan 2025',
-      validUntil: 'Lifetime VIP',
-      coursesCompleted: 15,
-      savedPrompts: 180,
-      totalDownloads: 45,
-      streakDays: 42,
-      status: 'Aktif'
-    };
-  });
+    return null; // Fresh visit requires login
+  };
+
+  const initialUser = getInitialUser();
+
+  // Current Logged In User (defaults to null on fresh visits)
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(initialUser);
+
+  const saveUserSession = (user: UserProfile, rememberMe: boolean = true) => {
+    setCurrentUser(user);
+    try {
+      if (rememberMe) {
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+        sessionStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      } else {
+        sessionStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      }
+    } catch {
+      // ignore
+    }
+  };
 
   const userRole: UserRole = currentUser ? currentUser.role : 'Guest';
 
@@ -336,7 +344,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (currentUser) {
       const updated = { ...currentUser, role };
       setCurrentUser(updated);
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updated));
+      try {
+        if (localStorage.getItem(STORAGE_KEYS.CURRENT_USER)) {
+          localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updated));
+        } else if (sessionStorage.getItem(STORAGE_KEYS.CURRENT_USER)) {
+          sessionStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updated));
+        }
+      } catch {
+        // ignore
+      }
     }
   };
 
@@ -370,7 +386,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(() => !initialUser);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
   // Sync to local storage
@@ -395,20 +411,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [usersList]);
 
   useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(bookmarks));
   }, [bookmarks]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.COMPLETED_EPISODES, JSON.stringify(completedEpisodes));
   }, [completedEpisodes]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(paymentTransactions));
+  }, [paymentTransactions]);
 
   // Sync from MongoDB API on initial startup
   useEffect(() => {
@@ -438,19 +450,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const activeCourse = courses.find(c => c.id === activeCourseId || c.slug === activeCourseId) || courses[0] || MOCK_COURSES[0];
 
+  // Actions
+  const navigateTo = (view: ViewMode, extraId?: string) => {
+    if (extraId) {
+      if (view === 'course-detail') setActiveCourseIdState(extraId);
+    }
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const setActiveCourseId = (id: string) => {
     setActiveCourseIdState(id);
+    setCurrentView('course-detail');
   };
 
   // Auth Operations
-  const loginWithGoogle = async (googleData?: string | { email: string; name?: string; avatar?: string }) => {
+  const loginWithGoogle = async (
+    googleData?: string | { email: string; name?: string; avatar?: string },
+    rememberMe: boolean = true
+  ) => {
     let targetEmail = 'kreator.ai@gmail.com';
     let targetName = '';
     let targetAvatar = '';
 
     if (typeof googleData === 'string') {
       targetEmail = googleData;
-    } else if (googleData && typeof googleData === 'object') {
+    } else if (googleData) {
       targetEmail = googleData.email || 'kreator.ai@gmail.com';
       targetName = googleData.name || '';
       targetAvatar = googleData.avatar || '';
@@ -483,7 +508,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       status: 'Aktif'
     };
 
-    setCurrentUser(loggedUser);
+    saveUserSession(loggedUser, rememberMe);
     if (!existing) {
       setUsersList(prev => [loggedUser, ...prev]);
     }
@@ -491,7 +516,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('success', 'Berhasil Masuk dengan Akun Google', `Selamat datang, ${loggedUser.name}! (${loggedUser.role})`);
   };
 
-  const loginWithEmail = async (creds: LoginCredentials): Promise<boolean> => {
+  const loginWithEmail = async (creds: LoginCredentials, rememberMe: boolean = true): Promise<boolean> => {
     const emailClean = creds.email.trim().toLowerCase();
     const isAdmin = ADMIN_EMAILS.includes(emailClean);
     const existing = usersList.find(u => u.email.toLowerCase() === emailClean);
@@ -517,13 +542,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setUsersList(prev => [loggedUser, ...prev]);
     }
 
-    setCurrentUser(loggedUser);
+    const shouldRemember = creds.rememberMe !== undefined ? creds.rememberMe : rememberMe;
+    saveUserSession(loggedUser, shouldRemember);
     setIsAuthModalOpen(false);
     showToast('success', 'Login Berhasil', `Selamat datang kembali, ${loggedUser.name}! Role: ${loggedUser.role}`);
     return true;
   };
 
-  const registerWithEmail = async (data: RegisterData): Promise<boolean> => {
+  const registerWithEmail = async (data: RegisterData, rememberMe: boolean = true): Promise<boolean> => {
     const emailClean = data.email.trim().toLowerCase();
     const isAdmin = ADMIN_EMAILS.includes(emailClean);
 
@@ -543,7 +569,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     setUsersList(prev => [newUser, ...prev]);
-    setCurrentUser(newUser);
+    const shouldRemember = data.rememberMe !== undefined ? data.rememberMe : rememberMe;
+    saveUserSession(newUser, shouldRemember);
     setIsAuthModalOpen(false);
     showToast('success', 'Registrasi Berhasil', `Akun ${newUser.email} terdaftar sebagai ${newUser.role}.`);
     return true;
@@ -551,6 +578,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const logout = () => {
     setCurrentUser(null);
+    try {
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      sessionStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    } catch {
+      // ignore
+    }
+    setCurrentView('landing');
+    setIsAuthModalOpen(true);
     showToast('info', 'Logout Berhasil', 'Anda telah keluar dari sesi.');
   };
 

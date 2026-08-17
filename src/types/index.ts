@@ -178,6 +178,7 @@ export interface ToastMessage {
 export interface LoginCredentials {
   email: string;
   password?: string;
+  rememberMe?: boolean;
 }
 
 export interface RegisterData {
@@ -185,6 +186,7 @@ export interface RegisterData {
   email: string;
   password?: string;
   role?: UserRole;
+  rememberMe?: boolean;
 }
 
 export const buildFullPromptFormula = (prompt: PromptPack): string => {
