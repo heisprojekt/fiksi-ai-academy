@@ -10,7 +10,8 @@
     "preview": "node ./node_modules/vite/bin/vite.js preview",
     "server": "tsx src/server/index.ts",
     "db:generate": "prisma generate",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",

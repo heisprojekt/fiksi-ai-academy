@@ -138,6 +138,8 @@ export interface UserProfile {
   totalDownloads: number;
   streakDays: number;
   status?: string;
+  bookmarks?: string[];
+  completedEpisodes?: string[];
 }
 
 export interface QRISPaymentTransaction {

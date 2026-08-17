@@ -589,6 +589,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     setIsAuthModalOpen(false);
     showToast('success', 'Berhasil Masuk dengan Akun Google', `Selamat datang, ${loggedUser.name}! (${loggedUser.role})`);
+
+    // IMMEDIATELY SYNC / SAVE USER TO MONGODB DATABASE
+    api.syncUser({
+      name: loggedUser.name,
+      email: loggedUser.email,
+      avatar: loggedUser.avatar,
+      role: loggedUser.role,
+      status: loggedUser.status,
+      validUntil: loggedUser.validUntil,
+      streakDays: loggedUser.streakDays,
+      bookmarks: loggedUser.bookmarks
+    }).then((dbUser) => {
+      if (dbUser) {
+        const finalUser = { ...loggedUser, id: dbUser.id };
+        saveUserSession(finalUser, rememberMe);
+        setUsersList(prev => {
+          const others = prev.filter(u => u.email.toLowerCase() !== emailClean);
+          return [finalUser, ...others];
+        });
+      }
+    }).catch((err) => {
+      console.warn('Background MongoDB user sync error:', err);
+    });
   };
 
   const loginWithEmail = async (creds: LoginCredentials, rememberMe: boolean = true): Promise<boolean> => {
@@ -621,6 +644,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     saveUserSession(loggedUser, shouldRemember);
     setIsAuthModalOpen(false);
     showToast('success', 'Login Berhasil', `Selamat datang kembali, ${loggedUser.name}! Role: ${loggedUser.role}`);
+
+    // SYNC USER TO MONGODB DATABASE
+    api.syncUser({
+      name: loggedUser.name,
+      email: loggedUser.email,
+      avatar: loggedUser.avatar,
+      role: loggedUser.role,
+      status: loggedUser.status,
+      validUntil: loggedUser.validUntil,
+      streakDays: loggedUser.streakDays
+    }).then((dbUser) => {
+      if (dbUser) {
+        const finalUser = { ...loggedUser, id: dbUser.id };
+        saveUserSession(finalUser, shouldRemember);
+        setUsersList(prev => {
+          const others = prev.filter(u => u.email.toLowerCase() !== emailClean);
+          return [finalUser, ...others];
+        });
+      }
+    }).catch((err) => {
+      console.warn('Background MongoDB user sync error:', err);
+    });
+
     return true;
   };
 
@@ -648,6 +694,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     saveUserSession(newUser, shouldRemember);
     setIsAuthModalOpen(false);
     showToast('success', 'Registrasi Berhasil', `Akun ${newUser.email} terdaftar sebagai ${newUser.role}.`);
+
+    // SYNC NEW REGISTERED USER TO MONGODB DATABASE
+    api.syncUser({
+      name: newUser.name,
+      email: newUser.email,
+      avatar: newUser.avatar,
+      role: newUser.role,
+      status: newUser.status,
+      validUntil: newUser.validUntil,
+      streakDays: newUser.streakDays
+    }).then((dbUser) => {
+      if (dbUser) {
+        const finalUser = { ...newUser, id: dbUser.id };
+        saveUserSession(finalUser, shouldRemember);
+        setUsersList(prev => {
+          const others = prev.filter(u => u.email.toLowerCase() !== emailClean);
+          return [finalUser, ...others];
+        });
+      }
+    }).catch((err) => {
+      console.warn('Background MongoDB user sync error:', err);
+    });
+
     return true;
   };
 
@@ -779,7 +848,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // User CMS Actions
   const updateUserRole = (emailOrId: string, newRole: UserRole) => {
-    setUsersList(prev => prev.map(u => (u.id === emailOrId || u.email === emailOrId) ? { ...u, role: newRole } : u));
+    let targetUser: UserProfile | undefined;
+    setUsersList(prev => prev.map(u => {
+      if (u.id === emailOrId || u.email === emailOrId) {
+        targetUser = { ...u, role: newRole };
+        return targetUser;
+      }
+      return u;
+    }));
+
+    if (targetUser && targetUser.id) {
+      api.updateUser(targetUser.id, { role: newRole }).catch(err => console.warn('Failed to update role in MongoDB:', err));
+    }
+
     if (currentUser && (currentUser.id === emailOrId || currentUser.email === emailOrId)) {
       setCurrentUser(prev => prev ? { ...prev, role: newRole } : null);
     }
@@ -787,17 +868,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateUserTier = (emailOrId: string, newRole: UserRole, validUntil?: string, status?: string) => {
+    let targetUser: UserProfile | undefined;
     setUsersList(prev => prev.map(u => {
       if (u.id === emailOrId || u.email === emailOrId) {
-        return {
+        targetUser = {
           ...u,
           role: newRole,
           validUntil: validUntil !== undefined ? validUntil : (newRole === 'Admin' ? 'Lifetime VIP' : newRole === 'Pro Member' ? '1 Tahun' : 'Free Tier'),
           status: status !== undefined ? status : u.status || 'Aktif'
         };
+        return targetUser;
       }
       return u;
     }));
+
+    if (targetUser && targetUser.id) {
+      api.updateUser(targetUser.id, {
+        role: targetUser.role,
+        validUntil: targetUser.validUntil,
+        status: targetUser.status
+      }).catch(err => console.warn('Failed to update tier in MongoDB:', err));
+    }
 
     if (currentUser && (currentUser.id === emailOrId || currentUser.email === emailOrId)) {
       setCurrentUser(prev => prev ? {
@@ -812,7 +903,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteUser = (emailOrId: string) => {
+    const target = usersList.find(u => u.id === emailOrId || u.email === emailOrId);
     setUsersList(prev => prev.filter(u => u.id !== emailOrId && u.email !== emailOrId));
+    if (target && target.id) {
+      api.deleteUser(target.id).catch(err => console.warn('Failed to delete user in MongoDB:', err));
+    }
     showToast('info', 'User Dihapus', 'Data pengguna berhasil dihapus.');
   };
 

@@ -168,6 +168,46 @@ export const api = {
     }
   },
 
+  async syncUser(user: Partial<UserProfile>): Promise<UserProfile | null> {
+    try {
+      const res = await fetch(`${API_BASE}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user)
+      });
+      if (!res.ok) throw new Error('Failed to sync user');
+      return await res.json();
+    } catch (e) {
+      console.warn('API Sync user failed:', e);
+      return null;
+    }
+  },
+
+  async updateUser(id: string, user: Partial<UserProfile>): Promise<UserProfile | null> {
+    try {
+      const res = await fetch(`${API_BASE}/users/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user)
+      });
+      if (!res.ok) throw new Error('Failed to update user');
+      return await res.json();
+    } catch (e) {
+      console.warn('API Update user failed:', e);
+      return null;
+    }
+  },
+
+  async deleteUser(id: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' });
+      return res.ok;
+    } catch (e) {
+      console.warn('API Delete user failed:', e);
+      return false;
+    }
+  },
+
   // TRANSACTIONS
   async getTransactions(): Promise<QRISPaymentTransaction[] | null> {
     try {

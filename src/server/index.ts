@@ -298,6 +298,56 @@ app.get('/api/users', async (_req: Request, res: Response) => {
   }
 });
 
+app.post('/api/users', async (req: Request, res: Response) => {
+  try {
+    const { email, name, avatar, role, status, validUntil, bookmarks, streakDays } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const emailClean = email.trim().toLowerCase();
+    
+    // Check if user already exists
+    const existing = await prisma.user.findUnique({
+      where: { email: emailClean }
+    });
+
+    if (existing) {
+      const updated = await prisma.user.update({
+        where: { email: emailClean },
+        data: {
+          name: name || existing.name,
+          avatar: avatar || existing.avatar,
+          role: role || existing.role,
+          status: status || existing.status || 'Active',
+          validUntil: validUntil || existing.validUntil,
+          streakDays: streakDays !== undefined ? streakDays : existing.streakDays,
+          bookmarks: bookmarks || existing.bookmarks
+        }
+      });
+      return res.json(updated);
+    } else {
+      const newUser = await prisma.user.create({
+        data: {
+          email: emailClean,
+          name: name || emailClean.split('@')[0],
+          avatar: avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80',
+          role: role || 'Free Member',
+          joinedDate: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+          validUntil: validUntil || 'Free Tier',
+          status: status || 'Active',
+          streakDays: streakDays || 1,
+          bookmarks: bookmarks || []
+        }
+      });
+      return res.status(201).json(newUser);
+    }
+  } catch (error: any) {
+    console.error('Error in POST /api/users:', error.message);
+    res.status(500).json({ error: 'Failed to create or update user in database', details: error.message });
+  }
+});
+
 app.put('/api/users/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
@@ -308,6 +358,18 @@ app.put('/api/users/:id', async (req: Request, res: Response) => {
     res.json(updated);
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to update user', details: error.message });
+  }
+});
+
+app.delete('/api/users/:id', async (req: Request, res: Response) => {
+  try {
+    const id = getIdParam(req);
+    await prisma.user.delete({
+      where: { id }
+    });
+    res.json({ success: true, id });
+  } catch (error: any) {
+    res.status(500).json({ error: 'Failed to delete user', details: error.message });
   }
 });
 
