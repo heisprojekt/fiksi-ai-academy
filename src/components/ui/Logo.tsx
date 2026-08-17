@@ -47,10 +47,10 @@ export const Logo: React.FC<LogoProps> = ({
       {showText && (
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <span className={`font-extrabold tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-accent transition-all ${currentSize.text}`}>
+            <span className={`font-extrabold tracking-tight text-white transition-colors group-hover:text-violet-300 ${currentSize.text}`}>
               FIKSI
             </span>
-            <span className={`px-2 py-0.5 rounded-full font-extrabold uppercase bg-gradient-to-r from-accent-purple to-accent-pink text-white shadow-sm shadow-accent-purple/30 ${currentSize.badge}`}>
+            <span className={`px-2 py-0.5 rounded-full font-bold tracking-wider uppercase bg-violet-500/15 border border-violet-500/30 text-violet-300 ${currentSize.badge}`}>
               AI ACADEMY
             </span>
           </div>

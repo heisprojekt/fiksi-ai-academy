@@ -9,22 +9,26 @@ export default {
     extend: {
       colors: {
         background: {
-          DEFAULT: '#060816',
-          secondary: '#0B1020',
-          tertiary: '#0F1629'
+          DEFAULT: '#08090E',
+          secondary: '#0D0F18',
+          tertiary: '#121420'
         },
         card: {
-          DEFAULT: '#101827',
-          hover: '#172238',
-          border: 'rgba(255, 255, 255, 0.08)',
+          DEFAULT: '#121420',
+          hover: '#181B2B',
+          border: 'rgba(255, 255, 255, 0.07)',
           highlight: 'rgba(255, 255, 255, 0.12)'
         },
         accent: {
-          cyan: '#22D3EE',
-          blue: '#3B82F6',
-          purple: '#7C3AED',
-          pink: '#C084FC',
-          electric: '#6366F1'
+          DEFAULT: '#8B5CF6',
+          hover: '#7C3AED',
+          light: '#A78BFA',
+          soft: '#DDD6FE',
+          purple: '#8B5CF6',
+          pink: '#A78BFA',
+          cyan: '#A78BFA',
+          blue: '#7C3AED',
+          electric: '#8B5CF6'
         }
       },
       fontFamily: {
@@ -36,10 +40,10 @@ export default {
         '4xl': '32px'
       },
       backgroundImage: {
-        'gradient-accent': 'linear-gradient(135deg, #22D3EE 0%, #3B82F6 35%, #7C3AED 70%, #C084FC 100%)',
-        'gradient-glow': 'radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, rgba(124, 58, 237, 0.05) 50%, transparent 100%)',
-        'gradient-card': 'linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%)',
-        'gradient-hero': 'radial-gradient(circle at 50% 20%, rgba(124, 58, 237, 0.2) 0%, rgba(34, 211, 238, 0.1) 40%, rgba(6, 8, 22, 0) 70%)',
+        'gradient-accent': 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)',
+        'gradient-glow': 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.12) 0%, transparent 70%)',
+        'gradient-card': 'linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%)',
+        'gradient-hero': 'radial-gradient(circle at 50% 10%, rgba(139, 92, 246, 0.15) 0%, rgba(8, 9, 14, 0) 70%)',
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

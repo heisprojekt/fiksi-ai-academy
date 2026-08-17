@@ -20,9 +20,9 @@ export const GlassCard: React.FC<GlassCardProps> = ({
     <div
       className={twMerge(
         clsx(
-          'relative rounded-2xl bg-[#101827]/70 backdrop-blur-xl border border-white/[0.08] text-slate-100 overflow-hidden transition-all duration-300',
-          hoverable && 'hover:bg-[#172238]/80 hover:border-white/[0.18] hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5),0_0_20px_0_rgba(59,130,246,0.12)] hover:-translate-y-0.5',
-          glow && 'border-gradient-glow shadow-[0_0_30px_rgba(59,130,246,0.15)]',
+          'relative rounded-2xl bg-[#121420]/80 backdrop-blur-xl border border-white/[0.07] text-slate-100 overflow-hidden transition-all duration-300',
+          hoverable && 'hover:bg-[#171A29]/90 hover:border-violet-500/30 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.6),0_0_20px_0_rgba(139,92,246,0.08)] hover:-translate-y-0.5',
+          glow && 'border-gradient-glow shadow-[0_0_30px_rgba(139,92,246,0.12)]',
           className
         )
       )}

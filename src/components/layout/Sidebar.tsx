@@ -38,7 +38,7 @@ export const Sidebar: React.FC = () => {
       <div className="sticky top-28 flex flex-col gap-6">
 
         {/* Sidebar Nav Items */}
-        <div className="flex flex-col gap-1.5 p-2 rounded-3xl bg-[#101827]/40 border border-white/[0.06] backdrop-blur-xl">
+        <div className="flex flex-col gap-1.5 p-2 rounded-3xl bg-[#121420]/60 border border-white/[0.06] backdrop-blur-xl">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.id || (item.id === 'courses' && currentView === 'course-detail');
@@ -49,13 +49,13 @@ export const Sidebar: React.FC = () => {
                 onClick={() => navigateTo(item.id)}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-semibold transition-all group ${
                   isActive
-                    ? 'bg-gradient-accent text-white shadow-lg shadow-accent-purple/20'
-                    : 'text-slate-400 hover:text-white hover:bg-white/[0.06]'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/25'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${
-                    isActive ? 'text-white' : 'text-slate-400 group-hover:text-accent-cyan'
+                    isActive ? 'text-white' : 'text-slate-400 group-hover:text-violet-400'
                   }`} />
                   <span>{item.label}</span>
                 </div>
@@ -64,7 +64,7 @@ export const Sidebar: React.FC = () => {
                   <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full ${
                     isActive
                       ? 'bg-white/20 text-white'
-                      : 'bg-white/10 text-slate-300 group-hover:bg-accent-cyan/20 group-hover:text-accent-cyan'
+                      : 'bg-white/10 text-slate-300 group-hover:bg-violet-500/20 group-hover:text-violet-300'
                   }`}>
                     {item.badge}
                   </span>
@@ -80,12 +80,12 @@ export const Sidebar: React.FC = () => {
             onClick={() => navigateTo('profile')}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-semibold transition-all group ${
               currentView === 'profile'
-                ? 'bg-gradient-accent text-white shadow-lg shadow-accent-purple/20'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.06]'
+                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/25'
+                : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
             }`}
           >
             <div className="flex items-center gap-3">
-              <Settings className={`w-4 h-4 ${currentView === 'profile' ? 'text-white' : 'text-slate-400 group-hover:text-accent-cyan'}`} />
+              <Settings className={`w-4 h-4 ${currentView === 'profile' ? 'text-white' : 'text-slate-400 group-hover:text-violet-400'}`} />
               <span>Settings</span>
             </div>
             <ChevronRight className="w-3.5 h-3.5 opacity-50" />
@@ -96,10 +96,10 @@ export const Sidebar: React.FC = () => {
         {userRole !== 'Pro Member' && (
           <GlassCard glow className="p-5 flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <div className="w-9 h-9 rounded-xl bg-gradient-accent flex items-center justify-center text-white shadow-md shadow-accent-purple/30">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-600/25">
                 <Crown className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-extrabold tracking-wider uppercase text-accent-cyan bg-accent-cyan/10 px-2 py-0.5 rounded-full border border-accent-cyan/20">
+              <span className="text-[10px] font-extrabold tracking-wider uppercase text-violet-300 bg-violet-500/15 px-2 py-0.5 rounded-full border border-violet-500/30">
                 Akses VIP
               </span>
             </div>
@@ -107,7 +107,7 @@ export const Sidebar: React.FC = () => {
             <div>
               <h4 className="text-sm font-bold text-white">Upgrade to Pro</h4>
               <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Akses semua konten premium, prompt pack eksklusif, & asset 3D tanpa batas.
+                Akses semua konten premium, prompt pack eksklusif, & asset kreatif tanpa batas.
               </p>
             </div>
 

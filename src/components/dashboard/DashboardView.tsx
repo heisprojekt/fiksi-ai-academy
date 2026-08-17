@@ -93,7 +93,7 @@ export const DashboardView: React.FC = () => {
       {/* ========================================================================= */}
       {/* HEADER GREETING SECTION                                                   */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/[0.07]">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
@@ -114,7 +114,7 @@ export const DashboardView: React.FC = () => {
           <GradientButton
             size="sm"
             variant="secondary"
-            icon={<Sparkles className="w-3.5 h-3.5 text-accent-cyan" />}
+            icon={<Sparkles className="w-3.5 h-3.5 text-violet-400" />}
             onClick={() => navigateTo('prompts')}
           >
             Jelajahi Prompt
@@ -136,21 +136,20 @@ export const DashboardView: React.FC = () => {
         // -------------------------------------------------------------------------
         // STATE A: NEW ACCOUNT ROADMAP & STARTER GUIDE
         // -------------------------------------------------------------------------
-        <div className="flex flex-col gap-5 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-accent-cyan/15 via-accent-purple/10 to-[#0c1024] border border-accent-cyan/30 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-accent-cyan/10 blur-[100px] pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-accent-purple/10 blur-[100px] pointer-events-none" />
+        <div className="flex flex-col gap-5 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-violet-950/40 via-[#121420] to-[#0d0f18] border border-violet-500/25 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-violet-600/10 blur-[100px] pointer-events-none" />
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-accent-cyan/20 border border-accent-cyan/40 text-[10px] font-mono font-bold text-accent-cyan uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3 h-3 text-accent-cyan" />
+                <span className="px-2.5 py-1 rounded-lg bg-violet-500/15 border border-violet-500/30 text-[10px] font-mono font-bold text-violet-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3 text-violet-400" />
                   Rekomendasi Akun Baru
                 </span>
                 <span className="text-xs text-slate-400 font-medium">Panduan 4 Langkah Mulai Cepat</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                Mulai Perjalanan Kreator AI Pertamamu 🚀
+              <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                Mulai Perjalanan Kreator AI Pertamamu
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
                 Kami telah menyusun alur belajar terbaik dari fondasi pembuatan karakter, video prompt engineering, hingga penggunaan tools generator AI terkini.
@@ -164,23 +163,23 @@ export const DashboardView: React.FC = () => {
             {/* Step 1: Masterclass Fondasi */}
             <div 
               onClick={() => navigateTo('course-detail', 'omni-flash-masterclass')}
-              className="p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-accent-cyan/50 transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-sm"
+              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-violet-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
             >
               <div className="flex items-center justify-between">
-                <span className="w-6 h-6 rounded-lg bg-accent-cyan/20 border border-accent-cyan/40 text-accent-cyan text-xs font-bold flex items-center justify-center font-mono">
+                <span className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold flex items-center justify-center font-mono">
                   1
                 </span>
-                <Badge variant="cyan" size="sm">Masterclass</Badge>
+                <Badge variant="purple" size="sm">Masterclass</Badge>
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white group-hover:text-accent-cyan transition-colors">
+                <h4 className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors">
                   Fondasi Karakter AI
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                   Omni Flash Masterclass • Tonton episode 1 untuk dasar konsistensi wajah.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-accent-cyan flex items-center gap-1">
+              <span className="text-[11px] font-semibold text-violet-300 flex items-center gap-1">
                 <span>Mulai Belajar</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -189,23 +188,23 @@ export const DashboardView: React.FC = () => {
             {/* Step 2: Formula Prompt Viral */}
             <div 
               onClick={() => navigateTo('prompts')}
-              className="p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-accent-purple/50 transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-sm"
+              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-violet-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
             >
               <div className="flex items-center justify-between">
-                <span className="w-6 h-6 rounded-lg bg-accent-purple/20 border border-accent-purple/40 text-accent-pink text-xs font-bold flex items-center justify-center font-mono">
+                <span className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold flex items-center justify-center font-mono">
                   2
                 </span>
                 <Badge variant="purple" size="sm">Formula Prompt</Badge>
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white group-hover:text-accent-pink transition-colors">
+                <h4 className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors">
                   Salin Prompt Populer
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                   Gunakan formula prompt teruji untuk Midjourney, Flux, dan Kling AI.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-accent-pink flex items-center gap-1">
+              <span className="text-[11px] font-semibold text-violet-300 flex items-center gap-1">
                 <span>Eksplorasi Prompt</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -214,23 +213,23 @@ export const DashboardView: React.FC = () => {
             {/* Step 3: AI Tools Rekomendasi */}
             <div 
               onClick={() => navigateTo('tools')}
-              className="p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-accent-blue/50 transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-sm"
+              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-violet-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
             >
               <div className="flex items-center justify-between">
-                <span className="w-6 h-6 rounded-lg bg-accent-blue/20 border border-accent-blue/40 text-accent-cyan text-xs font-bold flex items-center justify-center font-mono">
+                <span className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold flex items-center justify-center font-mono">
                   3
                 </span>
                 <Badge variant="pro" size="sm">Tools AI</Badge>
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white group-hover:text-accent-cyan transition-colors">
+                <h4 className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors">
                   Coba Tool Generator
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                   Daftar curated tools video AI, voice clone, dan upscaler terbaik.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-accent-cyan flex items-center gap-1">
+              <span className="text-[11px] font-semibold text-violet-300 flex items-center gap-1">
                 <span>Buka Tools</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -239,23 +238,23 @@ export const DashboardView: React.FC = () => {
             {/* Step 4: Asset Pack Kreatif */}
             <div 
               onClick={() => navigateTo('assets')}
-              className="p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-emerald-500/50 transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-sm"
+              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-violet-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
             >
               <div className="flex items-center justify-between">
-                <span className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-bold flex items-center justify-center font-mono">
+                <span className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold flex items-center justify-center font-mono">
                   4
                 </span>
                 <Badge variant="outline" size="sm">Creative Assets</Badge>
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">
+                <h4 className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors">
                   Ambil Starter Assets
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                   LUT color grading, overlay visual, dan template storyboard video.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
+              <span className="text-[11px] font-semibold text-violet-300 flex items-center gap-1">
                 <span>Download Assets</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -268,8 +267,8 @@ export const DashboardView: React.FC = () => {
         // STATE B: RETURNING USER - RESUME LAST OPENED ACTIVITY BANNER
         // -------------------------------------------------------------------------
         lastAccessed && (
-          <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-accent-purple/20 via-accent-cyan/10 to-[#0c1024] border border-accent-purple/40 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-accent-purple/15 blur-[90px] pointer-events-none" />
+          <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-violet-950/30 via-[#121420] to-[#0d0f18] border border-violet-500/25 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-violet-600/10 blur-[90px] pointer-events-none" />
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
               
@@ -278,9 +277,9 @@ export const DashboardView: React.FC = () => {
                   <img
                     src={lastAccessed.thumbnail}
                     alt={lastAccessed.title}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-accent-cyan/40 shadow-lg"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-1 ring-violet-500/30 shadow-lg"
                   />
-                  <span className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-[#060816] border border-white/20 text-accent-cyan">
+                  <span className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-[#08090E] border border-white/15 text-violet-300">
                     {lastAccessed.type === 'course' && <BookOpen className="w-3.5 h-3.5" />}
                     {lastAccessed.type === 'prompt' && <Sparkles className="w-3.5 h-3.5" />}
                     {lastAccessed.type === 'tool' && <Wrench className="w-3.5 h-3.5" />}
@@ -291,7 +290,7 @@ export const DashboardView: React.FC = () => {
 
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="px-2 py-0.5 rounded-md bg-accent-purple/30 border border-accent-purple/50 text-[10px] font-mono font-bold text-accent-pink uppercase flex items-center gap-1">
+                    <span className="px-2 py-0.5 rounded-md bg-violet-500/15 border border-violet-500/30 text-[10px] font-mono font-bold text-violet-300 uppercase flex items-center gap-1">
                       <Clock className="w-2.5 h-2.5" />
                       Sesi Terakhir Dibuka • {formatRelativeTime(lastAccessed.timestamp)}
                     </span>
@@ -330,7 +329,7 @@ export const DashboardView: React.FC = () => {
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <History className="w-4 h-4 text-accent-cyan" />
+              <History className="w-4 h-4 text-violet-400" />
               <h2 className="text-base font-bold text-white">Riwayat Terakhir Kamu</h2>
               <span className="text-xs text-slate-400 font-mono">({recentActivity.length} aktivitas)</span>
             </div>
@@ -365,13 +364,13 @@ export const DashboardView: React.FC = () => {
                       </Badge>
                       <span className="text-[10px] text-slate-500 font-mono">{formatRelativeTime(item.timestamp)}</span>
                     </div>
-                    <h4 className="text-xs font-bold text-white truncate mt-0.5 group-hover:text-accent-cyan transition-colors">
+                    <h4 className="text-xs font-bold text-white truncate mt-0.5 group-hover:text-violet-300 transition-colors">
                       {item.title}
                     </h4>
                   </div>
                 </div>
 
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-accent-cyan group-hover:translate-x-0.5 transition-all shrink-0" />
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-violet-300 group-hover:translate-x-0.5 transition-all shrink-0" />
               </GlassCard>
             ))}
           </div>
@@ -384,14 +383,14 @@ export const DashboardView: React.FC = () => {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-accent-cyan" />
+            <BookOpen className="w-4 h-4 text-violet-400" />
             <h2 className="text-lg font-bold text-white tracking-tight">
               {isNewUser ? 'Rekomendasi Kursus Fondasi' : 'Continue Learning Masterclass'}
             </h2>
           </div>
           <button 
             onClick={() => navigateTo('courses')}
-            className="text-xs font-semibold text-accent-cyan hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-violet-300 hover:underline flex items-center gap-1"
           >
             <span>Lihat Semua Kursus</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -413,7 +412,7 @@ export const DashboardView: React.FC = () => {
                     <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
                       <span>{course.category}</span>
                       <span>•</span>
-                      <span className="text-accent-cyan font-medium">{course.level}</span>
+                      <span className="text-violet-300 font-medium">{course.level}</span>
                     </div>
                   </div>
                 </div>
@@ -422,11 +421,11 @@ export const DashboardView: React.FC = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-400 text-[11px]">Progres Masterclass</span>
-                  <span className="font-bold text-accent-cyan text-[11px]">{course.progressPercentage || 0}%</span>
+                  <span className="font-bold text-violet-300 text-[11px]">{course.progressPercentage || 0}%</span>
                 </div>
                 <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
                   <div 
-                    className="bg-gradient-accent h-full transition-all duration-500" 
+                    className="bg-gradient-to-r from-violet-600 to-indigo-500 h-full transition-all duration-500" 
                     style={{ width: `${course.progressPercentage || 0}%` }}
                   />
                 </div>
@@ -437,7 +436,7 @@ export const DashboardView: React.FC = () => {
                 className={`w-full flex items-center justify-between px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   course.progressPercentage === 100
                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
-                    : 'bg-white/5 text-slate-200 hover:bg-gradient-accent hover:text-white border border-white/10'
+                    : 'bg-white/[0.04] text-slate-200 hover:bg-violet-600 hover:text-white border border-white/10'
                 }`}
               >
                 <span>
@@ -470,7 +469,7 @@ export const DashboardView: React.FC = () => {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-accent-cyan" />
+                <Sparkles className="w-4 h-4 text-violet-400" />
                 <h2 className="text-base font-bold text-white">
                   {isNewUser 
                     ? 'Prompt Starter Pack Paling Direkomendasikan' 
@@ -505,7 +504,7 @@ export const DashboardView: React.FC = () => {
                           {prompt.isPopular && <Badge variant="amber" size="sm">HOT</Badge>}
                         </div>
                         <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
-                          <span className="text-accent-cyan font-medium">{prompt.aiModel}</span>
+                          <span className="text-violet-300 font-medium">{prompt.aiModel}</span>
                           <span>•</span>
                           <span>{prompt.category}</span>
                           <span>•</span>
@@ -519,17 +518,17 @@ export const DashboardView: React.FC = () => {
                         onClick={() => toggleBookmark(prompt.id)}
                         className={`p-2 rounded-xl border transition-colors ${
                           isBookmarked 
-                            ? 'bg-accent-purple/20 border-accent-purple text-accent-pink' 
+                            ? 'bg-violet-500/20 border-violet-500/50 text-violet-300' 
                             : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
                         }`}
                         title={isBookmarked ? 'Hapus dari Simpanan' : 'Simpan Prompt'}
                       >
-                        <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-accent-pink' : ''}`} />
+                        <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-violet-400' : ''}`} />
                       </button>
 
                       <button
                         onClick={() => copyToClipboard(buildFullPromptFormula(prompt), prompt.title)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent-blue/10 border border-accent-blue/30 text-accent-cyan hover:bg-accent-blue/20 text-xs font-semibold transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/30 text-violet-300 hover:bg-violet-500/20 text-xs font-semibold transition-colors"
                       >
                         <Copy className="w-3.5 h-3.5" />
                         <span>Copy</span>
@@ -573,7 +572,7 @@ export const DashboardView: React.FC = () => {
 
                   <button
                     onClick={() => copyToClipboard(buildFullPromptFormula(prompt), prompt.title)}
-                    className="w-full py-1.5 rounded-xl bg-white/5 border border-white/10 hover:border-accent-cyan/40 text-[11px] font-semibold text-slate-200 hover:text-accent-cyan transition-colors flex items-center justify-center gap-1.5"
+                    className="w-full py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-violet-500/40 text-[11px] font-semibold text-slate-200 hover:text-violet-300 transition-colors flex items-center justify-center gap-1.5"
                   >
                     <Copy className="w-3 h-3" />
                     <span>Copy Formula</span>
@@ -592,32 +591,32 @@ export const DashboardView: React.FC = () => {
           <GlassCard className="p-5 flex flex-col gap-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Target className="w-4 h-4 text-accent-cyan" />
+                <Target className="w-4 h-4 text-violet-400" />
                 <span>Statistik Belajar {userName.split(' ')[0]}</span>
               </h3>
               <Badge variant="outline" size="sm">Live</Badge>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+              <div className="flex flex-col p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                 <span className="text-xs text-slate-400">Streak Belajar</span>
                 <span className="text-xl font-extrabold text-amber-400 mt-1">
                   {currentUser?.streakDays || 1} Hari 🔥
                 </span>
               </div>
-              <div className="flex flex-col p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+              <div className="flex flex-col p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                 <span className="text-xs text-slate-400">Saved Prompts</span>
-                <span className="text-xl font-extrabold text-accent-cyan mt-1">{bookmarks.length}</span>
+                <span className="text-xl font-extrabold text-violet-300 mt-1">{bookmarks.length}</span>
               </div>
-              <div className="flex flex-col p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+              <div className="flex flex-col p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                 <span className="text-xs text-slate-400">Kursus Selesai</span>
                 <span className="text-xl font-extrabold text-emerald-400 mt-1">
                   {courses.filter(c => c.progressPercentage === 100).length}
                 </span>
               </div>
-              <div className="flex flex-col p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+              <div className="flex flex-col p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                 <span className="text-xs text-slate-400">Total Aktivitas</span>
-                <span className="text-xl font-extrabold text-accent-pink mt-1">
+                <span className="text-xl font-extrabold text-violet-300 mt-1">
                   {recentActivity.length > 0 ? recentActivity.length : 1}
                 </span>
               </div>
@@ -628,12 +627,12 @@ export const DashboardView: React.FC = () => {
           <GlassCard className="p-5 flex flex-col gap-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2">
-                <Wrench className="w-4 h-4 text-accent-cyan" />
+                <Wrench className="w-4 h-4 text-violet-400" />
                 <h3 className="text-sm font-bold text-white">Tools AI Pilihan</h3>
               </div>
               <button 
                 onClick={() => navigateTo('tools')}
-                className="text-[11px] text-accent-cyan hover:underline font-semibold"
+                className="text-[11px] text-violet-300 hover:underline font-semibold"
               >
                 Lihat Semua
               </button>
@@ -657,12 +656,12 @@ export const DashboardView: React.FC = () => {
                     targetId: tool.id,
                     badge: tool.pricingType
                   })}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.06] hover:border-accent-cyan/40 transition-all group"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-violet-500/30 transition-all group"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <img src={tool.thumbnail} alt={tool.name} className="w-8 h-8 rounded-lg object-cover" />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-bold text-white group-hover:text-accent-cyan truncate">{tool.name}</span>
+                      <span className="text-xs font-bold text-white group-hover:text-violet-300 truncate">{tool.name}</span>
                       <span className="text-[10px] text-slate-400">{tool.category}</span>
                     </div>
                   </div>
@@ -676,10 +675,10 @@ export const DashboardView: React.FC = () => {
           <GlassCard glow className="p-5 flex flex-col gap-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2">
-                <RefreshCw className="w-4 h-4 text-accent-cyan animate-spin-slow" />
+                <RefreshCw className="w-4 h-4 text-violet-400 animate-spin-slow" />
                 <h3 className="text-sm font-bold text-white">Update Mingguan</h3>
               </div>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-accent-purple/20 text-accent-pink border border-accent-purple/40">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-violet-500/15 text-violet-300 border border-violet-500/30">
                 {latestUpdate.version}
               </span>
             </div>
@@ -689,7 +688,7 @@ export const DashboardView: React.FC = () => {
               <ul className="flex flex-col gap-2 mt-1">
                 {latestUpdate.highlights.map((hl, i) => (
                   <li key={i} className="flex items-center gap-2 text-slate-300 text-[11px] leading-snug">
-                    <span className="text-accent-cyan font-bold">•</span>
+                    <span className="text-violet-400 font-bold">•</span>
                     <span>{hl}</span>
                   </li>
                 ))}

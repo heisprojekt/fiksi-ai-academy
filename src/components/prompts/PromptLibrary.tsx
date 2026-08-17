@@ -220,7 +220,7 @@ export const PromptLibrary: React.FC = () => {
       </div>
 
       {/* Search & Filter Controls Bar */}
-      <div className="flex flex-col gap-3.5 p-4 rounded-3xl bg-[#101827]/70 border border-white/[0.08] backdrop-blur-xl">
+      <div className="flex flex-col gap-3.5 p-4 rounded-3xl bg-[#121420]/80 border border-white/[0.07] backdrop-blur-xl">
         
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           {/* Search input */}
@@ -231,18 +231,18 @@ export const PromptLibrary: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari prompt, tag, atau style..."
-              className="w-full pl-10 pr-4 py-2 rounded-2xl bg-[#060816] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-accent-purple/60"
+              className="w-full pl-10 pr-4 py-2 rounded-2xl bg-[#08090E] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/60 focus:ring-1 focus:ring-violet-500/30"
             />
           </div>
 
           {/* Tier Filter & Model Filters */}
           <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
             {/* Access Tier Quick Filter */}
-            <div className="flex items-center gap-1 p-1 rounded-2xl bg-[#060816] border border-white/10 text-xs shrink-0">
+            <div className="flex items-center gap-1 p-1 rounded-2xl bg-[#08090E] border border-white/10 text-xs shrink-0">
               {[
                 { id: 'All', label: 'Semua Tier' },
-                { id: 'Free', label: '🟢 Free' },
-                { id: 'Pro', label: '👑 Pro VIP' }
+                { id: 'Free', label: 'Free' },
+                { id: 'Pro', label: 'Pro VIP' }
               ].map(t => (
                 <button
                   key={t.id}
@@ -250,7 +250,7 @@ export const PromptLibrary: React.FC = () => {
                   onClick={() => setSelectedTier(t.id)}
                   className={`px-3 py-1.5 rounded-xl font-bold transition-all whitespace-nowrap ${
                     selectedTier === t.id
-                      ? 'bg-gradient-accent text-white shadow-sm'
+                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -264,10 +264,10 @@ export const PromptLibrary: React.FC = () => {
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
-                className="px-3 py-2 rounded-2xl bg-[#060816] border border-white/10 text-xs text-accent-cyan font-bold focus:outline-none cursor-pointer"
+                className="px-3 py-2 rounded-2xl bg-[#08090E] border border-white/10 text-xs text-violet-300 font-bold focus:outline-none cursor-pointer"
               >
                 {aiModels.map(m => (
-                  <option key={m} value={m} className="bg-[#101827] text-slate-200">
+                  <option key={m} value={m} className="bg-[#121420] text-slate-200">
                     {m === 'All' ? 'Semua Model AI' : m}
                   </option>
                 ))}
@@ -290,13 +290,13 @@ export const PromptLibrary: React.FC = () => {
                 onClick={() => handleCategoryChange(cat)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
                   selectedCategory === cat
-                    ? 'bg-accent-purple/20 text-accent-pink border border-accent-purple/40 shadow-sm'
-                    : 'bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]'
+                    ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40 shadow-sm'
+                    : 'bg-white/[0.03] text-slate-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.05]'
                 }`}
               >
                 <span>{cat}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                  selectedCategory === cat ? 'bg-accent-purple/40 text-accent-pink' : 'bg-white/10 text-slate-400'
+                  selectedCategory === cat ? 'bg-violet-500/40 text-violet-200' : 'bg-white/10 text-slate-400'
                 }`}>
                   {count}
                 </span>
@@ -309,7 +309,7 @@ export const PromptLibrary: React.FC = () => {
         {availableSubCategories.length > 2 && (
           <div className="flex items-center gap-2 pt-1 border-t border-white/[0.06] overflow-x-auto pb-1 custom-scrollbar">
             <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1 shrink-0 mr-1">
-              <Layers className="w-3 h-3 text-accent-cyan" />
+              <Layers className="w-3 h-3 text-violet-400" />
               <span>Sub-Group:</span>
             </span>
             {availableSubCategories.map(sub => {
@@ -324,7 +324,7 @@ export const PromptLibrary: React.FC = () => {
                   onClick={() => setSelectedSubCategory(sub)}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition-all flex items-center gap-1 shrink-0 ${
                     selectedSubCategory === sub
-                      ? 'bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/40 shadow-sm font-semibold'
+                      ? 'bg-violet-500/20 text-violet-300 border border-violet-500/35 shadow-sm font-semibold'
                       : 'bg-white/[0.02] text-slate-400 hover:text-slate-200 hover:bg-white/[0.05] border border-white/[0.04]'
                   }`}
                 >
@@ -341,7 +341,7 @@ export const PromptLibrary: React.FC = () => {
       {/* Info Count & Pagination Top Bar */}
       <div className="flex items-center justify-between text-xs text-slate-400 px-1">
         <span>
-          Menampilkan <strong className="text-white">{startCount}-{endCount}</strong> dari <strong className="text-accent-cyan">{filteredPrompts.length}</strong> formula prompt
+          Menampilkan <strong className="text-white">{startCount}-{endCount}</strong> dari <strong className="text-violet-300">{filteredPrompts.length}</strong> formula prompt
         </span>
         {totalPages > 1 && (
           <span className="font-mono">
@@ -378,7 +378,7 @@ export const PromptLibrary: React.FC = () => {
                 {/* Thumbnail Header with Native Lazy Loading */}
                 <div 
                   onClick={() => setActivePromptForModal(prompt)}
-                  className="relative aspect-video rounded-2xl overflow-hidden cursor-pointer border border-white/10 group-hover:border-accent-cyan/40 transition-colors bg-slate-900"
+                  className="relative aspect-video rounded-2xl overflow-hidden cursor-pointer border border-white/10 group-hover:border-violet-500/40 transition-colors bg-slate-900"
                 >
                   <img
                     src={optimizedThumb}
@@ -387,7 +387,7 @@ export const PromptLibrary: React.FC = () => {
                     decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#060816] via-transparent to-black/30 p-3 flex flex-col justify-between">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#08090E] via-transparent to-black/30 p-3 flex flex-col justify-between">
                     <div className="flex items-center justify-between">
                       <Badge variant="purple" size="sm">{prompt.aiModel}</Badge>
                       
@@ -406,7 +406,7 @@ export const PromptLibrary: React.FC = () => {
                       <span className="text-[10px] font-bold text-slate-300 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md">
                         {formatUsageBadge(prompt.usageCount)}
                       </span>
-                      <span className="text-[10px] font-bold text-accent-cyan bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md">
+                      <span className="text-[10px] font-bold text-violet-300 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md">
                         {prompt.difficulty}
                       </span>
                     </div>
@@ -418,7 +418,7 @@ export const PromptLibrary: React.FC = () => {
                   <div className="flex items-center justify-between gap-2">
                     <h3 
                       onClick={() => setActivePromptForModal(prompt)}
-                      className="text-base font-bold text-white group-hover:text-accent-cyan transition-colors cursor-pointer line-clamp-1"
+                      className="text-base font-bold text-white group-hover:text-violet-300 transition-colors cursor-pointer line-clamp-1"
                     >
                       {prompt.title}
                     </h3>
@@ -432,9 +432,9 @@ export const PromptLibrary: React.FC = () => {
                     {isLockedForUser && (
                       <div 
                         onClick={() => setActivePromptForModal(prompt)}
-                        className="absolute inset-0 flex items-center justify-center bg-[#060816]/70 backdrop-blur-[2px] cursor-pointer hover:bg-[#060816]/60 transition-colors"
+                        className="absolute inset-0 flex items-center justify-center bg-[#08090E]/75 backdrop-blur-[2px] cursor-pointer hover:bg-[#08090E]/65 transition-colors"
                       >
-                        <span className="text-[11px] font-bold text-accent-pink flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-purple/20 border border-accent-purple/40">
+                        <span className="text-[11px] font-bold text-violet-300 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-violet-500/20 border border-violet-500/40">
                           <Lock className="w-3 h-3" />
                           <span>Formula Khusus Pro VIP</span>
                         </span>
@@ -443,11 +443,11 @@ export const PromptLibrary: React.FC = () => {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                    <span className="text-[10px] font-semibold text-accent-cyan bg-accent-cyan/10 border border-accent-cyan/20 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-semibold text-violet-300 bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 rounded-md">
                       {prompt.category}
                     </span>
                     {prompt.subCategory && prompt.subCategory !== prompt.category && (
-                      <span className="text-[10px] font-medium text-accent-pink bg-accent-purple/10 border border-accent-purple/20 px-2 py-0.5 rounded-md">
+                      <span className="text-[10px] font-medium text-slate-300 bg-white/[0.04] border border-white/[0.06] px-2 py-0.5 rounded-md">
                         {prompt.subCategory}
                       </span>
                     )}
@@ -465,12 +465,12 @@ export const PromptLibrary: React.FC = () => {
                     onClick={() => toggleBookmark(prompt.id)}
                     className={`p-2.5 rounded-xl border transition-colors ${
                       isBookmarked 
-                        ? 'bg-accent-purple/20 border-accent-purple text-accent-pink' 
+                        ? 'bg-violet-500/20 border-violet-500/40 text-violet-300' 
                         : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
                     }`}
                     title={isBookmarked ? 'Hapus Bookmark' : 'Simpan Bookmark'}
                   >
-                    <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-accent-pink' : ''}`} />
+                    <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-violet-400' : ''}`} />
                   </button>
 
                   <button
@@ -484,9 +484,9 @@ export const PromptLibrary: React.FC = () => {
                   {isLockedForUser ? (
                     <button
                       onClick={() => handleCopyPrompt(prompt)}
-                      className="flex-1 px-3 py-2 rounded-xl bg-gradient-to-r from-accent-purple/30 to-accent-pink/30 hover:from-accent-purple/40 hover:to-accent-pink/40 border border-accent-purple/50 text-accent-pink text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95"
+                      className="flex-1 px-3 py-2 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 border border-violet-500/35 text-violet-300 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95"
                     >
-                      <Crown className="w-3.5 h-3.5 text-accent-pink" />
+                      <Crown className="w-3.5 h-3.5 text-violet-300" />
                       <span>Buka Kunci Pro</span>
                     </button>
                   ) : (
@@ -553,7 +553,7 @@ export const PromptLibrary: React.FC = () => {
                   onClick={() => handlePageChange(pageNum)}
                   className={`w-9 h-9 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-center ${
                     isActive
-                      ? 'bg-gradient-accent text-white shadow-lg shadow-accent-purple/30 border border-accent-purple/40 scale-105'
+                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/30 scale-105'
                       : 'bg-white/[0.04] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08]'
                   }`}
                 >

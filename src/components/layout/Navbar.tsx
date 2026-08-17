@@ -37,7 +37,7 @@ export const Navbar: React.FC = () => {
   const isAdminAccount = !!currentUser && ADMIN_EMAILS.includes(currentUser.email.trim().toLowerCase());
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/[0.08] bg-[#060816]/90 backdrop-blur-xl transition-all">
+    <header className="sticky top-0 z-40 w-full border-b border-white/[0.07] bg-[#08090E]/90 backdrop-blur-xl transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
         
         {/* Left: Official FIKSI AI Logo */}
@@ -50,10 +50,10 @@ export const Navbar: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsSearchModalOpen(true)}
-            className="w-full flex items-center justify-between px-4 py-2.5 rounded-2xl bg-[#0e1328]/80 border border-white/[0.08] text-slate-400 hover:border-accent-cyan/40 hover:bg-[#141b38] hover:text-slate-200 transition-all text-xs shadow-inner group"
+            className="w-full flex items-center justify-between px-4 py-2.5 rounded-2xl bg-[#121420] border border-white/[0.07] text-slate-400 hover:border-violet-500/40 hover:bg-[#161928] hover:text-slate-200 transition-all text-xs shadow-inner group"
           >
             <div className="flex items-center gap-2.5">
-              <Search className="w-4 h-4 text-slate-400 group-hover:text-accent-cyan transition-colors" />
+              <Search className="w-4 h-4 text-slate-400 group-hover:text-violet-400 transition-colors" />
               <span className="line-clamp-1">Cari kursus masterclass, formula prompt, atau aset 3D...</span>
             </div>
             <kbd className="hidden md:inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-mono bg-white/10 text-slate-300 rounded-lg border border-white/10">
@@ -68,7 +68,7 @@ export const Navbar: React.FC = () => {
           {/* Search Trigger for Mobile View */}
           <button
             onClick={() => setIsSearchModalOpen(true)}
-            className="sm:hidden p-2.5 rounded-2xl bg-[#101827] border border-white/10 text-slate-300 hover:text-white"
+            className="sm:hidden p-2.5 rounded-2xl bg-[#121420] border border-white/10 text-slate-300 hover:text-white"
             title="Cari konten"
           >
             <Search className="w-4 h-4" />
@@ -80,16 +80,16 @@ export const Navbar: React.FC = () => {
           {isAdminAccount && (
             <div className="flex items-center gap-2">
               {/* Role Simulator Dropdown */}
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent-purple/15 border border-accent-purple/40 text-xs shadow-sm">
-                <Crown className="w-3.5 h-3.5 text-accent-pink shrink-0" />
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/25 text-xs shadow-sm">
+                <Crown className="w-3.5 h-3.5 text-violet-400 shrink-0" />
                 <select
                   value={userRole}
                   onChange={(e) => setUserRole(e.target.value as UserRole)}
-                  className="bg-transparent text-accent-cyan font-bold focus:outline-none cursor-pointer text-xs"
+                  className="bg-transparent text-violet-300 font-semibold focus:outline-none cursor-pointer text-xs"
                 >
-                  <option value="Admin" className="bg-[#101827] text-white">👑 Mode: Admin Portal (CMS)</option>
-                  <option value="Pro Member" className="bg-[#101827] text-accent-cyan">⚡ Simulasi Pro Member</option>
-                  <option value="Free Member" className="bg-[#101827] text-slate-300">🔒 Simulasi Free Member</option>
+                  <option value="Admin" className="bg-[#121420] text-white">👑 Mode: Admin Portal (CMS)</option>
+                  <option value="Pro Member" className="bg-[#121420] text-violet-300">⚡ Simulasi Pro Member</option>
+                  <option value="Free Member" className="bg-[#121420] text-slate-300">🔒 Simulasi Free Member</option>
                 </select>
               </div>
 
@@ -98,7 +98,7 @@ export const Navbar: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setUserRole('Admin')}
-                  className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-pink hover:opacity-90 text-white text-xs font-bold shadow-md shadow-accent-purple/30 transition-all active:scale-95 animate-pulse"
+                  className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white text-xs font-bold shadow-md shadow-violet-600/30 transition-all active:scale-95 animate-pulse"
                   title="Kembalikan mode ke Admin penuh tanpa perlu relog"
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
@@ -112,11 +112,11 @@ export const Navbar: React.FC = () => {
                   onClick={() => navigateTo('admin')}
                   className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
                     currentView === 'admin'
-                      ? 'bg-gradient-accent text-white shadow-lg shadow-accent-purple/30'
-                      : 'bg-accent-purple/20 text-accent-cyan border border-accent-purple/40 hover:bg-accent-purple/30'
+                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/30'
+                      : 'bg-violet-500/15 text-violet-300 border border-violet-500/30 hover:bg-violet-500/25'
                   }`}
                 >
-                  <ShieldCheck className="w-4 h-4 text-accent-cyan" />
+                  <ShieldCheck className="w-4 h-4 text-violet-300" />
                   <span>Admin CMS</span>
                 </button>
               )}
@@ -127,10 +127,10 @@ export const Navbar: React.FC = () => {
           {!isAdminAccount && userRole === 'Free Member' && (
             <button
               onClick={() => setIsUpgradeModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-accent-cyan/20 via-accent-purple/20 to-accent-blue/20 hover:from-accent-cyan/30 hover:to-accent-purple/30 text-accent-cyan border border-accent-cyan/40 text-xs font-bold shadow-md shadow-accent-cyan/10 transition-all active:scale-95 group"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-violet-600/25 transition-all active:scale-95 group"
             >
-              <Crown className="w-3.5 h-3.5 text-accent-cyan group-hover:scale-110 transition-transform" />
-              <span>Upgrade Pro (QRIS)</span>
+              <Crown className="w-3.5 h-3.5 text-violet-200 group-hover:scale-110 transition-transform" />
+              <span>Upgrade Pro</span>
             </button>
           )}
 
@@ -162,7 +162,7 @@ export const Navbar: React.FC = () => {
             <div className="relative">
               <button
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#101827] border border-white/[0.08] hover:border-white/20 transition-all"
+                className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#121420] border border-white/[0.07] hover:border-violet-500/30 transition-all"
               >
                 <img
                   src={currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
@@ -171,7 +171,7 @@ export const Navbar: React.FC = () => {
                 />
                 <div className="hidden lg:flex flex-col text-left pr-1">
                   <span className="text-xs font-bold text-white line-clamp-1">{currentUser.name}</span>
-                  <span className="text-[10px] text-accent-cyan font-semibold">{userRole}</span>
+                  <span className="text-[10px] text-violet-300 font-semibold">{userRole}</span>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
               </button>
@@ -179,7 +179,7 @@ export const Navbar: React.FC = () => {
               {/* Profile Dropdown Menu */}
               {isProfileMenuOpen && (
                 <div 
-                  className="absolute right-0 mt-2 w-56 p-2 rounded-2xl bg-[#0e1328] border border-white/15 shadow-2xl backdrop-blur-2xl flex flex-col gap-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute right-0 mt-2 w-56 p-2 rounded-2xl bg-[#121420] border border-white/10 shadow-2xl backdrop-blur-2xl flex flex-col gap-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
                   onMouseLeave={() => setIsProfileMenuOpen(false)}
                 >
                   <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] mb-1">
@@ -197,7 +197,7 @@ export const Navbar: React.FC = () => {
                     }}
                     className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-white/5 transition-colors text-left"
                   >
-                    <User className="w-4 h-4 text-accent-cyan" />
+                    <User className="w-4 h-4 text-violet-400" />
                     <span>Profil & Pengaturan</span>
                   </button>
 
@@ -207,7 +207,7 @@ export const Navbar: React.FC = () => {
                         navigateTo('admin');
                         setIsProfileMenuOpen(false);
                       }}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-accent-cyan hover:bg-accent-blue/15 transition-colors text-left font-semibold"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-violet-300 hover:bg-violet-500/15 transition-colors text-left font-semibold"
                     >
                       <ShieldCheck className="w-4 h-4" />
                       <span>Admin CMS Portal</span>

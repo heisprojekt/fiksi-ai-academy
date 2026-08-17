@@ -23,15 +23,15 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const variantClasses = {
-    gradient: 'bg-gradient-accent text-white shadow-sm',
-    cyan: 'bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20',
-    purple: 'bg-accent-purple/15 text-accent-pink border border-accent-purple/30',
-    pro: 'bg-gradient-to-r from-accent-purple to-accent-pink text-white font-bold shadow-md shadow-accent-purple/20',
-    new: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
-    green: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
-    amber: 'bg-amber-500/15 text-amber-400 border border-amber-500/30',
-    outline: 'bg-white/5 text-slate-300 border border-white/10',
-    dark: 'bg-[#0B1020] text-slate-300 border border-white/10'
+    gradient: 'bg-violet-500/15 text-violet-300 border border-violet-500/30',
+    cyan: 'bg-violet-500/10 text-violet-300 border border-violet-500/20',
+    purple: 'bg-violet-500/15 text-violet-300 border border-violet-500/30',
+    pro: 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold shadow-sm shadow-violet-600/20',
+    new: 'bg-violet-500/15 text-violet-300 border border-violet-500/30 font-bold',
+    green: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+    amber: 'bg-amber-500/10 text-amber-300 border border-amber-500/20',
+    outline: 'bg-white/[0.04] text-slate-300 border border-white/10',
+    dark: 'bg-[#0D0F18] text-slate-300 border border-white/10'
   };
 
   return (

@@ -82,16 +82,16 @@ export const ToolsView: React.FC = () => {
     <div className="flex flex-col gap-8 py-4 animate-in fade-in duration-200">
       
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-accent-cyan/15 via-accent-purple/10 to-transparent border border-white/10 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-accent-cyan/10 blur-[100px] pointer-events-none" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-violet-950/30 via-[#121420] to-[#0d0f18] border border-violet-500/25 shadow-xl backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-violet-600/10 blur-[100px] pointer-events-none" />
         
         <div className="flex items-center gap-4 relative z-10">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-accent-cyan to-accent-blue flex items-center justify-center text-[#060816] shadow-xl shadow-accent-cyan/20 shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-600/25 shrink-0">
             <Wrench className="w-7 h-7" />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <Badge variant="cyan" size="sm" icon={<Zap className="w-3 h-3" />}>DIREKTORI AI TOOLS</Badge>
+              <Badge variant="purple" size="sm" icon={<Zap className="w-3 h-3" />}>DIREKTORI AI TOOLS</Badge>
               <span className="text-xs text-slate-400 font-mono hidden sm:inline">• Curated by FIKSI AI</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
@@ -117,7 +117,7 @@ export const ToolsView: React.FC = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col gap-4 p-4 rounded-3xl bg-[#101827]/70 border border-white/[0.08] backdrop-blur-xl">
+      <div className="flex flex-col gap-4 p-4 rounded-3xl bg-[#121420]/80 border border-white/[0.07] backdrop-blur-xl">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative w-full sm:w-80">
@@ -127,12 +127,12 @@ export const ToolsView: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari nama tool, kategori, tag..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#060816] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-accent-cyan transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#08090E] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/60 focus:ring-1 focus:ring-violet-500/30 transition-colors"
             />
           </div>
 
           {/* Pricing Model Quick Filter */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#060816] border border-white/10 text-xs w-full sm:w-auto overflow-x-auto">
+          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#08090E] border border-white/10 text-xs w-full sm:w-auto overflow-x-auto">
             {['All', 'Free', 'Freemium', 'Paid'].map((p) => (
               <button
                 key={p}
@@ -140,17 +140,17 @@ export const ToolsView: React.FC = () => {
                 onClick={() => setSelectedPricing(p)}
                 className={`px-3 py-1.5 rounded-xl font-bold transition-all whitespace-nowrap ${
                   selectedPricing === p
-                    ? 'bg-gradient-accent text-white shadow-sm'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                {p === 'All' ? 'Semua Model' : p}
+                {p === 'All' ? 'Semua Harga' : p}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Category Pills */}
+        {/* Category Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
           {categories.map((cat) => {
             const count = cat === 'All' 
@@ -162,15 +162,15 @@ export const ToolsView: React.FC = () => {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
                   selectedCategory === cat
-                    ? 'bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/40 shadow-sm'
-                    : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+                    ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40 shadow-sm'
+                    : 'bg-white/[0.03] text-slate-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.05]'
                 }`}
               >
-                <span>{cat}</span>
+                <span>{cat === 'All' ? 'Semua Kategori' : cat}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                  selectedCategory === cat ? 'bg-accent-cyan/30 text-accent-cyan' : 'bg-white/10 text-slate-400'
+                  selectedCategory === cat ? 'bg-violet-500/40 text-violet-200' : 'bg-white/10 text-slate-400'
                 }`}>
                   {count}
                 </span>
@@ -239,7 +239,7 @@ export const ToolsView: React.FC = () => {
                   {/* Tool Title & Description */}
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-base font-bold text-white group-hover:text-accent-cyan transition-colors line-clamp-1">
+                      <h3 className="text-base font-bold text-white group-hover:text-violet-300 transition-colors line-clamp-1">
                         {tool.name}
                       </h3>
                     </div>
@@ -274,16 +274,16 @@ export const ToolsView: React.FC = () => {
                       }}
                       className={`p-2 rounded-xl border transition-all ${
                         bookmarks.includes(tool.id)
-                          ? 'bg-accent-purple/20 border-accent-purple text-accent-pink'
+                          ? 'bg-violet-500/20 border-violet-500/40 text-violet-300'
                           : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
                       }`}
                       title={bookmarks.includes(tool.id) ? 'Hapus Bookmark' : 'Simpan Tool'}
                     >
-                      <Bookmark className={`w-3.5 h-3.5 ${bookmarks.includes(tool.id) ? 'fill-accent-pink' : ''}`} />
+                      <Bookmark className={`w-3.5 h-3.5 ${bookmarks.includes(tool.id) ? 'fill-violet-400' : ''}`} />
                     </button>
 
                     <div className="flex items-center gap-1.5 text-slate-400">
-                      <Sparkles className="w-3.5 h-3.5 text-accent-cyan" />
+                      <Sparkles className="w-3.5 h-3.5 text-violet-400" />
                       <span className="text-[11px] font-medium text-slate-300">{tool.category}</span>
                     </div>
                   </div>
@@ -295,8 +295,8 @@ export const ToolsView: React.FC = () => {
                     onClick={(e) => handleToolClick(tool, e)}
                     className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${
                       isLocked
-                        ? 'bg-accent-purple/20 text-accent-pink border border-accent-purple/40 hover:bg-accent-purple/30'
-                        : 'bg-gradient-accent text-white shadow-accent-purple/20 hover:opacity-90 active:scale-95'
+                        ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40 hover:bg-violet-500/30'
+                        : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/20 hover:opacity-90 active:scale-95'
                     }`}
                   >
                     {isLocked ? (

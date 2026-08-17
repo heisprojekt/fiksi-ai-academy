@@ -25,17 +25,17 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
   };
 
   const variantClasses = {
-    gradient: 'bg-gradient-accent text-white shadow-lg shadow-accent-purple/20 hover:shadow-accent-purple/40 hover:scale-[1.02] active:scale-[0.98]',
-    secondary: 'bg-white/10 text-white hover:bg-white/15 border border-white/10 hover:border-white/20 hover:scale-[1.01] active:scale-[0.99]',
-    ghost: 'bg-transparent text-slate-300 hover:text-white hover:bg-white/5',
-    outline: 'bg-transparent text-accent-cyan border border-accent-cyan/30 hover:border-accent-cyan/60 hover:bg-accent-cyan/10'
+    gradient: 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/25 hover:shadow-violet-600/40 hover:from-violet-500 hover:to-indigo-500 active:scale-[0.98]',
+    secondary: 'bg-white/[0.06] text-slate-200 hover:text-white hover:bg-white/[0.1] border border-white/10 hover:border-white/20 active:scale-[0.98]',
+    ghost: 'bg-transparent text-slate-300 hover:text-white hover:bg-white/[0.05]',
+    outline: 'bg-transparent text-violet-300 border border-violet-500/30 hover:border-violet-500/60 hover:bg-violet-500/10'
   };
 
   return (
     <button
       className={twMerge(
         clsx(
-          'inline-flex items-center justify-center transition-all duration-200 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-accent-blue/50 disabled:opacity-50 disabled:pointer-events-none',
+          'inline-flex items-center justify-center transition-all duration-200 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-violet-500/40 disabled:opacity-50 disabled:pointer-events-none',
           sizeClasses[size],
           variantClasses[variant],
           className
