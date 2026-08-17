@@ -37,6 +37,7 @@ export interface Episode {
   videoUrl: string;
   description: string;
   keyTopics: string[];
+  articleContent?: string;
 }
 
 export interface ResourceItem {

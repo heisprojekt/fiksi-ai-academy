@@ -30,7 +30,8 @@ import {
   DollarSign,
   Wallet,
   ArrowUpRight,
-  Cpu
+  Cpu,
+  Download
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { GradientButton } from '../ui/GradientButton';
@@ -68,6 +69,43 @@ export const PRESET_AI_MODELS = [
   'Google Gemini 1.5 Pro',
   'DeepSeek R1'
 ];
+
+export const DEFAULT_EPISODE_ARTICLE_TEMPLATE = `# Panduan & Rangkuman Materi Pembelajaran
+
+Selamat datang di materi episode ini! Gunakan rangkuman dan panduan langkah demi langkah di bawah ini untuk mempraktikkan isi video.
+
+---
+
+### 📌 Langkah 1 — Pembuatan Prompt di Gemini / ChatGPT
+Mulai dengan membuat prompt deskripsi subjek dan karakter yang mendalam:
+
+> **💡 Formula Prompt Utama:**  
+> \`Indonesian young creator, 24 years old, natural warm smile, glowing glass skin, wavy dark brown hair, wearing casual modern batik blazer, soft indoor natural lighting, captured on 85mm lens, f/1.8, 8k realism --ar 16:9\`
+
+**Poin-poin penting:**
+- Tentukan detail subjek (usia, etnis, ekspresi wajah, pakaian).
+- Tentukan pencahayaan (volumetric rim light / cinematic golden hour).
+- Tentukan resolusi dan rasio aspek yang diinginkan.
+
+---
+
+### 📌 Langkah 2 — Generate Visual di Engine AI
+1. Buka workspace AI Generator lalu buat render karakter utama.
+2. Kunci nomor Seed (Seed Locking) agar proporsi anatomi tidak berubah di pose lain.
+3. Simpan render master beresolusi tinggi (4K).
+
+---
+
+### 📌 Langkah 3 — Video Motion & Editing
+- Gunakan setting pergerakan kamera halus (Subtle Zoom atau Pan).
+- Atur motion scale antara 3 - 5 agar struktur wajah stabil.
+- Tambahkan negative prompt untuk menghindari artefak.
+
+---
+
+### 💡 Pro Tips & Rekomendasi
+- Selalu uji coba prompt dengan resolusi standar sebelum melakukan upscaling final.
+- Simpan prompt favorit ke Prompt Library untuk digunakan kembali.`;
 
 export const AdminDashboard: React.FC = () => {
   const { 
@@ -128,6 +166,15 @@ export const AdminDashboard: React.FC = () => {
   const [newEpDuration, setNewEpDuration] = useState('15:00');
   const [newEpVideoUrl, setNewEpVideoUrl] = useState('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4');
   const [newEpDescription, setNewEpDescription] = useState('');
+  const [newEpTopics, setNewEpTopics] = useState('Prompt Karakter, Parameter AI, Motion Video');
+  const [newEpArticle, setNewEpArticle] = useState('');
+  const [showEpArticleInput, setShowEpArticleInput] = useState(false);
+
+  // Resource Sub-form State
+  const [newResTitle, setNewResTitle] = useState('');
+  const [newResType, setNewResType] = useState('PDF');
+  const [newResSize, setNewResSize] = useState('2.5 MB');
+  const [newResUrl, setNewResUrl] = useState('');
 
   // Prompt Modal States
   const [promptModalOpen, setPromptModalOpen] = useState(false);
@@ -340,19 +387,52 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleAddEpisodeToForm = () => {
-    if (!newEpTitle.trim()) return;
+    if (!newEpTitle.trim()) {
+      showToast('warning', 'Judul Wajib', 'Silakan masukkan judul episode.');
+      return;
+    }
+    const topics = newEpTopics.split(',').map(t => t.trim()).filter(Boolean);
     const ep: Episode = {
       id: `ep-${Date.now()}`,
-      title: newEpTitle,
-      duration: newEpDuration,
+      title: newEpTitle.trim(),
+      duration: newEpDuration.trim() || '15:00',
       completed: false,
-      videoUrl: newEpVideoUrl,
-      description: newEpDescription || 'Materi video pembelajaran komprehensif.',
-      keyTopics: ['Materi Utama', 'Praktik Langsung']
+      videoUrl: newEpVideoUrl.trim() || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      description: newEpDescription.trim() || 'Materi video pembelajaran komprehensif.',
+      keyTopics: topics.length > 0 ? topics : ['Materi Utama', 'Praktik Langsung'],
+      articleContent: newEpArticle.trim() || undefined
     };
     setCourseForm(prev => ({ ...prev, episodes: [...prev.episodes, ep] }));
     setNewEpTitle('');
     setNewEpDescription('');
+    setNewEpArticle('');
+    setShowEpArticleInput(false);
+    showToast('success', 'Episode Ditambahkan', `"${ep.title}" ditambahkan ke draft kursus.`);
+  };
+
+  const handleAddResourceToForm = () => {
+    if (!newResTitle.trim()) {
+      showToast('warning', 'Judul Resource Wajib', 'Silakan masukkan nama resource/file.');
+      return;
+    }
+    const res: ResourceItem = {
+      title: newResTitle.trim(),
+      type: newResType,
+      size: newResSize.trim() || '1.0 MB',
+      downloadUrl: newResUrl.trim() || '#'
+    };
+    setCourseForm(prev => ({ ...prev, resources: [...prev.resources, res] }));
+    setNewResTitle('');
+    setNewResUrl('');
+    showToast('success', 'Resource Ditambahkan', `"${res.title}" siap diunduh oleh member.`);
+  };
+
+  const handleRemoveResourceFromForm = (idx: number) => {
+    setCourseForm(prev => ({
+      ...prev,
+      resources: prev.resources.filter((_, i) => i !== idx)
+    }));
+    showToast('info', 'Resource Dihapus', 'File resource telah dihapus dari kursus.');
   };
 
   // Prompt Handlers
@@ -1698,47 +1778,65 @@ export const AdminDashboard: React.FC = () => {
             />
           </div>
 
-          {/* Episode List in Modal */}
-          <div className="p-3 rounded-2xl bg-[#060816] border border-white/10 flex flex-col gap-3">
+          {/* Episode List & Article Editor in Modal */}
+          <div className="p-4 rounded-2xl bg-[#060816] border border-white/10 flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-white">Daftar Episode ({courseForm.episodes.length})</span>
+              <span className="text-xs font-bold text-white flex items-center gap-2">
+                <GraduationCap className="w-4 h-4 text-accent-cyan" />
+                <span>Daftar Episode Video ({courseForm.episodes.length})</span>
+              </span>
+              <span className="text-[11px] text-slate-400">Termasuk Video & Artikel Modul</span>
             </div>
 
-            <div className="flex flex-col gap-2 max-h-36 overflow-y-auto">
-              {courseForm.episodes.map((ep, i) => (
-                <div key={ep.id || i} className="flex items-center justify-between p-2 rounded-xl bg-white/5 text-xs text-slate-200">
-                  <div className="flex items-center gap-2">
-                    <span className="text-accent-cyan font-bold">#{i + 1}</span>
-                    <span>{ep.title}</span>
-                    <span className="text-slate-400 text-[10px]">({ep.duration})</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setCourseForm(prev => ({ ...prev, episodes: prev.episodes.filter((_, idx) => idx !== i) }))}
-                    className="p-1 text-rose-400 hover:text-rose-300"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+            <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1">
+              {courseForm.episodes.length === 0 ? (
+                <div className="p-3 text-center rounded-xl bg-white/[0.02] text-xs text-slate-400">
+                  Belum ada episode. Tambahkan episode baru di bawah.
                 </div>
-              ))}
+              ) : (
+                courseForm.episodes.map((ep, i) => (
+                  <div key={ep.id || i} className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 text-xs text-slate-200 border border-white/5">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-accent-cyan font-bold shrink-0">#{i + 1}</span>
+                      <span className="font-semibold truncate">{ep.title}</span>
+                      <span className="text-slate-400 text-[10px] shrink-0 font-mono">({ep.duration})</span>
+                      {ep.articleContent && (
+                        <span className="text-[9px] bg-accent-purple/30 text-accent-pink px-1.5 py-0.2 rounded font-bold shrink-0">
+                          📖 Ada Artikel
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCourseForm(prev => ({ ...prev, episodes: prev.episodes.filter((_, idx) => idx !== i) }))}
+                      className="p-1 text-rose-400 hover:text-rose-300 transition-colors"
+                      title="Hapus episode"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
 
-            {/* Add new episode inline */}
-            <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
+            {/* Add new episode inline form */}
+            <div className="flex flex-col gap-2.5 pt-3 border-t border-white/10 bg-white/[0.01] p-2.5 rounded-xl">
+              <span className="text-[11px] font-bold text-slate-300">+ Tambah Episode Video Baru</span>
+              
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
                 <input
                   type="text"
-                  placeholder="Judul Episode Baru"
+                  placeholder="Judul Episode Baru (cth: Episode 1: Workflow Dasar)"
                   value={newEpTitle}
                   onChange={(e) => setNewEpTitle(e.target.value)}
-                  className="sm:col-span-8 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white"
+                  className="sm:col-span-8 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-accent-cyan"
                 />
                 <input
                   type="text"
-                  placeholder="Durasi (15:00)"
+                  placeholder="Durasi (12:30)"
                   value={newEpDuration}
                   onChange={(e) => setNewEpDuration(e.target.value)}
-                  className="sm:col-span-4 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white"
+                  className="sm:col-span-4 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none"
                 />
               </div>
 
@@ -1748,19 +1846,167 @@ export const AdminDashboard: React.FC = () => {
                   placeholder="URL Video (Google Drive / YouTube / MP4 direct link)"
                   value={newEpVideoUrl}
                   onChange={(e) => setNewEpVideoUrl(e.target.value)}
-                  className="sm:col-span-9 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500"
+                  className="sm:col-span-12 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500 font-mono"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <input
+                  type="text"
+                  placeholder="Deskripsi Singkat Episode..."
+                  value={newEpDescription}
+                  onChange={(e) => setNewEpDescription(e.target.value)}
+                  className="sm:col-span-7 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500"
+                />
+                <input
+                  type="text"
+                  placeholder="Topik (pisahkan koma: Prompt, Seed, Motion)"
+                  value={newEpTopics}
+                  onChange={(e) => setNewEpTopics(e.target.value)}
+                  className="sm:col-span-5 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500"
+                />
+              </div>
+
+              {/* Episode Article / Study Guide Markdown Editor Toggle */}
+              <div className="flex items-center justify-between pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowEpArticleInput(!showEpArticleInput)}
+                  className="text-[11px] text-accent-cyan hover:underline font-semibold flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>{showEpArticleInput ? 'Tutup Editor Artikel' : '📝 Tulis / Edit Artikel Isi Video (Markdown)'}</span>
+                </button>
+
+                {showEpArticleInput && (
+                  <button
+                    type="button"
+                    onClick={() => setNewEpArticle(DEFAULT_EPISODE_ARTICLE_TEMPLATE)}
+                    className="text-[10px] text-accent-pink hover:text-white font-bold flex items-center gap-1 bg-accent-purple/20 px-2 py-0.5 rounded-md"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Gunakan Template Artikel</span>
+                  </button>
+                )}
+              </div>
+
+              {showEpArticleInput && (
+                <div className="flex flex-col gap-1.5">
+                  <textarea
+                    rows={6}
+                    value={newEpArticle}
+                    onChange={(e) => setNewEpArticle(e.target.value)}
+                    placeholder="Tulis artikel rangkuman langkah-langkah isi video di sini (Mendukung format Markdown: # Heading, ### Langkah 1, > Tips, ```prompt dsb.)..."
+                    className="w-full p-3 rounded-xl bg-[#030611] border border-accent-cyan/30 text-xs text-slate-200 font-mono focus:outline-none focus:border-accent-cyan leading-relaxed resize-y"
+                  />
+                  <span className="text-[10px] text-slate-400">
+                    💡 Artikel ini akan otomatis muncul di bawah video pembelajaran bagi seluruh member.
+                  </span>
+                </div>
+              )}
+
+              <div className="flex justify-end pt-1">
                 <button
                   type="button"
                   onClick={handleAddEpisodeToForm}
-                  className="sm:col-span-3 py-2 px-3 rounded-xl bg-accent-blue/20 text-accent-cyan border border-accent-blue/30 text-xs font-bold hover:bg-accent-blue/30 transition-colors"
+                  className="py-2 px-4 rounded-xl bg-gradient-accent text-white text-xs font-bold hover:opacity-90 transition-opacity shadow-md"
                 >
-                  + Episode
+                  + Tambahkan Episode ke Kursus
                 </button>
               </div>
-              <span className="text-[10px] text-slate-400 italic">
-                * Mendukung format Google Drive (https://drive.google.com/file/d/.../view), YouTube, atau direct MP4.
+            </div>
+          </div>
+
+          {/* Resources & Downloadable Attachments Section in Modal */}
+          <div className="p-4 rounded-2xl bg-[#060816] border border-white/10 flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-white flex items-center gap-2">
+                <Download className="w-4 h-4 text-accent-cyan" />
+                <span>Resources & File Lampiran Kursus ({courseForm.resources?.length || 0})</span>
               </span>
+              <span className="text-[11px] text-slate-400">PDF, Template ZIP, Notion, & Link Drive</span>
+            </div>
+
+            {/* List existing resources */}
+            <div className="flex flex-col gap-2 max-h-36 overflow-y-auto pr-1">
+              {(!courseForm.resources || courseForm.resources.length === 0) ? (
+                <div className="p-3 text-center rounded-xl bg-white/[0.02] text-xs text-slate-400">
+                  Belum ada file resource tambahan. Tambahkan di bawah.
+                </div>
+              ) : (
+                courseForm.resources.map((res, i) => (
+                  <div key={i} className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 text-xs text-slate-200 border border-white/5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <FileText className="w-4 h-4 text-accent-cyan shrink-0" />
+                      <span className="font-bold truncate">{res.title}</span>
+                      <span className="text-slate-400 text-[10px] shrink-0 font-mono bg-white/5 px-2 py-0.5 rounded">
+                        {res.type} • {res.size}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveResourceFromForm(i)}
+                      className="p-1 text-rose-400 hover:text-rose-300 transition-colors"
+                      title="Hapus resource"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Add new resource sub-form */}
+            <div className="flex flex-col gap-2 pt-2 border-t border-white/10 bg-white/[0.01] p-2.5 rounded-xl">
+              <span className="text-[11px] font-bold text-slate-300">+ Tambah File Lampiran / Resource</span>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <input
+                  type="text"
+                  placeholder="Nama Resource (cth: Cheatsheet Prompt PDF / LUT Pack)"
+                  value={newResTitle}
+                  onChange={(e) => setNewResTitle(e.target.value)}
+                  className="sm:col-span-6 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500"
+                />
+                <select
+                  value={newResType}
+                  onChange={(e) => setNewResType(e.target.value)}
+                  className="sm:col-span-3 p-2 rounded-xl bg-[#101827] border border-white/10 text-xs text-white focus:outline-none"
+                >
+                  <option value="PDF">PDF</option>
+                  <option value="ZIP">ZIP Pack</option>
+                  <option value="Notion">Notion Docs</option>
+                  <option value="Figma">Figma File</option>
+                  <option value="PSD">Photoshop PSD</option>
+                  <option value="JSON">JSON Preset</option>
+                  <option value="Drive">Google Drive</option>
+                  <option value="Link">Web Link</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="Ukuran (2.5 MB)"
+                  value={newResSize}
+                  onChange={(e) => setNewResSize(e.target.value)}
+                  className="sm:col-span-3 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <input
+                  type="text"
+                  placeholder="URL Download / Link Akses (Drive / Notion / Cloud Link)"
+                  value={newResUrl}
+                  onChange={(e) => setNewResUrl(e.target.value)}
+                  className="sm:col-span-9 p-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500 font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddResourceToForm}
+                  className="sm:col-span-3 py-2 px-3 rounded-xl bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/30 text-xs font-bold hover:bg-accent-cyan/30 transition-colors"
+                >
+                  + Resource
+                </button>
+              </div>
             </div>
           </div>
 

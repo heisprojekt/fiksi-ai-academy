@@ -35,12 +35,51 @@ export const MOCK_COURSES: Course[] = [
     episodes: [
       {
         id: 'ep-1',
-        title: 'Episode 1: Pengenalan Omni Flash',
+        title: 'Episode 1: Pengenalan & Workflow Karakter AI',
         duration: '12:45',
         completed: true,
         videoUrl: 'https://drive.google.com/file/d/1jg0t4FgM25ei0JdJPmowjqQeimtx9rGT/view?usp=sharing',
-        description: 'Memahami arsitektur Omni Flash, perbandingan dengan model lain, dan pengaturan workspace dasar.',
-        keyTopics: ['Omni Flash Architecture', 'Model Parameters', 'Prompt Base Setup']
+        description: 'Panduan langkah demi langkah membuat prompt karakter konsisten dan generate visual pertama.',
+        keyTopics: ['Omni Flash Architecture', 'Model Parameters', 'Prompt Base Setup'],
+        articleContent: `# Panduan Lengkap: Cara Mudah Bikin Karakter AI & Video Sinematik
+
+Selamat datang di modul pembelajaran ini! Di episode ini, kita mempelajari alur kerja (workflow) lengkap untuk menciptakan karakter AI yang konsisten dan mengubahnya menjadi video sinematik berstandar studio.
+
+---
+
+### 📌 Langkah 1 — Bikin Prompt Karakter di Gemini / ChatGPT
+Mulai dengan membuat prompt deskripsi karakter yang detail. Prompt inilah yang menentukan bentuk wajah, gaya rambut, pakaian, dan vibe karakter AI Anda.
+
+> **💡 Formula Prompt Karakter Dasar:**  
+> \`Indonesian young woman, 24 years old, natural warm smile, glowing glass skin, wavy dark brown hair, wearing modern casual batik blazer, soft natural indoor lighting, captured on 85mm lens, f/1.8, 8k realism --ar 16:9\`
+
+**Tips Penyusunan Prompt:**
+- **Jelaskan karakter sedetail mungkin:** Bentuk wajah, warna mata, gaya rambut, pakaian khas, hingga ekspresi mikro.
+- **Tentukan lighting:** Gunakan *soft window light* atau *cinematic golden hour*.
+- **Karakteristik anatomi:** Tuliskan spesifikasi usia dan etnis untuk mengunci bentuk visual.
+
+---
+
+### 📌 Langkah 2 — Generate di Google Flow / Omni Flash
+Gunakan prompt yang sudah dirapikan untuk melakukan rendering visual utama:
+1. Buka workspace AI Generator lalu pilih fitur **Create a Character**.
+2. Tempel (paste) prompt karakter dari Gemini/ChatGPT.
+3. Kunci parameter **Seed Number** agar karakter tidak berubah proporsi anatominya saat Anda membuat pose baru.
+4. Simpan gambar render utama sebagai **Master Character Reference**.
+
+---
+
+### 📌 Langkah 3 — Video Generation & Camera Movement
+Setelah gambar karakter siap, langkah berikutnya adalah menganimasikan visual menjadi klip video pendek:
+- **Camera Movement:** Gunakan setting *Subtle Slow Zoom-In* atau *Horizontal Tracking Shot*.
+- **Motion Value:** Disarankan antara \`3 - 5\` agar gerakan halus dan tidak merusak struktur wajah.
+- **Negative Prompt:** Selalu sertakan \`blurry, distorted face, extra limbs, jittering, low quality\`.
+
+---
+
+### 💡 Pro Tips & Best Practices
+- **Konsistensi Nama Karakter:** Berikan nama fiktif unik pada karakter (misal: "Dewi Sastrawan, consistent face") di setiap prompt.
+- **Resolusi:** Lakukan upscaling 4K sebelum proses export final untuk hasil video yang tajam di Reels/TikTok.`
       },
       {
         id: 'ep-2',
@@ -49,7 +88,26 @@ export const MOCK_COURSES: Course[] = [
         completed: true,
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
         description: 'Cara menyusun prompt terstruktur untuk menghindari distorsi anatomi dan artifacts.',
-        keyTopics: ['Prompt Weighting', 'Negative Prompt Master', 'Seed Locking']
+        keyTopics: ['Prompt Weighting', 'Negative Prompt Master', 'Seed Locking'],
+        articleContent: `# Rangkuman Episode 2: Formula Prompting & Kontrol Seed
+
+Pada sesi ini, kita mendalami teknik kontrol parameter tingkat lanjut untuk memastikan hasil render visual selalu stabil dan presisi sesuai visi kreatif Anda.
+
+---
+
+### 📐 1. Anatomi Prompt Berstandar Industri
+Prompt yang baik memiliki 5 pilar utama yang disusun berurutan:
+1. **Subject:** Siapa/apa yang menjadi pusat perhatian (contoh: *Futuristic female tech founder*).
+2. **Environment & Scene:** Latar belakang dan suasana (contoh: *Minimalist glass skyscraper office overlooking Jakarta sunset*).
+3. **Lighting & Palette:** Pencahayaan dan skema warna (contoh: *Volumetric orange-teal backlight, soft rim light*).
+4. **Camera & Optics:** Lensa dan sudut pandang (contoh: *Eye-level medium shot, 50mm anamorphic lens, shallow depth of field*).
+5. **Quality & Style Modifiers:** Render engine dan output (contoh: *Hyper-realistic, photorealistic, Unreal Engine 5 render style*).
+
+---
+
+### 🔒 2. Mengunci Seed untuk Variasi Tanpa Mengubah Karakter
+- **Fixed Seed:** Menjaga wajah dan proporsi tubuh tetap sama persis meskipun Anda mengubah aksi (duduk, berjalan, memegang cangkir kopi).
+- **CFG Scale:** Gunakan rentang \`6.5 - 7.5\` untuk keseimbangan ideal antara kreativitas AI dan kepatuhan terhadap prompt.`
       },
       {
         id: 'ep-3',
@@ -58,7 +116,24 @@ export const MOCK_COURSES: Course[] = [
         completed: false,
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
         description: 'Pelajari teknik menjaga konsistensi karakter di berbagai scene menggunakan Omni Flash reference image.',
-        keyTopics: ['Reference Image Injection', 'Prompt Structure Continuity', 'Consistency Techniques', 'Common Mistakes Avoidance']
+        keyTopics: ['Reference Image Injection', 'Prompt Structure Continuity', 'Consistency Techniques'],
+        articleContent: `# Panduan Episode 3: Konsistensi Karakter Multi-Scene
+
+Kunci sukses konten serial atau iklan AI adalah bagaimana karakter yang sama dapat tampil di puluhan scene berbeda tanpa berubah wajahnya.
+
+---
+
+### 🎯 Workflow Multi-Angle Reference
+1. Generate **Front View**, **Side Profile (3/4 View)**, dan **Close-Up Shot** dari karakter yang sama.
+2. Gunakan fitur *Image Reference Weight* (Image-to-Image) dengan bobot \`0.6 - 0.75\`.
+3. Tambahkan tag outfit konsisten (contoh: \`wearing signature emerald hoodie\`) di setiap sequence.
+
+---
+
+### 📋 Checklist Sebelum Render Video
+- [x] Apakah referensi gambar wajah utama sudah terpasang?
+- [x] Apakah deskripsi pakaian dan warna rambut konsisten di seluruh prompt?
+- [x] Apakah rasio video seragam (16:9 untuk YouTube atau 9:16 untuk Short)?`
       },
       {
         id: 'ep-4',
@@ -67,7 +142,10 @@ export const MOCK_COURSES: Course[] = [
         completed: false,
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoytimes.mp4',
         description: 'Mengontrol pergerakan kamera pan, tilt, zoom, dan orbital movement tanpa glitch.',
-        keyTopics: ['Pan & Tilt Prompting', 'Focal Length Control', 'Slow Motion Dynamics']
+        keyTopics: ['Pan & Tilt Prompting', 'Focal Length Control', 'Slow Motion Dynamics'],
+        articleContent: `# Rangkuman Episode 4: Sinematografi Kamera & Dinamika Motion
+
+Pelajari cara mengarahkan kamera AI layaknya sutradara film profesional menggunakan directional prompt keywords.`
       },
       {
         id: 'ep-5',
@@ -76,7 +154,10 @@ export const MOCK_COURSES: Course[] = [
         completed: false,
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
         description: 'Teknik pencahayaan Volumetric, Cyberpunk Neon, Rembrant, dan Natural Golden Hour lighting.',
-        keyTopics: ['Volumetric Light', 'Color Palette Prompting', 'HDR Tone Mapping']
+        keyTopics: ['Volumetric Light', 'Color Palette Prompting', 'HDR Tone Mapping'],
+        articleContent: `# Rangkuman Episode 5: Pencahayaan & Color Grading Sinematik
+
+Pencahayaan adalah pembeda utama antara visual amatir dan visual berkelas komersial.`
       },
       {
         id: 'ep-6',
@@ -85,7 +166,10 @@ export const MOCK_COURSES: Course[] = [
         completed: false,
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
         description: 'Trik upscaling 4K 60fps dengan Topaz AI & Color Grading LUTs di Premiere/DaVinci.',
-        keyTopics: ['4K Upscaling', '60fps Interpolation', 'LUT Application']
+        keyTopics: ['4K Upscaling', '60fps Interpolation', 'LUT Application'],
+        articleContent: `# Rangkuman Episode 6: Mastering Post-Production & Upscaling 4K
+
+Workflow finishing video agar jernih dan bebas blur saat diunggah ke platform media sosial.`
       }
     ],
     resources: [

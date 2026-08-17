@@ -22,6 +22,7 @@ import { GlassCard } from '../ui/GlassCard';
 import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
 import { parseVideoUrl } from '../../utils/videoEmbed';
+import { ArticleViewer } from './ArticleViewer';
 
 export const CourseView: React.FC = () => {
   const { 
@@ -39,6 +40,7 @@ export const CourseView: React.FC = () => {
 
   const [activeEpisodeIndex, setActiveEpisodeIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'materi' | 'overview' | 'resources' | 'notes'>('overview');
+  const [underVideoTab, setUnderVideoTab] = useState<'article' | 'notes' | 'resources'>('article');
   const [isPlaying, setIsPlaying] = useState(false);
   const [searchCategory, setSearchCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -362,10 +364,16 @@ export const CourseView: React.FC = () => {
             </div>
 
             {/* Under Video Episode Info & Action Buttons */}
-            <div className="p-6 flex flex-col gap-4 bg-[#101827]">
+            <div className="p-6 flex flex-col gap-5 bg-[#101827]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white">{currentEpisode?.title}</h3>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[11px] font-bold text-accent-cyan bg-accent-cyan/10 px-2.5 py-0.5 rounded-full border border-accent-cyan/20">
+                      Episode {activeEpisodeIndex + 1}
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">⏱️ {currentEpisode?.duration}</span>
+                  </div>
+                  <h3 className="text-xl font-extrabold text-white tracking-tight">{currentEpisode?.title}</h3>
                   <p className="text-xs text-slate-400 mt-1">{currentEpisode?.description}</p>
                 </div>
 
@@ -381,56 +389,176 @@ export const CourseView: React.FC = () => {
                 )}
               </div>
 
-              {/* Key Topics List */}
-              {currentEpisode?.keyTopics && currentEpisode.keyTopics.length > 0 && (
-                <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Topik Yang Dibahas:</span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {currentEpisode.keyTopics.map((topic, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-slate-300">
-                        <Check className="w-3.5 h-3.5 text-accent-cyan" />
-                        <span>{topic}</span>
+              {/* Sub-Navigation Tabs Under Video */}
+              <div className="flex items-center gap-2 border-b border-white/10 pb-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setUnderVideoTab('article')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                    underVideoTab === 'article'
+                      ? 'bg-gradient-accent text-white shadow-md shadow-accent-purple/20'
+                      : 'text-slate-400 hover:text-white bg-white/[0.04]'
+                  }`}
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>Artikel & Panduan Episode</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setUnderVideoTab('notes')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                    underVideoTab === 'notes'
+                      ? 'bg-gradient-accent text-white shadow-md shadow-accent-purple/20'
+                      : 'text-slate-400 hover:text-white bg-white/[0.04]'
+                  }`}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Catatan Pribadi ({savedNotes.length})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setUnderVideoTab('resources')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                    underVideoTab === 'resources'
+                      ? 'bg-gradient-accent text-white shadow-md shadow-accent-purple/20'
+                      : 'text-slate-400 hover:text-white bg-white/[0.04]'
+                  }`}
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>File & Resource ({currentCourse?.resources?.length || 0})</span>
+                </button>
+              </div>
+
+              {/* TAB 1: ARTICLE & STUDY GUIDE */}
+              {underVideoTab === 'article' && (
+                <div className="flex flex-col gap-4">
+                  {/* Key Topics Badges */}
+                  {currentEpisode?.keyTopics && currentEpisode.keyTopics.length > 0 && (
+                    <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex flex-col gap-2">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-accent-cyan" />
+                        <span>Fokus Pembelajaran Episode Ini:</span>
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {currentEpisode.keyTopics.map((topic, i) => (
+                          <div key={i} className="flex items-center gap-1.5 text-xs text-slate-300 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
+                            <Check className="w-3 h-3 text-accent-cyan" />
+                            <span>{topic}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+                  )}
+
+                  {/* Render Full Markdown Article */}
+                  <ArticleViewer
+                    content={currentEpisode?.articleContent}
+                    fallbackTitle={currentEpisode?.title}
+                    fallbackDescription={currentEpisode?.description}
+                    fallbackTopics={currentEpisode?.keyTopics}
+                  />
+                </div>
+              )}
+
+              {/* TAB 2: PRIVATE NOTES */}
+              {underVideoTab === 'notes' && (
+                <div className="flex flex-col gap-4 pt-1">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-accent-cyan" />
+                      <span>Catatan Belajar Anda</span>
+                    </h4>
+                    <span className="text-[11px] text-slate-400">Tersimpan lokal & sinkron otomatis</span>
                   </div>
+
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      value={userNote}
+                      onChange={(e) => setUserNote(e.target.value)}
+                      placeholder="Tulis ringkasan rumus prompt, shortcut, atau poin penting dari video ini..."
+                      rows={4}
+                      className="w-full p-3.5 rounded-2xl bg-[#060816] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-accent-cyan resize-none leading-relaxed"
+                    />
+                    <div className="flex justify-end">
+                      <GradientButton size="sm" onClick={handleSaveNote}>
+                        Simpan Catatan
+                      </GradientButton>
+                    </div>
+                  </div>
+
+                  {savedNotes.length > 0 && (
+                    <div className="flex flex-col gap-2 pt-3 border-t border-white/10">
+                      <span className="text-xs font-bold text-slate-300">Catatan Tersimpan:</span>
+                      <div className="flex flex-col gap-2">
+                        {savedNotes.map((note, i) => (
+                          <div key={i} className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs text-slate-200 leading-relaxed flex items-start justify-between gap-3 group">
+                            <p className="flex-1 italic">"{note}"</p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSavedNotes(prev => prev.filter((_, idx) => idx !== i));
+                                showToast('info', 'Catatan Dihapus', 'Catatan telah dihapus.');
+                              }}
+                              className="text-slate-500 hover:text-rose-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 3: DOWNLOADABLE RESOURCES */}
+              {underVideoTab === 'resources' && (
+                <div className="flex flex-col gap-4 pt-1">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                      <Download className="w-4 h-4 text-accent-cyan" />
+                      <span>File Lampiran & Asset Praktik</span>
+                    </h4>
+                    <span className="text-xs text-slate-400">Termasuk PDF, Template, & LUT</span>
+                  </div>
+
+                  {(!currentCourse?.resources || currentCourse.resources.length === 0) ? (
+                    <div className="p-8 text-center rounded-2xl bg-white/[0.02] border border-white/10 text-xs text-slate-400">
+                      Belum ada file resource tambahan untuk kursus ini.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {currentCourse.resources.map((res, idx) => (
+                        <div key={idx} className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] flex items-center justify-between gap-3 transition-all group">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-xl bg-accent-cyan/10 border border-accent-cyan/20 flex items-center justify-center text-accent-cyan shrink-0">
+                              <FileText className="w-5 h-5" />
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-xs font-bold text-white truncate">{res.title}</span>
+                              <span className="text-[10px] text-slate-400 font-mono">{res.type} • {res.size}</span>
+                            </div>
+                          </div>
+
+                          <button 
+                            type="button"
+                            onClick={() => showToast('success', 'Mengunduh Resource', `${res.title} siap diunduh.`)}
+                            className="p-2.5 rounded-xl bg-accent-cyan/20 hover:bg-accent-cyan text-accent-cyan hover:text-black font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm shrink-0"
+                            title="Unduh File Resource"
+                          >
+                            <Download className="w-4 h-4" />
+                            <span className="hidden sm:inline">Unduh</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
             </div>
-          </GlassCard>
-
-          {/* Interactive Notes Section */}
-          <GlassCard className="p-6 flex flex-col gap-4">
-            <h4 className="text-sm font-bold text-white flex items-center gap-2">
-              <FileText className="w-4 h-4 text-accent-cyan" />
-              <span>Catatan Pribadi Episode Ini</span>
-            </h4>
-
-            <div className="flex flex-col gap-2">
-              <textarea
-                value={userNote}
-                onChange={(e) => setUserNote(e.target.value)}
-                placeholder="Tulis catatan penting dari episode ini..."
-                rows={3}
-                className="w-full p-3 rounded-2xl bg-[#060816] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-accent-purple/60 resize-none"
-              />
-              <div className="flex justify-end">
-                <GradientButton size="sm" onClick={handleSaveNote}>
-                  Simpan Catatan
-                </GradientButton>
-              </div>
-            </div>
-
-            {savedNotes.length > 0 && (
-              <div className="flex flex-col gap-2 pt-3 border-t border-white/10">
-                <span className="text-[11px] font-bold text-slate-400">Catatan Tersimpan:</span>
-                {savedNotes.map((note, i) => (
-                  <div key={i} className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs text-slate-300">
-                    "{note}"
-                  </div>
-                ))}
-              </div>
-            )}
           </GlassCard>
 
         </div>
