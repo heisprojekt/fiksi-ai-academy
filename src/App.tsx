@@ -8,6 +8,8 @@ import { SearchModal } from './components/ui/SearchModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { UpgradeModal } from './components/payment/UpgradeModal';
 
+import { MobileNavigation } from './components/layout/MobileNavigation';
+
 // Views - Code Split with lazy loading for instant tab switching & lighter initial bundle
 const LandingView = lazy(() => import('./components/landing/LandingView').then(m => ({ default: m.LandingView })));
 const DashboardView = lazy(() => import('./components/dashboard/DashboardView').then(m => ({ default: m.DashboardView })));
@@ -90,11 +92,11 @@ export const MainContent: React.FC = () => {
       {/* Main Body */}
       {isDashboardLayout && currentView !== 'landing' ? (
         <div className="flex-1 w-full flex min-h-[calc(100vh-64px)]">
-          {/* Member Dashboard Sidebar - Docked flush to the far left */}
+          {/* Member Dashboard Sidebar - Docked flush to the far left on desktop */}
           <Sidebar />
           
           {/* Main Workspace Area */}
-          <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-12 py-6 max-w-7xl mx-auto w-full">
+          <main className="flex-1 min-w-0 px-3 sm:px-8 lg:px-12 py-4 sm:py-6 max-w-7xl mx-auto w-full pb-28 md:pb-8">
             <Suspense fallback={<ViewLoadingFallback />}>
               <div key={currentView} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                 {renderCurrentView()}
@@ -103,7 +105,7 @@ export const MainContent: React.FC = () => {
           </main>
         </div>
       ) : (
-        <main className="flex-1">
+        <main className="flex-1 pb-24 md:pb-0">
           <Suspense fallback={<ViewLoadingFallback />}>
             <div key={currentView} className="animate-in fade-in duration-300">
               {renderCurrentView()}
@@ -111,6 +113,9 @@ export const MainContent: React.FC = () => {
           </Suspense>
         </main>
       )}
+
+      {/* Mobile Sticky Bottom Navigation & Drawer */}
+      <MobileNavigation />
 
       {/* Footer on Landing & Public Views */}
       {(currentView === 'landing' || currentView === 'blog') && <Footer />}
