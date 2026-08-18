@@ -178,9 +178,9 @@ router.put('/prompts/:id', async (req: Request, res: Response) => {
 router.delete('/prompts/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
-    await prisma.promptPack.delete({
-      where: { id }
-    });
+    if (/^[0-9a-fA-F]{24}$/.test(id)) {
+      await prisma.promptPack.delete({ where: { id } }).catch(() => {});
+    }
     res.json({ success: true, id });
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to delete prompt', details: error.message });
@@ -188,7 +188,7 @@ router.delete('/prompts/:id', async (req: Request, res: Response) => {
 });
 
 // ==========================================
-// 2. COURSES API
+// 2. COURSES API (WITH ROBUST SLUG & ID LOOKUP)
 // ==========================================
 router.get('/courses', async (_req: Request, res: Response) => {
   try {
@@ -196,7 +196,12 @@ router.get('/courses', async (_req: Request, res: Response) => {
       where: { isPublished: true },
       orderBy: { createdAt: 'desc' }
     });
-    res.json(courses);
+    const mapped = courses.map(c => ({
+      ...c,
+      id: c.slug || c.id,
+      dbId: c.id
+    }));
+    res.json(mapped);
   } catch (error: any) {
     console.error('Error fetching courses:', error.message);
     res.status(500).json({ error: 'Failed to fetch courses', details: error.message });
@@ -206,10 +211,11 @@ router.get('/courses', async (_req: Request, res: Response) => {
 router.post('/courses', async (req: Request, res: Response) => {
   try {
     const slug = req.body.slug || req.body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const { id: _, dbId: __, ...data } = req.body;
     const newCourse = await prisma.course.create({
-      data: { ...req.body, slug }
+      data: { ...data, slug }
     });
-    res.status(201).json(newCourse);
+    res.status(201).json({ ...newCourse, id: newCourse.slug || newCourse.id });
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to create course', details: error.message });
   }
@@ -218,11 +224,22 @@ router.post('/courses', async (req: Request, res: Response) => {
 router.put('/courses/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
-    const updated = await prisma.course.update({
-      where: { id },
-      data: req.body
-    });
-    res.json(updated);
+    let course = null;
+    if (/^[0-9a-fA-F]{24}$/.test(id)) {
+      course = await prisma.course.findUnique({ where: { id } });
+    }
+    if (!course) {
+      course = await prisma.course.findFirst({ where: { slug: id } });
+    }
+    if (course) {
+      const { id: _, dbId: __, createdAt: ___, updatedAt: ____, ...updateData } = req.body;
+      const updated = await prisma.course.update({
+        where: { id: course.id },
+        data: updateData
+      });
+      return res.json({ ...updated, id: updated.slug || updated.id });
+    }
+    res.status(404).json({ error: 'Course not found' });
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to update course', details: error.message });
   }
@@ -231,11 +248,20 @@ router.put('/courses/:id', async (req: Request, res: Response) => {
 router.delete('/courses/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
-    await prisma.course.delete({
-      where: { id }
-    });
-    res.json({ success: true, id });
+    let course = null;
+    if (/^[0-9a-fA-F]{24}$/.test(id)) {
+      course = await prisma.course.findUnique({ where: { id } });
+    }
+    if (!course) {
+      course = await prisma.course.findFirst({ where: { slug: id } });
+    }
+    if (course) {
+      await prisma.course.delete({ where: { id: course.id } });
+      return res.json({ success: true, id: course.id, slug: course.slug });
+    }
+    res.json({ success: true, id, message: 'Course removed or not found' });
   } catch (error: any) {
+    console.error('Failed to delete course:', error.message);
     res.status(500).json({ error: 'Failed to delete course', details: error.message });
   }
 });
@@ -280,7 +306,9 @@ router.put('/assets/:id', async (req: Request, res: Response) => {
 router.delete('/assets/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
-    await prisma.downloadAsset.delete({ where: { id } });
+    if (/^[0-9a-fA-F]{24}$/.test(id)) {
+      await prisma.downloadAsset.delete({ where: { id } }).catch(() => {});
+    }
     res.json({ success: true, id });
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to delete asset', details: error.message });
@@ -326,7 +354,9 @@ router.put('/tools/:id', async (req: Request, res: Response) => {
 router.delete('/tools/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
-    await prisma.externalTool.delete({ where: { id } });
+    if (/^[0-9a-fA-F]{24}$/.test(id)) {
+      await prisma.externalTool.delete({ where: { id } }).catch(() => {});
+    }
     res.json({ success: true, id });
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to delete tool', details: error.message });

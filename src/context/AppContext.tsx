@@ -596,13 +596,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           api.getTransactions()
         ]);
 
-        if (dbCourses && dbCourses.length > 0) setCourses(dbCourses);
-        if (dbPrompts && dbPrompts.data && dbPrompts.data.length > 0) setPrompts(dbPrompts.data);
-        if (dbAssets && dbAssets.length > 0) setAssets(dbAssets);
-        if (dbTools && dbTools.length > 0) setExternalTools(dbTools);
-        if (dbTrxs && dbTrxs.length > 0) setPaymentTransactions(dbTrxs);
+        if (dbCourses && Array.isArray(dbCourses)) {
+          setCourses(dbCourses);
+          localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(dbCourses));
+        }
+        if (dbPrompts && Array.isArray(dbPrompts.data) && dbPrompts.data.length > 0) {
+          setPrompts(dbPrompts.data);
+          localStorage.setItem(STORAGE_KEYS.PROMPTS, JSON.stringify(dbPrompts.data));
+        }
+        if (dbAssets && Array.isArray(dbAssets) && dbAssets.length > 0) {
+          setAssets(dbAssets);
+          localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(dbAssets));
+        }
+        if (dbTools && Array.isArray(dbTools) && dbTools.length > 0) {
+          setExternalTools(dbTools);
+          localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(dbTools));
+        }
+        if (dbTrxs && Array.isArray(dbTrxs) && dbTrxs.length > 0) {
+          setPaymentTransactions(dbTrxs);
+          localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(dbTrxs));
+        }
 
-        if (dbUsers && dbUsers.length > 0) {
+        if (dbUsers && Array.isArray(dbUsers) && dbUsers.length > 0) {
           setUsersList(dbUsers);
 
           // IMMEDIATELY RE-SYNC CURRENT LOGGED-IN USER FROM DATABASE
@@ -913,32 +928,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Course CRUD
   const addCourse = (courseData: Omit<Course, 'id'>): Course => {
-    const newId = `course-${Date.now()}`;
+    const slug = courseData.slug || courseData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const newCourse: Course = {
       ...courseData,
-      id: newId,
-      slug: courseData.slug || newId,
+      id: slug,
+      slug,
       progressPercentage: 0,
       completedEpisodes: 0,
       totalEpisodes: courseData.episodes ? courseData.episodes.length : 0,
       resources: courseData.resources || []
     };
-    setCourses(prev => [newCourse, ...prev]);
-    api.createCourse(courseData).catch(() => {});
+    setCourses(prev => {
+      const updated = [newCourse, ...prev];
+      try { localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    api.createCourse(courseData).catch(err => console.warn('Failed to create course in DB:', err));
     showToast('success', 'Kursus Ditambahkan', `"${newCourse.title}" sekarang live dan dapat diakses public.`);
     return newCourse;
   };
 
   const updateCourse = (id: string, updated: Partial<Course>) => {
-    setCourses(prev => prev.map(c => c.id === id ? { ...c, ...updated } : c));
-    api.updateCourse(id, updated).catch(() => {});
+    setCourses(prev => {
+      const list = prev.map(c => (c.id === id || (c as any).slug === id || (c as any).dbId === id) ? { ...c, ...updated } : c);
+      try { localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(list)); } catch {}
+      return list;
+    });
+    api.updateCourse(id, updated).catch(err => console.warn('Failed to update course in DB:', err));
     showToast('success', 'Kursus Diperbarui', 'Perubahan kursus berhasil disimpan.');
   };
 
   const deleteCourse = (id: string) => {
-    setCourses(prev => prev.filter(c => c.id !== id));
-    api.deleteCourse(id).catch(() => {});
-    showToast('info', 'Kursus Dihapus', 'Kursus berhasil dihapus dari sistem.');
+    setCourses(prev => {
+      const updated = prev.filter(c => c.id !== id && (c as any).slug !== id && (c as any).dbId !== id);
+      try { localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    api.deleteCourse(id).catch(err => console.warn('Failed to delete course in DB:', err));
+    showToast('info', 'Kursus Dihapus', 'Kursus berhasil dihapus dari sistem & database.');
   };
 
   // Prompt CRUD
@@ -951,22 +978,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isNew: true,
       tags: promptData.tags || ['AI', 'Prompt']
     };
-    setPrompts(prev => [newPrompt, ...prev]);
-    api.createPrompt(promptData).catch(() => {});
+    setPrompts(prev => {
+      const updated = [newPrompt, ...prev];
+      try { localStorage.setItem(STORAGE_KEYS.PROMPTS, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    api.createPrompt(promptData).catch(err => console.warn('Failed to create prompt in DB:', err));
     showToast('success', 'Prompt Ditambahkan', `"${newPrompt.title}" berhasil diterbitkan.`);
     return newPrompt;
   };
 
   const updatePrompt = (id: string, updated: Partial<PromptPack>) => {
-    setPrompts(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
-    api.updatePrompt(id, updated).catch(() => {});
+    setPrompts(prev => {
+      const list = prev.map(p => p.id === id ? { ...p, ...updated } : p);
+      try { localStorage.setItem(STORAGE_KEYS.PROMPTS, JSON.stringify(list)); } catch {}
+      return list;
+    });
+    api.updatePrompt(id, updated).catch(err => console.warn('Failed to update prompt in DB:', err));
     showToast('success', 'Prompt Diperbarui', 'Perubahan prompt berhasil disimpan.');
   };
 
   const deletePrompt = (id: string) => {
-    setPrompts(prev => prev.filter(p => p.id !== id));
-    api.deletePrompt(id).catch(() => {});
-    showToast('info', 'Prompt Dihapus', 'Prompt dihapus dari katalog.');
+    setPrompts(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      try { localStorage.setItem(STORAGE_KEYS.PROMPTS, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    api.deletePrompt(id).catch(err => console.warn('Failed to delete prompt in DB:', err));
+    showToast('info', 'Prompt Dihapus', 'Prompt dihapus dari katalog & database.');
   };
 
   const incrementPromptUsage = (id: string) => {
@@ -987,18 +1026,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       downloadsCount: 0,
       tags: assetData.tags || ['Creative Asset']
     };
-    setAssets(prev => [newAsset, ...prev]);
+    setAssets(prev => {
+      const updated = [newAsset, ...prev];
+      try { localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    api.createAsset(assetData).catch(err => console.warn('Failed to create asset in DB:', err));
     showToast('success', 'Aset Ditambahkan', `"${newAsset.title}" sekarang live di Assets.`);
     return newAsset;
   };
 
   const updateAsset = (id: string, updated: Partial<DownloadAsset>) => {
-    setAssets(prev => prev.map(a => a.id === id ? { ...a, ...updated } : a));
+    setAssets(prev => {
+      const list = prev.map(a => a.id === id ? { ...a, ...updated } : a);
+      try { localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(list)); } catch {}
+      return list;
+    });
+    api.updateAsset(id, updated).catch(err => console.warn('Failed to update asset in DB:', err));
     showToast('success', 'Aset Diperbarui', 'Perubahan aset berhasil disimpan.');
   };
 
   const deleteAsset = (id: string) => {
-    setAssets(prev => prev.filter(a => a.id !== id));
+    setAssets(prev => {
+      const updated = prev.filter(a => a.id !== id);
+      try { localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    api.deleteAsset(id).catch(err => console.warn('Failed to delete asset in DB:', err));
     showToast('info', 'Aset Dihapus', 'Aset berhasil dihapus dari katalog.');
   };
 
@@ -1009,18 +1063,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `tool-${Date.now()}`,
       tags: toolData.tags || ['AI Tool']
     };
-    setExternalTools(prev => [newTool, ...prev]);
+    setExternalTools(prev => {
+      const updated = [newTool, ...prev];
+      try { localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    api.createTool(toolData).catch(err => console.warn('Failed to create tool in DB:', err));
     showToast('success', 'Tool AI Ditambahkan', `"${newTool.name}" berhasil diterbitkan ke direktori.`);
     return newTool;
   };
 
   const updateExternalTool = (id: string, updated: Partial<ExternalTool>) => {
-    setExternalTools(prev => prev.map(t => t.id === id ? { ...t, ...updated } : t));
+    setExternalTools(prev => {
+      const list = prev.map(t => t.id === id ? { ...t, ...updated } : t);
+      try { localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(list)); } catch {}
+      return list;
+    });
+    api.updateTool(id, updated).catch(err => console.warn('Failed to update tool in DB:', err));
     showToast('success', 'Tool AI Diperbarui', 'Perubahan data tool berhasil disimpan.');
   };
 
   const deleteExternalTool = (id: string) => {
-    setExternalTools(prev => prev.filter(t => t.id !== id));
+    setExternalTools(prev => {
+      const updated = prev.filter(t => t.id !== id);
+      try { localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    api.deleteTool(id).catch(err => console.warn('Failed to delete tool in DB:', err));
     showToast('info', 'Tool Dihapus', 'Tool eksternal telah dihapus dari direktori.');
   };
 
