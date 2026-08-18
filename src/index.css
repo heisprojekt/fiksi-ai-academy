@@ -56,12 +56,14 @@
 .text-gradient {
   background: linear-gradient(135deg, #DDD6FE 0%, #A78BFA 50%, #8B5CF6 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-subtle {
   background: linear-gradient(180deg, #FFFFFF 0%, #94A3B8 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -77,6 +79,7 @@
   padding: 1px;
   background: linear-gradient(135deg, rgba(167, 139, 250, 0.4), rgba(124, 58, 237, 0.4));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
