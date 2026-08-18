@@ -10,17 +10,40 @@ import { UpgradeModal } from './components/payment/UpgradeModal';
 
 import { MobileNavigation } from './components/layout/MobileNavigation';
 
-// Views - Code Split with lazy loading for instant tab switching & lighter initial bundle
-const LandingView = lazy(() => import('./components/landing/LandingView').then(m => ({ default: m.LandingView })));
-const DashboardView = lazy(() => import('./components/dashboard/DashboardView').then(m => ({ default: m.DashboardView })));
-const CourseView = lazy(() => import('./components/course/CourseView').then(m => ({ default: m.CourseView })));
-const PromptLibrary = lazy(() => import('./components/prompts/PromptLibrary').then(m => ({ default: m.PromptLibrary })));
-const AssetsView = lazy(() => import('./components/assets/AssetsView').then(m => ({ default: m.AssetsView })));
-const BookmarksView = lazy(() => import('./components/bookmarks/BookmarksView').then(m => ({ default: m.BookmarksView })));
-const ProfileView = lazy(() => import('./components/profile/ProfileView').then(m => ({ default: m.ProfileView })));
-const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
-const BlogView = lazy(() => import('./components/blog/BlogView').then(m => ({ default: m.BlogView })));
-const ToolsView = lazy(() => import('./components/tools/ToolsView').then(m => ({ default: m.ToolsView })));
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
+
+// Resilient lazy loading helper that automatically retries and handles deployment cache mismatches
+function lazyWithRetry<T extends React.ComponentType<any>>(
+  componentImport: () => Promise<{ default: T }>
+) {
+  return lazy(async () => {
+    try {
+      return await componentImport();
+    } catch (error: any) {
+      console.warn('Dynamic import chunk failed, attempting auto-retry...', error);
+      // If a deployment updated chunk hashes, refresh page once to fetch latest index.html
+      const hasReloaded = window.sessionStorage.getItem('chunk_reload_triggered');
+      if (!hasReloaded) {
+        window.sessionStorage.setItem('chunk_reload_triggered', 'true');
+        window.location.reload();
+        return new Promise<{ default: T }>(() => {});
+      }
+      throw error;
+    }
+  });
+}
+
+// Views - Code Split with resilient lazy loading
+const LandingView = lazyWithRetry(() => import('./components/landing/LandingView').then(m => ({ default: m.LandingView })));
+const DashboardView = lazyWithRetry(() => import('./components/dashboard/DashboardView').then(m => ({ default: m.DashboardView })));
+const CourseView = lazyWithRetry(() => import('./components/course/CourseView').then(m => ({ default: m.CourseView })));
+const PromptLibrary = lazyWithRetry(() => import('./components/prompts/PromptLibrary').then(m => ({ default: m.PromptLibrary })));
+const AssetsView = lazyWithRetry(() => import('./components/assets/AssetsView').then(m => ({ default: m.AssetsView })));
+const BookmarksView = lazyWithRetry(() => import('./components/bookmarks/BookmarksView').then(m => ({ default: m.BookmarksView })));
+const ProfileView = lazyWithRetry(() => import('./components/profile/ProfileView').then(m => ({ default: m.ProfileView })));
+const AdminDashboard = lazyWithRetry(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const BlogView = lazyWithRetry(() => import('./components/blog/BlogView').then(m => ({ default: m.BlogView })));
+const ToolsView = lazyWithRetry(() => import('./components/tools/ToolsView').then(m => ({ default: m.ToolsView })));
 
 const ViewLoadingFallback = () => (
   <div className="w-full min-h-[400px] flex flex-col items-center justify-center gap-4 p-8 animate-in fade-in duration-200">
@@ -97,20 +120,24 @@ export const MainContent: React.FC = () => {
           
           {/* Main Workspace Area */}
           <main className="flex-1 min-w-0 px-3 sm:px-8 lg:px-12 py-4 sm:py-6 max-w-7xl mx-auto w-full pb-28 md:pb-8">
-            <Suspense fallback={<ViewLoadingFallback />}>
-              <div key={currentView} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                {renderCurrentView()}
-              </div>
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<ViewLoadingFallback />}>
+                <div key={currentView} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  {renderCurrentView()}
+                </div>
+              </Suspense>
+            </ErrorBoundary>
           </main>
         </div>
       ) : (
         <main className="flex-1 pb-24 md:pb-0">
-          <Suspense fallback={<ViewLoadingFallback />}>
-            <div key={currentView} className="animate-in fade-in duration-300">
-              {renderCurrentView()}
-            </div>
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<ViewLoadingFallback />}>
+              <div key={currentView} className="animate-in fade-in duration-300">
+                {renderCurrentView()}
+              </div>
+            </Suspense>
+          </ErrorBoundary>
         </main>
       )}
 
