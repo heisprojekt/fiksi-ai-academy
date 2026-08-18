@@ -23,6 +23,7 @@ import { GradientButton } from '../ui/GradientButton';
 import { Badge } from '../ui/Badge';
 import { parseVideoUrl } from '../../utils/videoEmbed';
 import { ArticleViewer } from './ArticleViewer';
+import { MOCK_COURSES } from '../../data/mockData';
 
 export const CourseView: React.FC = () => {
   const { 
@@ -35,7 +36,9 @@ export const CourseView: React.FC = () => {
     navigateTo, 
     showToast,
     bookmarks,
-    toggleBookmark
+    toggleBookmark,
+    userRole,
+    setIsUpgradeModalOpen
   } = useApp();
 
   const [activeEpisodeIndex, setActiveEpisodeIndex] = useState(0);
@@ -52,9 +55,9 @@ export const CourseView: React.FC = () => {
 
   const categories = ['All', 'AI Video & Visual', 'Commercial AI', '3D Animation', 'Character Design'];
 
-  const currentCourse = activeCourse || courses[0];
+  const currentCourse = activeCourse || courses[0] || MOCK_COURSES[0];
   const currentEpisode = currentCourse?.episodes?.[activeEpisodeIndex] || currentCourse?.episodes?.[0];
-  const isEpCompleted = currentEpisode ? !!completedEpisodes[`${currentCourse.id}-${currentEpisode.id}`] : false;
+  const isEpCompleted = (currentCourse && currentEpisode) ? !!completedEpisodes[`${currentCourse.id}-${currentEpisode.id}`] : false;
   const parsedVideo = parseVideoUrl(currentEpisode?.videoUrl || '');
 
   const handleSaveNote = () => {

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { MOCK_WEEKLY_UPDATES } from '../../data/mockData';
+import { MOCK_WEEKLY_UPDATES, MOCK_COURSES } from '../../data/mockData';
 import { buildFullPromptFormula, Course, PromptPack, RecentActivityItem } from '../../types';
 import { 
   Play, 
@@ -79,17 +79,19 @@ export const DashboardView: React.FC = () => {
 
   // Last course accessed or first course in progress
   const activeCourseProgress = useMemo(() => {
+    const defaultCourse = courses[0] || MOCK_COURSES[0];
     const courseActivity = recentActivity.find(item => item.type === 'course');
     if (courseActivity) {
       const found = courses.find(c => c.id === courseActivity.targetId || c.id === courseActivity.id);
       if (found) return found;
     }
-    return courses.find(c => (c.progressPercentage || 0) > 0) || courses[0];
+    return courses.find(c => (c.progressPercentage || 0) > 0) || defaultCourse;
   }, [recentActivity, courses]);
 
   // Featured starter masterclass for recommendation
   const featuredStarterMasterclass = useMemo(() => {
-    return courses.find(c => c.id === 'omni-flash-masterclass') || courses.find(c => c.isPopular) || courses[0];
+    const defaultCourse = courses[0] || MOCK_COURSES[0];
+    return courses.find(c => c.id === 'omni-flash-masterclass') || courses.find(c => c.isPopular) || defaultCourse;
   }, [courses]);
 
   // Personalized prompt recommendations based on last accessed category or AI Model
@@ -106,8 +108,9 @@ export const DashboardView: React.FC = () => {
 
   // Recommended beginner starter courses for new users
   const beginnerStarterCourses = useMemo(() => {
-    const beginners = courses.filter(c => c.level === 'Pemula');
-    return beginners.length > 0 ? beginners.slice(0, 3) : courses.slice(0, 3);
+    const list = courses.length > 0 ? courses : MOCK_COURSES;
+    const beginners = list.filter(c => c.level === 'Pemula');
+    return beginners.length > 0 ? beginners.slice(0, 3) : list.slice(0, 3);
   }, [courses]);
 
   // Handle clicking a recent activity item
@@ -306,8 +309,8 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-start sm:items-center gap-5">
               <div className="relative shrink-0">
                 <img
-                  src={featuredStarterMasterclass.thumbnail}
-                  alt={featuredStarterMasterclass.title}
+                  src={featuredStarterMasterclass?.thumbnail || MOCK_COURSES[0].thumbnail}
+                  alt={featuredStarterMasterclass?.title || 'Masterclass Starter'}
                   className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl object-cover ring-2 ring-cyan-500/40 shadow-lg group-hover:scale-105 transition-transform"
                 />
                 <span className="absolute -bottom-1.5 -right-1.5 p-1.5 rounded-xl bg-cyan-500 text-white shadow-md">
@@ -321,9 +324,9 @@ export const DashboardView: React.FC = () => {
                     <Sparkles className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
                     REKOMENDASI MASTERCLASS PERTAMA
                   </span>
-                  <Badge variant="cyan" size="sm">{featuredStarterMasterclass.level}</Badge>
+                  <Badge variant="cyan" size="sm">{featuredStarterMasterclass?.level || 'Menengah'}</Badge>
                   <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono font-bold">
-                    {featuredStarterMasterclass.episodes?.length || 5} Episode Lengkap
+                    {featuredStarterMasterclass?.episodes?.length || 5} Episode Lengkap
                   </span>
                 </div>
 
@@ -332,7 +335,7 @@ export const DashboardView: React.FC = () => {
                 </h2>
 
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-                  Kuasai alur kerja pembuatan karakter konsisten, prompt sinematik, dan produksi video AI berkualitas tinggi dari instruktur <strong>{featuredStarterMasterclass.instructor.name}</strong>.
+                  Kuasai alur kerja pembuatan karakter konsisten, prompt sinematik, dan produksi video AI berkualitas tinggi dari instruktur <strong>{featuredStarterMasterclass?.instructor?.name || 'Rian Antigravity'}</strong>.
                 </p>
               </div>
             </div>
@@ -341,7 +344,7 @@ export const DashboardView: React.FC = () => {
               <GradientButton
                 size="md"
                 icon={<Play className="w-4 h-4 fill-white" />}
-                onClick={() => navigateTo('course-detail', featuredStarterMasterclass.id)}
+                onClick={() => navigateTo('course-detail', featuredStarterMasterclass?.id || 'omni-flash-masterclass')}
               >
                 Mulai Masterclass (Episode 1)
               </GradientButton>
@@ -367,8 +370,8 @@ export const DashboardView: React.FC = () => {
             <div className="flex items-start sm:items-center gap-4">
               <div className="relative shrink-0">
                 <img
-                  src={activeCourseProgress.thumbnail}
-                  alt={activeCourseProgress.title}
+                  src={activeCourseProgress?.thumbnail || MOCK_COURSES[0].thumbnail}
+                  alt={activeCourseProgress?.title || 'Masterclass Aktif'}
                   className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-1 ring-cyan-500/30 shadow-lg"
                 />
                 <span className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-slate-900 border border-white/15 text-cyan-400">
@@ -380,17 +383,17 @@ export const DashboardView: React.FC = () => {
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-300 uppercase flex items-center gap-1">
                     <Clock className="w-2.5 h-2.5" />
-                    Lanjutkan Sesi Belajar • {activeCourseProgress.category}
+                    Lanjutkan Sesi Belajar • {activeCourseProgress?.category || 'AI Masterclass'}
                   </span>
                   <span className="text-[11px] text-cyan-600 dark:text-cyan-400 font-bold">
-                    {activeCourseProgress.progressPercentage || 0}% Selesai
+                    {activeCourseProgress?.progressPercentage || 0}% Selesai
                   </span>
                 </div>
                 <h3 className="text-base sm:text-xl font-bold text-slate-900 dark:text-white line-clamp-1">
-                  {activeCourseProgress.title}
+                  {activeCourseProgress?.title || 'Masterclass'}
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1">
-                  {activeCourseProgress.subtitle || `Lanjutkan tontonan kamu di materi ${activeCourseProgress.title}.`}
+                  {activeCourseProgress?.subtitle || `Lanjutkan tontonan kamu di materi ${activeCourseProgress?.title || 'Masterclass'}.`}
                 </p>
               </div>
             </div>
@@ -399,7 +402,7 @@ export const DashboardView: React.FC = () => {
               <GradientButton
                 size="md"
                 icon={<Play className="w-4 h-4 fill-white" />}
-                onClick={() => navigateTo('course-detail', activeCourseProgress.id)}
+                onClick={() => navigateTo('course-detail', activeCourseProgress?.id || 'omni-flash-masterclass')}
               >
                 Lanjutkan Episode
               </GradientButton>

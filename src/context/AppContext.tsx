@@ -279,7 +279,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [courses, setCourses] = useState<Course[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.COURSES);
-      return saved ? JSON.parse(saved) : MOCK_COURSES;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+      return MOCK_COURSES;
     } catch {
       return MOCK_COURSES;
     }
@@ -607,8 +613,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ]);
 
         if (dbCourses && Array.isArray(dbCourses)) {
-          setCourses(dbCourses);
-          localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(dbCourses));
+          if (dbCourses.length > 0) {
+            setCourses(dbCourses);
+            localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(dbCourses));
+          } else {
+            setCourses(MOCK_COURSES);
+          }
         }
         if (dbPrompts && Array.isArray(dbPrompts.data) && dbPrompts.data.length > 0) {
           setPrompts(dbPrompts.data);
