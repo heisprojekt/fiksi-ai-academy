@@ -1,6 +1,6 @@
 import { defineConfig, Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
-import app from './src/server/index';
+import app from './api/index';
 
 function expressPlugin(): Plugin {
   return {
