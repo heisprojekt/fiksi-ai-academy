@@ -58,12 +58,53 @@ async function main() {
   try {
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
-    const userCount = await prisma.user.count();
-    console.log(`✅ Prisma connected! Total Users in DB: ${userCount}`);
     
-    const users = await prisma.user.findMany({ take: 5, orderBy: { createdAt: 'desc' } });
-    console.log('Registered Members:', users.map(u => ({ id: u.id, name: u.name, email: u.email, role: u.role })));
+    // 1. Count
+    const userCountBefore = await prisma.user.count();
+    console.log(`✅ Prisma connected! Total Users in DB: ${userCountBefore}`);
+    
+    // 2. Simulate Google User Registration
+    const testGoogleEmail = `kreator.google.test@gmail.com`;
+    console.log(`\nSimulating Google Sign-In for: ${testGoogleEmail}`);
+    const existing = await prisma.user.findUnique({ where: { email: testGoogleEmail } });
+    
+    let dbUser;
+    if (existing) {
+      dbUser = await prisma.user.update({
+        where: { email: testGoogleEmail },
+        data: {
+          name: 'Kreator AI Google Verified',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+          streakDays: existing.streakDays + 1
+        }
+      });
+      console.log('✅ Google User updated in MongoDB Atlas:', { id: dbUser.id, email: dbUser.email, role: dbUser.role, streak: dbUser.streakDays });
+    } else {
+      dbUser = await prisma.user.create({
+        data: {
+          email: testGoogleEmail,
+          name: 'Kreator AI Google Verified',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+          role: 'Free Member',
+          joinedDate: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+          validUntil: 'Free Tier',
+          status: 'Active',
+          coursesCompleted: 0,
+          savedPrompts: 0,
+          totalDownloads: 0,
+          streakDays: 1,
+          bookmarks: ['karakter-ai-1']
+        }
+      });
+      console.log('🌟 NEW Google User created in MongoDB Atlas:', { id: dbUser.id, email: dbUser.email, role: dbUser.role });
+    }
+
+    const allUsers = await prisma.user.findMany({ take: 10, orderBy: { createdAt: 'desc' } });
+    console.log('\n--- Current MongoDB Atlas Members List ---');
+    console.table(allUsers.map(u => ({ id: u.id, name: u.name, email: u.email, role: u.role, status: u.status })));
+
     await prisma.$disconnect();
+    console.log('\n🎉 ALL GOOGLE USER TESTS ON MONGODB ATLAS PASSED SUCCESSFULLY!');
   } catch (err: any) {
     console.error('Prisma test error:', err.message);
   }

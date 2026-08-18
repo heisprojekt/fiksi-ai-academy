@@ -1,14 +1,17 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import dns from 'dns';
 
-// Fix for Windows Node DNS querySrv on Atlas
-try {
-  dns.setServers(['8.8.8.8', '1.1.1.1']);
-} catch {
-  // ignore
+// Fix for Windows Node DNS querySrv on Atlas only (avoid overriding DNS in Vercel/Lambda Linux)
+if (process.platform === 'win32' && !process.env.VERCEL) {
+  try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+  } catch {
+    // ignore
+  }
 }
 
 dotenv.config();
@@ -19,11 +22,22 @@ if (!process.env.DATABASE_URL) {
   process.env.DATABASE_URL = DEFAULT_DATABASE_URL;
 }
 
+const ADMIN_EMAILS = ['heisprojekt@gmail.com', 'fiksiaiai@gmail.com'];
+
 const app = express();
 const port = process.env.PORT || 3001;
-const prisma = new PrismaClient();
 
-app.use(cors());
+// Serverless Singleton Prisma Client to prevent connection pool exhaustion
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+const prisma = globalForPrisma.prisma || new PrismaClient();
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}
+
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 
 const getIdParam = (req: Request): string => {
@@ -31,19 +45,23 @@ const getIdParam = (req: Request): string => {
   return Array.isArray(id) ? id[0] : (id || '');
 };
 
+const router = express.Router();
+
 // Root route
-app.get('/', (_req: Request, res: Response) => {
+router.get('/', (_req: Request, res: Response) => {
   res.json({
     message: '🚀 FIKSI AI Academy API Backend is running!',
     database: 'MongoDB Atlas',
     status: 'online',
     endpoints: {
       health: '/api/health',
+      dbStatus: '/api/db-status',
       prompts: '/api/prompts',
       courses: '/api/courses',
       assets: '/api/assets',
       tools: '/api/tools',
       users: '/api/users',
+      googleAuth: '/api/auth/google',
       blogs: '/api/blogs',
       updates: '/api/weekly-updates'
     }
@@ -51,14 +69,39 @@ app.get('/', (_req: Request, res: Response) => {
 });
 
 // Health check
-app.get('/api/health', (_req: Request, res: Response) => {
+router.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', database: 'mongodb', timestamp: new Date().toISOString() });
+});
+
+// Live Database connection & User count status check
+router.get('/db-status', async (_req: Request, res: Response) => {
+  try {
+    const userCount = await prisma.user.count();
+    const promptCount = await prisma.promptPack.count();
+    const courseCount = await prisma.course.count();
+    res.json({
+      status: 'connected',
+      database: 'MongoDB Atlas (fiksi_ai_academy)',
+      counts: {
+        users: userCount,
+        prompts: promptCount,
+        courses: courseCount
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      status: 'error',
+      database: 'MongoDB Atlas',
+      error: error.message
+    });
+  }
 });
 
 // ==========================================
 // 1. PROMPTS API
 // ==========================================
-app.get('/api/prompts', async (req: Request, res: Response) => {
+router.get('/prompts', async (req: Request, res: Response) => {
   try {
     const { category, aiModel, search, page = '1', limit = '50' } = req.query;
     const pageNum = parseInt(page as string, 10) || 1;
@@ -108,7 +151,7 @@ app.get('/api/prompts', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/prompts', async (req: Request, res: Response) => {
+router.post('/prompts', async (req: Request, res: Response) => {
   try {
     const newPrompt = await prisma.promptPack.create({
       data: req.body
@@ -119,7 +162,7 @@ app.post('/api/prompts', async (req: Request, res: Response) => {
   }
 });
 
-app.put('/api/prompts/:id', async (req: Request, res: Response) => {
+router.put('/prompts/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     const updated = await prisma.promptPack.update({
@@ -132,7 +175,7 @@ app.put('/api/prompts/:id', async (req: Request, res: Response) => {
   }
 });
 
-app.delete('/api/prompts/:id', async (req: Request, res: Response) => {
+router.delete('/prompts/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     await prisma.promptPack.delete({
@@ -147,7 +190,7 @@ app.delete('/api/prompts/:id', async (req: Request, res: Response) => {
 // ==========================================
 // 2. COURSES API
 // ==========================================
-app.get('/api/courses', async (_req: Request, res: Response) => {
+router.get('/courses', async (_req: Request, res: Response) => {
   try {
     const courses = await prisma.course.findMany({
       where: { isPublished: true },
@@ -160,7 +203,7 @@ app.get('/api/courses', async (_req: Request, res: Response) => {
   }
 });
 
-app.post('/api/courses', async (req: Request, res: Response) => {
+router.post('/courses', async (req: Request, res: Response) => {
   try {
     const slug = req.body.slug || req.body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const newCourse = await prisma.course.create({
@@ -172,7 +215,7 @@ app.post('/api/courses', async (req: Request, res: Response) => {
   }
 });
 
-app.put('/api/courses/:id', async (req: Request, res: Response) => {
+router.put('/courses/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     const updated = await prisma.course.update({
@@ -185,7 +228,7 @@ app.put('/api/courses/:id', async (req: Request, res: Response) => {
   }
 });
 
-app.delete('/api/courses/:id', async (req: Request, res: Response) => {
+router.delete('/courses/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     await prisma.course.delete({
@@ -200,7 +243,7 @@ app.delete('/api/courses/:id', async (req: Request, res: Response) => {
 // ==========================================
 // 3. ASSETS API
 // ==========================================
-app.get('/api/assets', async (_req: Request, res: Response) => {
+router.get('/assets', async (_req: Request, res: Response) => {
   try {
     const assets = await prisma.downloadAsset.findMany({
       where: { isPublished: true },
@@ -212,7 +255,7 @@ app.get('/api/assets', async (_req: Request, res: Response) => {
   }
 });
 
-app.post('/api/assets', async (req: Request, res: Response) => {
+router.post('/assets', async (req: Request, res: Response) => {
   try {
     const newAsset = await prisma.downloadAsset.create({ data: req.body });
     res.status(201).json(newAsset);
@@ -221,7 +264,7 @@ app.post('/api/assets', async (req: Request, res: Response) => {
   }
 });
 
-app.put('/api/assets/:id', async (req: Request, res: Response) => {
+router.put('/assets/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     const updated = await prisma.downloadAsset.update({
@@ -234,7 +277,7 @@ app.put('/api/assets/:id', async (req: Request, res: Response) => {
   }
 });
 
-app.delete('/api/assets/:id', async (req: Request, res: Response) => {
+router.delete('/assets/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     await prisma.downloadAsset.delete({ where: { id } });
@@ -247,7 +290,7 @@ app.delete('/api/assets/:id', async (req: Request, res: Response) => {
 // ==========================================
 // 4. EXTERNAL TOOLS API
 // ==========================================
-app.get('/api/tools', async (_req: Request, res: Response) => {
+router.get('/tools', async (_req: Request, res: Response) => {
   try {
     const tools = await prisma.externalTool.findMany({
       orderBy: { createdAt: 'desc' }
@@ -258,7 +301,7 @@ app.get('/api/tools', async (_req: Request, res: Response) => {
   }
 });
 
-app.post('/api/tools', async (req: Request, res: Response) => {
+router.post('/tools', async (req: Request, res: Response) => {
   try {
     const tool = await prisma.externalTool.create({ data: req.body });
     res.status(201).json(tool);
@@ -267,7 +310,7 @@ app.post('/api/tools', async (req: Request, res: Response) => {
   }
 });
 
-app.put('/api/tools/:id', async (req: Request, res: Response) => {
+router.put('/tools/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     const updated = await prisma.externalTool.update({
@@ -280,7 +323,7 @@ app.put('/api/tools/:id', async (req: Request, res: Response) => {
   }
 });
 
-app.delete('/api/tools/:id', async (req: Request, res: Response) => {
+router.delete('/tools/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     await prisma.externalTool.delete({ where: { id } });
@@ -293,27 +336,30 @@ app.delete('/api/tools/:id', async (req: Request, res: Response) => {
 // ==========================================
 // 5. USERS & TRANSACTIONS API
 // ==========================================
-app.get('/api/users', async (_req: Request, res: Response) => {
+router.get('/users', async (_req: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany({
       orderBy: { createdAt: 'desc' }
     });
     res.json(users);
   } catch (error: any) {
+    console.error('[MongoDB Error] Failed to fetch users:', error.message);
     res.status(500).json({ error: 'Failed to fetch users', details: error.message });
   }
 });
 
-app.post('/api/users', async (req: Request, res: Response) => {
+// Sync / Upsert User into MongoDB Atlas (Google Sign-In / Register / Profile update)
+router.post('/users', async (req: Request, res: Response) => {
   try {
-    const { email, name, avatar, role, status, validUntil, bookmarks, streakDays } = req.body;
+    const { email, name, avatar, role, status, validUntil, bookmarks, streakDays, coursesCompleted, savedPrompts, totalDownloads } = req.body;
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
     }
 
     const emailClean = email.trim().toLowerCase();
+    const isAdmin = ADMIN_EMAILS.includes(emailClean);
     
-    // Check if user already exists
+    // Check if user already exists in MongoDB Atlas
     const existing = await prisma.user.findUnique({
       where: { email: emailClean }
     });
@@ -324,37 +370,107 @@ app.post('/api/users', async (req: Request, res: Response) => {
         data: {
           name: name || existing.name,
           avatar: avatar || existing.avatar,
-          role: role || existing.role,
+          role: isAdmin ? 'Admin' : (role || existing.role),
           status: status || existing.status || 'Active',
-          validUntil: validUntil || existing.validUntil,
-          streakDays: streakDays !== undefined ? streakDays : existing.streakDays,
-          bookmarks: bookmarks || existing.bookmarks
+          validUntil: isAdmin ? 'Lifetime VIP' : (validUntil || existing.validUntil),
+          streakDays: streakDays !== undefined ? Number(streakDays) : existing.streakDays,
+          bookmarks: bookmarks || existing.bookmarks,
+          coursesCompleted: coursesCompleted !== undefined ? Number(coursesCompleted) : existing.coursesCompleted,
+          savedPrompts: savedPrompts !== undefined ? Number(savedPrompts) : existing.savedPrompts,
+          totalDownloads: totalDownloads !== undefined ? Number(totalDownloads) : existing.totalDownloads,
+          updatedAt: new Date()
         }
       });
+      console.log(`[MongoDB Atlas] ✅ Updated existing user: ${emailClean} (Role: ${updated.role})`);
       return res.json(updated);
     } else {
+      const fallbackName = emailClean.split('@')[0];
       const newUser = await prisma.user.create({
         data: {
           email: emailClean,
-          name: name || emailClean.split('@')[0],
-          avatar: avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80',
-          role: role || 'Free Member',
+          name: name || (isAdmin ? 'Admin FIKSI' : fallbackName),
+          avatar: avatar || (isAdmin 
+            ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+            : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80'),
+          role: isAdmin ? 'Admin' : (role || 'Free Member'),
           joinedDate: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-          validUntil: validUntil || 'Free Tier',
+          validUntil: isAdmin ? 'Lifetime VIP' : (validUntil || 'Free Tier'),
           status: status || 'Active',
-          streakDays: streakDays || 1,
-          bookmarks: bookmarks || []
+          coursesCompleted: 0,
+          savedPrompts: 0,
+          totalDownloads: 0,
+          streakDays: streakDays ? Number(streakDays) : 1,
+          bookmarks: bookmarks || [],
+          completedEpisodes: []
         }
       });
+      console.log(`[MongoDB Atlas] 🌟 Created NEW user via Google/Auth: ${emailClean} (ID: ${newUser.id}, Role: ${newUser.role})`);
       return res.status(201).json(newUser);
     }
   } catch (error: any) {
-    console.error('Error in POST /api/users:', error.message);
-    res.status(500).json({ error: 'Failed to create or update user in database', details: error.message });
+    console.error('[MongoDB Atlas Error] in POST /api/users:', error.message);
+    res.status(500).json({ error: 'Failed to create or update user in MongoDB Atlas', details: error.message });
   }
 });
 
-app.put('/api/users/:id', async (req: Request, res: Response) => {
+// Dedicated Google Authentication Endpoint
+router.post('/auth/google', async (req: Request, res: Response) => {
+  try {
+    const { email, name, avatar } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required for Google Sign-In' });
+    }
+
+    const emailClean = email.trim().toLowerCase();
+    const isAdmin = ADMIN_EMAILS.includes(emailClean);
+
+    const existing = await prisma.user.findUnique({
+      where: { email: emailClean }
+    });
+
+    if (existing) {
+      const updated = await prisma.user.update({
+        where: { email: emailClean },
+        data: {
+          name: name || existing.name,
+          avatar: avatar || existing.avatar,
+          role: isAdmin ? 'Admin' : existing.role,
+          updatedAt: new Date()
+        }
+      });
+      console.log(`[Google Auth -> MongoDB Atlas] Existing user logged in: ${emailClean}`);
+      return res.json({ success: true, user: updated, isNew: false });
+    } else {
+      const fallbackName = emailClean.split('@')[0];
+      const newUser = await prisma.user.create({
+        data: {
+          email: emailClean,
+          name: name || (isAdmin ? 'Admin FIKSI' : fallbackName),
+          avatar: avatar || (isAdmin 
+            ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+            : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80'),
+          role: isAdmin ? 'Admin' : 'Free Member',
+          joinedDate: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+          validUntil: isAdmin ? 'Lifetime VIP' : 'Free Tier',
+          status: 'Active',
+          coursesCompleted: 0,
+          savedPrompts: 0,
+          totalDownloads: 0,
+          streakDays: 1,
+          bookmarks: [],
+          completedEpisodes: []
+        }
+      });
+      console.log(`[Google Auth -> MongoDB Atlas] New Google account registered: ${emailClean} (ID: ${newUser.id})`);
+      return res.status(201).json({ success: true, user: newUser, isNew: true });
+    }
+  } catch (error: any) {
+    console.error('[Google Auth Error]:', error.message);
+    res.status(500).json({ error: 'Failed to authenticate Google user in MongoDB Atlas', details: error.message });
+  }
+});
+
+router.put('/users/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     const updated = await prisma.user.update({
@@ -367,7 +483,7 @@ app.put('/api/users/:id', async (req: Request, res: Response) => {
   }
 });
 
-app.delete('/api/users/:id', async (req: Request, res: Response) => {
+router.delete('/users/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     await prisma.user.delete({
@@ -379,7 +495,7 @@ app.delete('/api/users/:id', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/api/transactions', async (_req: Request, res: Response) => {
+router.get('/transactions', async (_req: Request, res: Response) => {
   try {
     const trxs = await prisma.qRISPaymentTransaction.findMany({
       orderBy: { createdAt: 'desc' }
@@ -390,7 +506,7 @@ app.get('/api/transactions', async (_req: Request, res: Response) => {
   }
 });
 
-app.post('/api/transactions', async (req: Request, res: Response) => {
+router.post('/transactions', async (req: Request, res: Response) => {
   try {
     const trx = await prisma.qRISPaymentTransaction.create({ data: req.body });
     res.status(201).json(trx);
@@ -399,7 +515,7 @@ app.post('/api/transactions', async (req: Request, res: Response) => {
   }
 });
 
-app.put('/api/transactions/:id', async (req: Request, res: Response) => {
+router.put('/transactions/:id', async (req: Request, res: Response) => {
   try {
     const id = getIdParam(req);
     const updated = await prisma.qRISPaymentTransaction.update({
@@ -415,7 +531,7 @@ app.put('/api/transactions/:id', async (req: Request, res: Response) => {
 // ==========================================
 // 6. BLOGS & UPDATES API
 // ==========================================
-app.get('/api/blogs', async (_req: Request, res: Response) => {
+router.get('/blogs', async (_req: Request, res: Response) => {
   try {
     const blogs = await prisma.blogArticle.findMany({
       where: { isPublished: true },
@@ -427,7 +543,7 @@ app.get('/api/blogs', async (_req: Request, res: Response) => {
   }
 });
 
-app.get('/api/weekly-updates', async (_req: Request, res: Response) => {
+router.get('/weekly-updates', async (_req: Request, res: Response) => {
   try {
     const updates = await prisma.weeklyUpdate.findMany({
       orderBy: { createdAt: 'desc' }
@@ -438,7 +554,13 @@ app.get('/api/weekly-updates', async (_req: Request, res: Response) => {
   }
 });
 
-if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+// Mount router on both '/api' and '/' so all environments & Vercel rewrites work seamlessly
+app.use('/api', router);
+app.use('/', router);
+
+// Start standalone server only when executed directly via node/tsx
+const isStandalone = process.argv[1]?.includes('server') || process.env.STANDALONE === 'true';
+if (isStandalone && !process.env.VERCEL && process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
     console.log(`🚀 FIKSI AI Academy API Server running at http://localhost:${port}`);
   });

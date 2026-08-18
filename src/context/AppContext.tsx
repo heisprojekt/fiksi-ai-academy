@@ -614,7 +614,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       role: isAdmin ? 'Admin' : existing.role
     } : {
       id: `u-${Date.now()}`,
-      name: targetName || (isAdmin ? `${fallbackName} (Admin)` : `${fallbackName}`),
+      name: targetName || (isAdmin ? 'Admin FIKSI' : fallbackName),
       email: targetEmail,
       avatar: targetAvatar || (isAdmin 
         ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
@@ -626,7 +626,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       savedPrompts: 0,
       totalDownloads: 0,
       streakDays: 1,
-      status: 'Aktif'
+      status: 'Active'
     };
 
     saveUserSession(loggedUser, rememberMe);
@@ -637,27 +637,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('success', 'Berhasil Masuk dengan Akun Google', `Selamat datang, ${loggedUser.name}! (${loggedUser.role})`);
 
     // IMMEDIATELY SYNC / SAVE USER TO MONGODB DATABASE
-    api.syncUser({
-      name: loggedUser.name,
-      email: loggedUser.email,
-      avatar: loggedUser.avatar,
-      role: loggedUser.role,
-      status: loggedUser.status,
-      validUntil: loggedUser.validUntil,
-      streakDays: loggedUser.streakDays,
-      bookmarks: loggedUser.bookmarks
-    }).then((dbUser) => {
+    try {
+      const dbUser = await api.syncUser({
+        name: loggedUser.name,
+        email: loggedUser.email,
+        avatar: loggedUser.avatar,
+        role: loggedUser.role,
+        status: loggedUser.status,
+        validUntil: loggedUser.validUntil,
+        streakDays: loggedUser.streakDays,
+        bookmarks: loggedUser.bookmarks
+      });
+
       if (dbUser) {
-        const finalUser = { ...loggedUser, id: dbUser.id };
+        const finalUser = { ...loggedUser, id: dbUser.id || (dbUser as any)._id };
         saveUserSession(finalUser, rememberMe);
         setUsersList(prev => {
           const others = prev.filter(u => u.email.toLowerCase() !== emailClean);
           return [finalUser, ...others];
         });
+        console.log('[Auth] User successfully stored in MongoDB Atlas:', finalUser);
       }
-    }).catch((err) => {
+    } catch (err) {
       console.warn('Background MongoDB user sync error:', err);
-    });
+    }
   };
 
   const loginWithEmail = async (creds: LoginCredentials, rememberMe: boolean = true): Promise<boolean> => {
@@ -692,26 +695,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('success', 'Login Berhasil', `Selamat datang kembali, ${loggedUser.name}! Role: ${loggedUser.role}`);
 
     // SYNC USER TO MONGODB DATABASE
-    api.syncUser({
-      name: loggedUser.name,
-      email: loggedUser.email,
-      avatar: loggedUser.avatar,
-      role: loggedUser.role,
-      status: loggedUser.status,
-      validUntil: loggedUser.validUntil,
-      streakDays: loggedUser.streakDays
-    }).then((dbUser) => {
+    try {
+      const dbUser = await api.syncUser({
+        name: loggedUser.name,
+        email: loggedUser.email,
+        avatar: loggedUser.avatar,
+        role: loggedUser.role,
+        status: loggedUser.status,
+        validUntil: loggedUser.validUntil,
+        streakDays: loggedUser.streakDays
+      });
       if (dbUser) {
-        const finalUser = { ...loggedUser, id: dbUser.id };
+        const finalUser = { ...loggedUser, id: dbUser.id || (dbUser as any)._id };
         saveUserSession(finalUser, shouldRemember);
         setUsersList(prev => {
           const others = prev.filter(u => u.email.toLowerCase() !== emailClean);
           return [finalUser, ...others];
         });
       }
-    }).catch((err) => {
+    } catch (err) {
       console.warn('Background MongoDB user sync error:', err);
-    });
+    }
 
     return true;
   };
@@ -732,7 +736,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       savedPrompts: 0,
       totalDownloads: 0,
       streakDays: 1,
-      status: 'Aktif'
+      status: 'Active'
     };
 
     setUsersList(prev => [newUser, ...prev]);
@@ -742,26 +746,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('success', 'Registrasi Berhasil', `Akun ${newUser.email} terdaftar sebagai ${newUser.role}.`);
 
     // SYNC NEW REGISTERED USER TO MONGODB DATABASE
-    api.syncUser({
-      name: newUser.name,
-      email: newUser.email,
-      avatar: newUser.avatar,
-      role: newUser.role,
-      status: newUser.status,
-      validUntil: newUser.validUntil,
-      streakDays: newUser.streakDays
-    }).then((dbUser) => {
+    try {
+      const dbUser = await api.syncUser({
+        name: newUser.name,
+        email: newUser.email,
+        avatar: newUser.avatar,
+        role: newUser.role,
+        status: newUser.status,
+        validUntil: newUser.validUntil,
+        streakDays: newUser.streakDays
+      });
       if (dbUser) {
-        const finalUser = { ...newUser, id: dbUser.id };
+        const finalUser = { ...newUser, id: dbUser.id || (dbUser as any)._id };
         saveUserSession(finalUser, shouldRemember);
         setUsersList(prev => {
           const others = prev.filter(u => u.email.toLowerCase() !== emailClean);
           return [finalUser, ...others];
         });
       }
-    }).catch((err) => {
+    } catch (err) {
       console.warn('Background MongoDB user sync error:', err);
-    });
+    }
 
     return true;
   };

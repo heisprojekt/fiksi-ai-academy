@@ -1,17 +1,20 @@
-import { defineConfig } from 'vite';
+import { defineConfig, Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import app from './src/server/index';
+
+function expressPlugin(): Plugin {
+  return {
+    name: 'express-backend',
+    configureServer(server) {
+      server.middlewares.use(app);
+    }
+  };
+}
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), expressPlugin()],
   server: {
     port: 5174,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-        secure: false,
-      }
-    }
   },
   build: {
     chunkSizeWarningLimit: 1500,

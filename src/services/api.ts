@@ -156,7 +156,7 @@ export const api = {
     }
   },
 
-  // USERS
+  // USERS & AUTH
   async getUsers(): Promise<UserProfile[] | null> {
     try {
       const res = await fetch(`${API_BASE}/users`);
@@ -175,10 +175,41 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user)
       });
-      if (!res.ok) throw new Error('Failed to sync user');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `HTTP error! status: ${res.status}`);
+      }
+      const savedUser = await res.json();
+      console.log('✅ User successfully synced to MongoDB Atlas:', savedUser.email);
+      return savedUser;
+    } catch (e) {
+      console.warn('API Sync user to MongoDB Atlas failed:', e);
+      return null;
+    }
+  },
+
+  async googleAuth(payload: { email: string; name?: string; avatar?: string }): Promise<{ success: boolean; user: UserProfile; isNew: boolean } | null> {
+    try {
+      const res = await fetch(`${API_BASE}/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`Google Auth HTTP error: ${res.status}`);
       return await res.json();
     } catch (e) {
-      console.warn('API Sync user failed:', e);
+      console.warn('API Google Auth failed:', e);
+      return null;
+    }
+  },
+
+  async getDbStatus(): Promise<{ status: string; database: string; counts?: { users: number; prompts: number; courses: number } } | null> {
+    try {
+      const res = await fetch(`${API_BASE}/db-status`);
+      if (!res.ok) throw new Error(`DB Status HTTP error: ${res.status}`);
+      return await res.json();
+    } catch (e) {
+      console.warn('API DB Status check failed:', e);
       return null;
     }
   },
