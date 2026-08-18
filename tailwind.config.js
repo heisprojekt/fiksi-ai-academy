@@ -18,23 +18,21 @@ export default {
           DEFAULT: '#13151D',
           hover: '#181B26',
           border: 'rgba(255, 255, 255, 0.08)',
-          highlight: 'rgba(255, 77, 0, 0.15)'
+          highlight: 'rgba(6, 182, 212, 0.15)'
         },
         accent: {
-          DEFAULT: '#FF4D00',
-          hover: '#FF5F1A',
-          light: '#FF7D40',
-          soft: '#FFD9C7',
-          dark: '#D93B00',
-          orange: '#FF4D00',
-          amber: '#FF8800',
-          ember: '#FF3700',
-          flame: '#FF5500',
-          purple: '#FF4D00',
-          cyan: '#FF7733',
-          blue: '#FF4D00',
-          pink: '#FF6036',
-          electric: '#FF4D00'
+          DEFAULT: '#06B6D4',
+          hover: '#22D3EE',
+          light: '#67E8F9',
+          soft: '#CFFAFE',
+          dark: '#0891B2',
+          cyan: '#06B6D4',
+          blue: '#3B82F6',
+          purple: '#8B5CF6',
+          violet: '#7C3AED',
+          pink: '#EC4899',
+          magenta: '#E879F9',
+          electric: '#06B6D4'
         }
       },
       fontFamily: {
@@ -46,12 +44,12 @@ export default {
         '4xl': '32px'
       },
       backgroundImage: {
-        'gradient-accent': 'linear-gradient(135deg, #FF5500 0%, #E63600 100%)',
-        'gradient-ember': 'linear-gradient(135deg, #FF6600 0%, #FF3700 50%, #CC2200 100%)',
-        'gradient-glow': 'radial-gradient(circle at 50% 0%, rgba(255, 77, 0, 0.22) 0%, transparent 70%)',
+        'gradient-accent': 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #8B5CF6 100%)',
+        'gradient-fiksi': 'linear-gradient(135deg, #22D3EE 0%, #3B82F6 40%, #8B5CF6 75%, #EC4899 100%)',
+        'gradient-glow': 'radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.22) 0%, rgba(139, 92, 246, 0.12) 50%, transparent 70%)',
         'gradient-card': 'linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%)',
-        'gradient-hero': 'radial-gradient(circle at 50% 0%, rgba(255, 77, 0, 0.25) 0%, rgba(11, 12, 16, 0) 70%)',
-        'gradient-corner': 'radial-gradient(circle at 100% 0%, rgba(255, 77, 0, 0.15) 0%, transparent 50%)',
+        'gradient-hero': 'radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.20) 0%, rgba(124, 58, 237, 0.12) 50%, rgba(11, 12, 16, 0) 75%)',
+        'gradient-corner': 'radial-gradient(circle at 100% 0%, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

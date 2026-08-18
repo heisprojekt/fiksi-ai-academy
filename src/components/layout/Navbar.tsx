@@ -53,82 +53,54 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/[0.08] bg-[#0B0C10]/95 backdrop-blur-2xl transition-all">
-      {/* Top Studio Control Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
-        {/* Left Section: macOS Traffic Lights + Brand Logo */}
-        <div className="flex items-center gap-4 shrink-0">
-          {/* macOS Traffic Lights Dots */}
-          <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/[0.03] border border-white/[0.05]">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] shadow-sm hover:opacity-80 transition-opacity" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] shadow-sm hover:opacity-80 transition-opacity" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] shadow-sm hover:opacity-80 transition-opacity" />
-          </div>
-
+        {/* Left Section: Brand Logo & Breadcrumb */}
+        <div className="flex items-center gap-3 shrink-0">
           <Logo size="md" onClick={() => navigateTo('landing')} />
 
           {/* Quick Route Breadcrumb */}
-          <div className="hidden xl:flex items-center gap-2 pl-2 border-l border-white/10 text-[11px] font-mono text-slate-400">
+          <div className="hidden md:flex items-center gap-1.5 pl-3 border-l border-white/10 text-[11px] font-mono text-slate-400">
             <span className="text-slate-500">/app</span>
             <span className="text-slate-600">/</span>
-            <span className="text-orange-400 font-bold uppercase">{currentView}</span>
+            <span className="text-cyan-400 font-bold uppercase">{currentView}</span>
           </div>
         </div>
 
-        {/* Center: Sleek Studio Route Tabs (Desktop) */}
-        <div className="hidden lg:flex items-center gap-1 p-1 rounded-2xl bg-[#13151D] border border-white/[0.08] shadow-inner">
-          {navTabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = currentView === tab.id || (tab.id === 'courses' && currentView === 'course-detail');
-            return (
-              <button
-                key={tab.id}
-                onClick={() => navigateTo(tab.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  isActive
-                    ? 'bg-[#FF4D00] text-white shadow-md shadow-orange-500/25'
-                    : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Right Section: Search + Admin Powers + Launch / Upgrade Button */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          
-          {/* Quick Search Button */}
+        {/* Center: Prominent Search Bar ("di header cukup pencarian saja") */}
+        <div className="flex-1 max-w-2xl mx-auto">
           <button
             type="button"
             onClick={() => setIsSearchModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#13151D] border border-white/[0.08] text-slate-400 hover:border-orange-500/40 hover:text-slate-200 transition-all text-xs group"
-            title="Cari masterclass atau prompt (⌘K)"
+            className="w-full flex items-center justify-between px-4 py-2 rounded-2xl bg-[#13151D] border border-white/[0.08] hover:border-cyan-500/50 hover:bg-[#181B26] text-slate-400 hover:text-slate-200 transition-all text-xs group shadow-inner"
+            title="Cari masterclass, formula prompt, AI tools... (Tekan ⌘K)"
           >
-            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-orange-400 transition-colors" />
-            <span className="hidden md:inline text-[11px]">Cari...</span>
-            <kbd className="hidden md:inline-flex px-1.5 py-0.5 text-[9px] font-mono bg-white/5 text-slate-400 rounded border border-white/10">
-              ⌘K
+            <div className="flex items-center gap-2.5 truncate">
+              <Search className="w-4 h-4 text-cyan-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <span className="text-slate-400 text-xs truncate">Cari formula prompt, tools AI, masterclass...</span>
+            </div>
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-mono font-bold bg-white/5 text-cyan-400 rounded-lg border border-white/10 shrink-0">
+              <span>⌘</span><span>K</span>
             </kbd>
           </button>
+        </div>
 
-          {/* ========================================================================= */}
-          {/* ADMIN SIMULATION / CMS CONTROLS                                           */}
-          {/* ========================================================================= */}
+        {/* Right Section: Admin Controls + Upgrade / Profile */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          
+          {/* Admin Simulation / CMS Controls */}
           {isAdminAccount && (
             <div className="flex items-center gap-1.5">
               {/* Role Simulator Dropdown */}
-              <div className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/25 text-xs shadow-sm">
-                <Crown className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+              <div className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/25 text-xs shadow-sm">
+                <Crown className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                 <select
                   value={userRole}
                   onChange={(e) => setUserRole(e.target.value as UserRole)}
-                  className="bg-transparent text-orange-300 font-bold focus:outline-none cursor-pointer text-xs"
+                  className="bg-transparent text-purple-300 font-bold focus:outline-none cursor-pointer text-xs"
                 >
                   <option value="Admin" className="bg-[#13151D] text-white">👑 Admin Mode</option>
-                  <option value="Pro Member" className="bg-[#13151D] text-orange-300">⚡ Simulasi Pro</option>
+                  <option value="Pro Member" className="bg-[#13151D] text-cyan-300">⚡ Simulasi Pro</option>
                   <option value="Free Member" className="bg-[#13151D] text-slate-300">🔒 Simulasi Free</option>
                 </select>
               </div>
@@ -139,12 +111,12 @@ export const Navbar: React.FC = () => {
                   onClick={() => navigateTo('admin')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     currentView === 'admin'
-                      ? 'bg-[#FF4D00] text-white shadow-md shadow-orange-500/30'
-                      : 'bg-orange-500/15 text-orange-400 border border-orange-500/30 hover:bg-orange-500/25'
+                      ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-md shadow-cyan-500/30'
+                      : 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/25'
                   }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Admin CMS</span>
+                  <span className="hidden sm:inline">CMS</span>
                 </button>
               )}
             </div>
@@ -154,16 +126,14 @@ export const Navbar: React.FC = () => {
           {!isAdminAccount && userRole === 'Free Member' && (
             <button
               onClick={() => setIsUpgradeModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#FF5500] to-[#E63600] hover:from-[#FF661A] hover:to-[#FF3D14] text-white text-xs font-black shadow-lg shadow-orange-500/25 transition-all active:scale-95 group"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white text-xs font-black shadow-lg shadow-cyan-500/25 transition-all active:scale-95 group"
             >
-              <Flame className="w-3.5 h-3.5 fill-current text-amber-200" />
+              <Zap className="w-3.5 h-3.5 fill-current text-cyan-200" />
               <span>Upgrade Pro</span>
             </button>
           )}
 
-          {/* ========================================================================= */}
-          {/* GUEST VS LOGGED IN MEMBER CONTROLS                                        */}
-          {/* ========================================================================= */}
+          {/* Guest vs Logged In Member Controls */}
           {userRole === 'Guest' || !currentUser ? (
             <div className="flex items-center gap-2">
               <button
@@ -180,7 +150,7 @@ export const Navbar: React.FC = () => {
                   setAuthMode('register');
                   setIsAuthModalOpen(true);
                 }}
-                className="px-3.5 py-1.5 rounded-xl bg-[#FF4D00] hover:bg-[#FF5F1A] text-white text-xs font-black shadow-md shadow-orange-500/25 transition-all"
+                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white text-xs font-black shadow-lg shadow-cyan-500/25 transition-all"
               >
                 Daftar
               </button>

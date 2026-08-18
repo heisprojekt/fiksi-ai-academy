@@ -77,24 +77,24 @@ export const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B0C10] text-slate-100 selection:bg-orange-500/30 selection:text-orange-200 relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#0B0C10] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-x-hidden">
       
       {/* Studio Canvas Ambient Glows & Grid */}
       <div className="fixed inset-0 canvas-grid pointer-events-none opacity-40 -z-10" />
-      <div className="fixed top-0 right-0 w-[600px] h-[500px] bg-gradient-to-b from-orange-500/10 via-orange-600/5 to-transparent blur-[120px] pointer-events-none -z-10" />
-      <div className="fixed bottom-0 left-0 w-[500px] h-[400px] bg-gradient-to-t from-orange-500/5 to-transparent blur-[120px] pointer-events-none -z-10" />
+      <div className="fixed top-0 right-0 w-[650px] h-[550px] bg-gradient-to-b from-cyan-500/10 via-blue-600/5 to-transparent blur-[130px] pointer-events-none -z-10" />
+      <div className="fixed bottom-0 left-0 w-[550px] h-[450px] bg-gradient-to-t from-purple-600/10 via-pink-600/5 to-transparent blur-[130px] pointer-events-none -z-10" />
 
       {/* Sticky Top Navbar */}
       <Navbar />
 
       {/* Main Body */}
       {isDashboardLayout && currentView !== 'landing' ? (
-        <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex">
-          {/* Member Dashboard Sidebar */}
+        <div className="flex-1 w-full flex min-h-[calc(100vh-64px)]">
+          {/* Member Dashboard Sidebar - Docked flush to the far left */}
           <Sidebar />
           
           {/* Main Workspace Area */}
-          <main className="flex-1 min-w-0 py-5">
+          <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-12 py-6 max-w-7xl mx-auto w-full">
             <Suspense fallback={<ViewLoadingFallback />}>
               <div key={currentView} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                 {renderCurrentView()}

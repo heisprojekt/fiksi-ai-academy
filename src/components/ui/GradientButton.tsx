@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface GradientButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant?: 'gradient' | 'secondary' | 'ghost' | 'outline' | 'orange';
+  variant?: 'gradient' | 'secondary' | 'ghost' | 'outline' | 'cyan' | 'purple';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   icon?: React.ReactNode;
@@ -25,18 +25,19 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
   };
 
   const variantClasses = {
-    gradient: 'bg-gradient-to-r from-[#FF5500] to-[#E63600] text-white shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:from-[#FF661A] hover:to-[#FF3D14] active:scale-[0.98]',
-    orange: 'bg-[#FF4D00] text-white shadow-lg shadow-orange-500/30 hover:bg-[#FF5D14] active:scale-[0.98]',
+    gradient: 'bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:from-cyan-400 hover:to-purple-500 active:scale-[0.98]',
+    cyan: 'bg-[#06B6D4] text-white shadow-lg shadow-cyan-500/30 hover:bg-cyan-400 active:scale-[0.98]',
+    purple: 'bg-[#7C3AED] text-white shadow-lg shadow-purple-500/30 hover:bg-purple-600 active:scale-[0.98]',
     secondary: 'bg-white/[0.06] text-slate-200 hover:text-white hover:bg-white/[0.1] border border-white/10 hover:border-white/20 active:scale-[0.98]',
     ghost: 'bg-transparent text-slate-300 hover:text-white hover:bg-white/[0.05]',
-    outline: 'bg-transparent text-orange-400 border border-orange-500/40 hover:border-orange-500 hover:bg-orange-500/10'
+    outline: 'bg-transparent text-cyan-300 border border-cyan-500/40 hover:border-cyan-400 hover:bg-cyan-500/10'
   };
 
   return (
     <button
       className={twMerge(
         clsx(
-          'inline-flex items-center justify-center transition-all duration-200 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-orange-500/40 disabled:opacity-50 disabled:pointer-events-none',
+          'inline-flex items-center justify-center transition-all duration-200 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-cyan-500/40 disabled:opacity-50 disabled:pointer-events-none',
           sizeClasses[size],
           variantClasses[variant],
           className

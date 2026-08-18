@@ -179,7 +179,7 @@ export const LandingView: React.FC = () => {
                     navigateTo('dashboard');
                   }
                 }}
-                className="px-6 py-3 rounded-2xl bg-[#FF4D00] hover:bg-[#FF5E19] text-white font-extrabold text-xs tracking-wider shadow-lg shadow-orange-500/30 flex items-center gap-2 transition-all active:scale-95"
+                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-extrabold text-xs tracking-wider shadow-lg shadow-cyan-500/30 flex items-center gap-2 transition-all active:scale-95"
               >
                 <span>Mulai Eksplorasi</span>
                 <ArrowRight className="w-4 h-4" />
@@ -187,9 +187,9 @@ export const LandingView: React.FC = () => {
 
               <button
                 onClick={() => navigateTo('course-detail', 'omni-flash-masterclass')}
-                className="px-5 py-3 rounded-2xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 hover:border-white/20 text-slate-200 font-bold text-xs flex items-center gap-2 transition-all"
+                className="px-5 py-3 rounded-2xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 hover:border-cyan-500/40 text-slate-200 font-bold text-xs flex items-center gap-2 transition-all"
               >
-                <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                <Play className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400" />
                 <span>Lihat Masterclass</span>
               </button>
             </motion.div>
@@ -202,36 +202,36 @@ export const LandingView: React.FC = () => {
               className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-white/[0.08] w-full text-slate-300 text-xs font-semibold"
             >
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                 <span>48+ Modul</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                 <span>500+ Prompt</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                 <span>Update Rutin</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                 <span>Akses Selamanya</span>
               </div>
             </motion.div>
 
           </div>
 
-          {/* Right Forge macOS Studio Canvas Mockup (Matching Reference Image) */}
+          {/* Right Resource & Prompt Library Studio Canvas Mockup */}
           <motion.div
             initial={{ opacity: 0, scale: 0.94, y: 25 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="lg:col-span-7 relative z-10"
           >
-            <div className="relative rounded-3xl p-1 bg-gradient-to-b from-orange-500/30 via-white/[0.08] to-transparent shadow-[0_20px_80px_-15px_rgba(255,77,0,0.25)]">
+            <div className="relative rounded-3xl p-1 bg-gradient-to-b from-cyan-500/30 via-purple-500/15 to-transparent shadow-[0_20px_80px_-15px_rgba(6,182,212,0.25)]">
               <div className="rounded-[22px] bg-[#0E1017] flex flex-col overflow-hidden border border-white/[0.08] text-slate-100">
                 
-                {/* macOS Studio Window Chrome Header */}
+                {/* macOS Window Chrome Header */}
                 <div className="flex items-center justify-between px-4 py-3 bg-[#13151D] border-b border-white/[0.08]">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5">
@@ -240,66 +240,52 @@ export const LandingView: React.FC = () => {
                       <span className="w-3 h-3 rounded-full bg-[#27C93F]" />
                     </div>
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0B0C10] border border-white/[0.06] text-[11px] font-mono text-slate-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                      <span>fiksi-studio.v2</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                      <span>fiksi-resource-library.v2</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-[11px] text-slate-400 hidden sm:inline font-mono">Desktop • 1920x1080</span>
+                    <span className="text-[11px] text-slate-400 hidden sm:inline font-mono">500+ Curated Prompts</span>
                     <button
-                      onClick={() => navigateTo('courses')}
-                      className="px-3 py-1 rounded-lg bg-[#FF4D00] hover:bg-[#FF5E19] text-white font-black text-xs shadow-md shadow-orange-500/25"
+                      onClick={() => navigateTo('prompts')}
+                      className="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black text-xs shadow-md shadow-cyan-500/25 transition-all"
                     >
-                      Launch
+                      Buka Resource
                     </button>
                   </div>
                 </div>
 
-                {/* Studio Canvas Area (Reference Image Layout) */}
-                <div className="p-5 sm:p-6 bg-[#0B0C10] canvas-grid relative flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden">
+                {/* Studio Resource Screenshot Container */}
+                <div className="relative aspect-[16/10] bg-[#0B0C10] overflow-hidden group cursor-pointer" onClick={() => navigateTo('prompts')}>
+                  <img
+                    src="/resource-preview.jpg"
+                    alt="FIKSI AI Resource & Prompt Library Studio"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
                   
-                  {/* Left Canvas Content */}
-                  <div className="flex-1 flex flex-col items-start gap-4 z-10">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-orange-400 font-bold tracking-wider uppercase">FIKSI STUDIO CANVAS</span>
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-orange-500/15 text-orange-400 border border-orange-500/30">PRO ENGINE</span>
+                  {/* Subtle Top-to-Bottom Lighting Vignette */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C10] via-transparent to-transparent opacity-60 pointer-events-none" />
+
+                  {/* Floating Action Badge */}
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-3 rounded-2xl bg-[#0B0C10]/85 backdrop-blur-md border border-white/10 z-10 shadow-xl">
+                    <div className="flex items-center gap-3">
+                      <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-black text-white">Direktori Resource & Formula Prompt</span>
+                        <span className="text-[10px] text-slate-400">Midjourney v6 • Flux.1 • Kling AI • UGC Ads</span>
+                      </div>
                     </div>
-
-                    <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-                      Design, build, ship, repeat.
-                    </h3>
-
-                    <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-                      Kreasikan visual AI, animasi sinematik, dan materi iklan otomatis. Terhubung langsung dengan MongoDB Atlas dan model AI generasi terbaru.
-                    </p>
-
-                    <div className="flex items-center gap-2.5 pt-1">
-                      <button
-                        onClick={() => navigateTo('prompts')}
-                        className="px-4 py-2 rounded-xl bg-[#FF4D00] hover:bg-[#FF5F1A] text-white text-xs font-black shadow-md shadow-orange-500/25 transition-all"
-                      >
-                        Explore Prompts
-                      </button>
-                      <button
-                        onClick={() => navigateTo('assets')}
-                        className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-slate-300 text-xs font-bold transition-all"
-                      >
-                        Download Assets
-                      </button>
-                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateTo('prompts');
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition-colors"
+                    >
+                      Jelajahi Sekarang →
+                    </button>
                   </div>
-
-                  {/* Right Glowing 3D Ember Orb Visual (from Generated Asset) */}
-                  <div className="w-48 sm:w-56 h-48 sm:h-56 shrink-0 relative flex items-center justify-center group">
-                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-orange-500/20 to-transparent blur-2xl group-hover:scale-110 transition-transform duration-500" />
-                    <img
-                      src="/ember-orb.jpg"
-                      alt="FIKSI AI 3D Ember Orb"
-                      className="w-full h-full object-cover rounded-2xl border border-orange-500/40 shadow-[0_0_35px_rgba(255,77,0,0.3)] relative z-10 transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-
                 </div>
 
                 {/* Bottom Canvas Status Bar */}
@@ -307,7 +293,7 @@ export const LandingView: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                     <span className="text-slate-300 font-semibold">deployed:</span>
-                    <span className="text-orange-400 font-bold">fiksiai.my.id</span>
+                    <span className="text-cyan-400 font-bold">fiksiai.my.id</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="hidden sm:inline text-slate-500">MongoDB Atlas: Connected</span>
