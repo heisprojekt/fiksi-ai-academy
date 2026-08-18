@@ -3,9 +3,71 @@ import { PromptPack } from '../types';
 
 export const NOTION_PROMPTS: PromptPack[] = [
   {
+    "id": "notion-fiksi-0-32",
+    "title": "KARAKTER 32",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1KkX9S-Uaj5jrzvW5QtBg7WFtLmJM5FKv",
+    "category": "Karakter AI",
+    "subCategory": "Cewek",
+    "aiModel": "Omni Flash",
+    "usageCount": 9340,
+    "difficulty": "Sedang",
+    "aspectRatio": "4:5",
+    "tags": [
+      "Karakter AI",
+      "Cewek",
+      "Indonesian Portrait"
+    ],
+    "promptText": "Photorealistic studio portrait, Indonesian woman in studio setting. Natural warm tan complexion with subtle highlight, glowing dewy finish, deep dark brown eyes with soft catchlights, well-defined brows, natural rosy lips, black glossy wavy hair. Warm approachable smile. Elegant modern studio casual wear. Soft studio lighting with warm fill. Shot on 85mm f/1.4 lens, sharp focus on eyes, micro skin pore details, subsurface scattering, authentic Indonesian beauty aesthetic.",
+    "negativePrompt": "blurry, deformed hands, plastic skin, bad anatomy, low quality, oversaturated, noise, artifacts",
+    "cameraSettings": "Sony A7R V, 85mm f/1.4 GM lens, natural depth of field",
+    "lighting": "Professional Studio Soft Lighting + Rim Light",
+    "motion": "Subtle Natural Breathing Movement",
+    "environment": "Authentic Indonesian Interior & Studio Setting",
+    "tips": [
+      "Deskripsi: Potret wanita Indonesia studio portrait dengan pencahayaan hangat alami.",
+      "Sub-Kategori: Cewek",
+      "Gunakan seed yang sama untuk mempertahankan konsistensi visual.",
+      "Rekomendasi Aspect Ratio: 4:5"
+    ],
+    "author": "FIKSI AI",
+    "isPremium": false,
+    "isPublished": true
+  },
+  {
+    "id": "notion-fiksi-0-31",
+    "title": "KARAKTER 31",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1YbJNqfgHg6S2sb_TgFUSmMahj6tnZSES",
+    "category": "Karakter AI",
+    "subCategory": "Cewek",
+    "aiModel": "Flux.1 Pro",
+    "usageCount": 8120,
+    "difficulty": "Sedang",
+    "aspectRatio": "4:5",
+    "tags": [
+      "Karakter AI",
+      "Cewek",
+      "Fashion"
+    ],
+    "promptText": "Photorealistic portrait, Indonesian creative woman, Studio Fashion portrait aesthetic. Symmetrical elegant face, glowing warm medium skin with natural finish, dark expressive almond eyes with soft eyeliner, natural brows, soft lips in peach gloss, sleek dark hair parted in the middle. Confident artistic expression. Minimalist contemporary outfit. Pure neutral studio background with soft directional key light. Shot on Sony A7R V with 85mm f/1.4 lens, shallow depth of field, ultra-high realistic skin texture with visible micro details, no plastic skin, film grain texture.",
+    "negativePrompt": "blurry, deformed hands, plastic skin, bad anatomy, low quality, oversaturated, noise, artifacts",
+    "cameraSettings": "Sony A7R V, 85mm f/1.4 GM lens, natural depth of field",
+    "lighting": "Professional Studio Soft Lighting + Rim Light",
+    "motion": "Subtle Natural Breathing Movement",
+    "environment": "Authentic Indonesian Interior & Studio Setting",
+    "tips": [
+      "Deskripsi: Potret wanita Indonesia kreatif dalam gaya studio fashion portrait elegan.",
+      "Sub-Kategori: Cewek",
+      "Gunakan seed yang sama untuk mempertahankan konsistensi visual.",
+      "Rekomendasi Aspect Ratio: 4:5"
+    ],
+    "author": "FIKSI AI",
+    "isPremium": true,
+    "isPublished": true
+  },
+  {
     "id": "notion-fiksi-0-1",
     "title": "KARAKTER 30",
-    "thumbnail": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1W2UvtHWQ0kzDLVeasHtiHaKe2rdoQGLL",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -35,7 +97,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-2",
     "title": "KARAKTER 29",
-    "thumbnail": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1ASqoZSQvqQNOH9TMXnr1kgnSgAzguFHM",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -65,7 +127,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-3",
     "title": "KARAKTER 28",
-    "thumbnail": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1qHFY41WIstNGXZH15SX8xifqFprS0zwE",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -95,7 +157,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-4",
     "title": "KARAKTER 27",
-    "thumbnail": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1KYX6FX7aUg5kyUrYBt6Y58-C9PdwcHPc",
     "category": "Karakter AI",
     "subCategory": "Cowok",
     "aiModel": "Flux.1 Pro",
@@ -125,7 +187,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-5",
     "title": "KARAKTER 26",
-    "thumbnail": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1gvCOEpzsz_hD7SF3Ogu9bPKT6r2v8_p9",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -155,7 +217,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-6",
     "title": "KARAKTER 25",
-    "thumbnail": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1ju3V1kTwlOPzCQro09bqlOX3NX5v8SKn",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -185,7 +247,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-7",
     "title": "KARAKTER 24",
-    "thumbnail": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1x67n1CGkqsqu06xhYs6O9tJm0JXOJohz",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -215,7 +277,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-8",
     "title": "KARAKTER 23",
-    "thumbnail": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1JrSabZrYfanrJe2-nbOsjYXSvqZ0BZXR",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -245,7 +307,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-9",
     "title": "KARAKTER 22",
-    "thumbnail": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/190iGh65CaDjS06OPWhjRwc7dfQw59lw9",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -275,7 +337,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-10",
     "title": "KARAKTER 21",
-    "thumbnail": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1PdD3-COJeHf1h7T9VtC4GjgG-fBDG2fV",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -305,7 +367,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-11",
     "title": "KARAKTER 20",
-    "thumbnail": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/18_O3K2wPtx3AR0g-TpNzzK92AqJ6Dgkr",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -335,7 +397,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-12",
     "title": "KARAKTER 19",
-    "thumbnail": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1eWLaqiGP9wNhlZs9dZqUqPYHwFn3DbdU",
     "category": "Karakter AI",
     "subCategory": "Cowok",
     "aiModel": "Flux.1 Pro",
@@ -365,7 +427,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-13",
     "title": "KARAKTER 18",
-    "thumbnail": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1svgPXoXPBfIf3_84rZ63WQCc_lc9YApO",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -395,7 +457,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-14",
     "title": "KARAKTER 17",
-    "thumbnail": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1-6Z0g6mrUXeeV1G7OYDrHI03RBZQuROE",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -425,7 +487,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-15",
     "title": "KARAKTER 16",
-    "thumbnail": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1Mnhqv8MvuWr6spb_TiyQxawqf23tr5lG",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -455,7 +517,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-16",
     "title": "KARAKTER 15",
-    "thumbnail": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1WZLwnEKhla0QuV-dd4dXvBlFeHlvcZ0G",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -485,7 +547,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-17",
     "title": "KARAKTER 14",
-    "thumbnail": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1NCnrtGOGlxJQgdn3v8QS4Y58qZJD-dz0",
     "category": "Karakter AI",
     "subCategory": "Cowok",
     "aiModel": "Omni Flash",
@@ -515,7 +577,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-18",
     "title": "KARAKTER 13",
-    "thumbnail": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1S6rkkAezwh3Stf4hlEs3ECpBFcXR0pKx",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -545,7 +607,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-19",
     "title": "KARAKTER 12",
-    "thumbnail": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1ngrqJ7X3CCsy6j5cgxFaeIIPetLk0-g_",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -575,7 +637,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-20",
     "title": "KARAKTER 11",
-    "thumbnail": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1BjlAgNkF37j5YdxZB6VgYw6VqOW1z3Ns",
     "category": "Karakter AI",
     "subCategory": "Cowok",
     "aiModel": "Flux.1 Pro",
@@ -605,7 +667,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-21",
     "title": "KARAKTER 10",
-    "thumbnail": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1P7GEn6gPYsWGrKogyjvrnqrdC-lH-9LE",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -635,7 +697,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-22",
     "title": "KARAKTER 9",
-    "thumbnail": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1cvNTPEhd0nYpsj24Bk9OVSkoHZa4mxj-",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -665,7 +727,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-23",
     "title": "KARAKTER 8",
-    "thumbnail": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/14yRAcYbVaPgzBUtadI8o03qWotBnDlH3",
     "category": "Karakter AI",
     "subCategory": "Cowok",
     "aiModel": "Omni Flash",
@@ -695,7 +757,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-24",
     "title": "KARAKTER 7",
-    "thumbnail": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1Jer-S8xcWKhUr1mkUog5mNYrjSUXkSwz",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -725,7 +787,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-25",
     "title": "KARAKTER 6",
-    "thumbnail": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/116OU3dYdQEjujMaphs9RIf3UySKErP6c",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -755,7 +817,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-26",
     "title": "KARAKTER 5",
-    "thumbnail": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/10snbAFPK3KH-e3EvNd7ZgSxRt0Tr8t6x",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",
@@ -785,7 +847,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-27",
     "title": "KARAKTER 4",
-    "thumbnail": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1rISZzzp6MGyRXuZTZX7k1uaBaOwvcUkM",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -815,7 +877,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-28",
     "title": "KARAKTER 3",
-    "thumbnail": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1RKPc0IrJt7-f-tzR_QPrpekGgvpJQf5B",
     "category": "Karakter AI",
     "subCategory": "Cowok",
     "aiModel": "Flux.1 Pro",
@@ -845,7 +907,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-29",
     "title": "KARAKTER 2",
-    "thumbnail": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1maHjvvHfhawOuxqot_OuNgUZNLFw3og7",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Omni Flash",
@@ -875,7 +937,7 @@ export const NOTION_PROMPTS: PromptPack[] = [
   {
     "id": "notion-fiksi-0-30",
     "title": "KARAKTER 1",
-    "thumbnail": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail": "https://lh3.googleusercontent.com/d/1PZdRwGNzmXkpxvtrO6Bj2Jl54jXZ5Tl0",
     "category": "Karakter AI",
     "subCategory": "Cewek",
     "aiModel": "Flux.1 Pro",

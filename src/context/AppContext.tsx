@@ -284,19 +284,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
-  // Load persistent prompts or fallback to MOCK_PROMPTS
+  // Load persistent prompts or fallback to NOTION_PROMPTS & MOCK_PROMPTS
   const [prompts, setPrompts] = useState<PromptPack[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.PROMPTS);
       if (saved) {
         const parsed: PromptPack[] = JSON.parse(saved);
-        const existingIds = new Set(parsed.map(p => p.id));
+        // Ensure character thumbnails from NOTION_PROMPTS take precedence
+        const updatedParsed = parsed.map(p => {
+          const matchNotion = NOTION_PROMPTS.find(np => np.id === p.id || (np.title && np.title.toUpperCase() === p.title.toUpperCase()));
+          if (matchNotion && matchNotion.thumbnail.includes('googleusercontent.com')) {
+            return { ...p, thumbnail: matchNotion.thumbnail };
+          }
+          return p;
+        });
+        const existingIds = new Set(updatedParsed.map(p => p.id));
+        const newFromNotion = NOTION_PROMPTS.filter(p => !existingIds.has(p.id));
         const newFromMock = MOCK_PROMPTS.filter(p => !existingIds.has(p.id));
-        return [...parsed, ...newFromMock];
+        return [...updatedParsed, ...newFromNotion, ...newFromMock];
       }
-      return MOCK_PROMPTS;
+      return [...NOTION_PROMPTS, ...MOCK_PROMPTS];
     } catch {
-      return MOCK_PROMPTS;
+      return [...NOTION_PROMPTS, ...MOCK_PROMPTS];
     }
   });
 
