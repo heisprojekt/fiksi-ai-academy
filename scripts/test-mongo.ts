@@ -53,6 +53,20 @@ async function main() {
   if (!okSrv) {
     await testDirect();
   }
+
+  console.log('\n--- Testing Prisma User Operations on MongoDB Atlas ---');
+  try {
+    const { PrismaClient } = await import('@prisma/client');
+    const prisma = new PrismaClient();
+    const userCount = await prisma.user.count();
+    console.log(`✅ Prisma connected! Total Users in DB: ${userCount}`);
+    
+    const users = await prisma.user.findMany({ take: 5, orderBy: { createdAt: 'desc' } });
+    console.log('Registered Members:', users.map(u => ({ id: u.id, name: u.name, email: u.email, role: u.role })));
+    await prisma.$disconnect();
+  } catch (err: any) {
+    console.error('Prisma test error:', err.message);
+  }
 }
 
 main();
