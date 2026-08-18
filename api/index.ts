@@ -365,14 +365,35 @@ router.post('/users', async (req: Request, res: Response) => {
     });
 
     if (existing) {
+      // Determine role: if already Pro Member or Admin in DB, NEVER downgrade to Free Member on login
+      let resolvedRole = existing.role;
+      if (isAdmin) {
+        resolvedRole = 'Admin';
+      } else if (role === 'Admin' || role === 'Pro Member') {
+        resolvedRole = role;
+      } else if (existing.role === 'Pro Member' || existing.role === 'Admin') {
+        resolvedRole = existing.role;
+      } else if (role) {
+        resolvedRole = role;
+      }
+
+      let resolvedValidUntil = existing.validUntil;
+      if (isAdmin) {
+        resolvedValidUntil = 'Lifetime VIP';
+      } else if (validUntil && validUntil !== 'Free Tier') {
+        resolvedValidUntil = validUntil;
+      } else if (existing.validUntil && existing.validUntil !== 'Free Tier') {
+        resolvedValidUntil = existing.validUntil;
+      }
+
       const updated = await prisma.user.update({
         where: { email: emailClean },
         data: {
           name: name || existing.name,
           avatar: avatar || existing.avatar,
-          role: isAdmin ? 'Admin' : (role || existing.role),
+          role: resolvedRole,
           status: status || existing.status || 'Active',
-          validUntil: isAdmin ? 'Lifetime VIP' : (validUntil || existing.validUntil),
+          validUntil: resolvedValidUntil,
           streakDays: streakDays !== undefined ? Number(streakDays) : existing.streakDays,
           bookmarks: bookmarks || existing.bookmarks,
           coursesCompleted: coursesCompleted !== undefined ? Number(coursesCompleted) : existing.coursesCompleted,
@@ -381,7 +402,7 @@ router.post('/users', async (req: Request, res: Response) => {
           updatedAt: new Date()
         }
       });
-      console.log(`[MongoDB Atlas] ✅ Updated existing user: ${emailClean} (Role: ${updated.role})`);
+      console.log(`[MongoDB Atlas] ✅ Synced user: ${emailClean} (Role: ${updated.role}, ValidUntil: ${updated.validUntil})`);
       return res.json(updated);
     } else {
       const fallbackName = emailClean.split('@')[0];

@@ -537,7 +537,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(paymentTransactions));
   }, [paymentTransactions]);
 
-  // Sync from MongoDB API on initial startup
+  // Sync from MongoDB API on initial startup & revalidate logged-in user
   useEffect(() => {
     const syncFromMongoDB = async () => {
       try {
@@ -554,14 +554,83 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (dbPrompts && dbPrompts.data && dbPrompts.data.length > 0) setPrompts(dbPrompts.data);
         if (dbAssets && dbAssets.length > 0) setAssets(dbAssets);
         if (dbTools && dbTools.length > 0) setExternalTools(dbTools);
-        if (dbUsers && dbUsers.length > 0) setUsersList(dbUsers);
         if (dbTrxs && dbTrxs.length > 0) setPaymentTransactions(dbTrxs);
+
+        if (dbUsers && dbUsers.length > 0) {
+          setUsersList(dbUsers);
+
+          // IMMEDIATELY RE-SYNC CURRENT LOGGED-IN USER FROM DATABASE
+          const savedSession = localStorage.getItem(STORAGE_KEYS.CURRENT_USER) || sessionStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+          if (savedSession) {
+            try {
+              const currentSaved = JSON.parse(savedSession);
+              if (currentSaved && currentSaved.email) {
+                const dbMatch = dbUsers.find(u => u.email.toLowerCase() === currentSaved.email.toLowerCase());
+                if (dbMatch) {
+                  const updatedCurrent: UserProfile = {
+                    ...currentSaved,
+                    id: dbMatch.id,
+                    role: dbMatch.role,
+                    validUntil: dbMatch.validUntil || currentSaved.validUntil,
+                    status: dbMatch.status || currentSaved.status || 'Active',
+                    name: dbMatch.name || currentSaved.name,
+                    avatar: dbMatch.avatar || currentSaved.avatar
+                  };
+                  setCurrentUser(updatedCurrent);
+                  if (localStorage.getItem(STORAGE_KEYS.CURRENT_USER)) {
+                    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updatedCurrent));
+                  } else if (sessionStorage.getItem(STORAGE_KEYS.CURRENT_USER)) {
+                    sessionStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updatedCurrent));
+                  }
+                  console.log(`[Auth Sync] ✅ Synced currentUser from MongoDB Atlas: ${updatedCurrent.email} (Role: ${updatedCurrent.role}, ValidUntil: ${updatedCurrent.validUntil})`);
+                }
+              }
+            } catch (err) {
+              console.warn('Failed parsing current user session:', err);
+            }
+          }
+        }
       } catch {
         // Fallback to local cache gracefully
       }
     };
     syncFromMongoDB();
   }, []);
+
+  // Listen for window focus to re-sync user tier live if upgraded by admin
+  useEffect(() => {
+    const onFocusSync = async () => {
+      if (!currentUser || !currentUser.email) return;
+      try {
+        const freshUsers = await api.getUsers();
+        if (freshUsers && freshUsers.length > 0) {
+          setUsersList(freshUsers);
+          const matched = freshUsers.find(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
+          if (matched && (matched.role !== currentUser.role || matched.validUntil !== currentUser.validUntil)) {
+            const updated: UserProfile = {
+              ...currentUser,
+              id: matched.id,
+              role: matched.role,
+              validUntil: matched.validUntil,
+              status: matched.status || currentUser.status
+            };
+            setCurrentUser(updated);
+            if (localStorage.getItem(STORAGE_KEYS.CURRENT_USER)) {
+              localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updated));
+            } else if (sessionStorage.getItem(STORAGE_KEYS.CURRENT_USER)) {
+              sessionStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updated));
+            }
+            showToast('info', 'Status Akun Diperbarui', `Status member kamu sekarang adalah ${matched.role} (${matched.validUntil}).`);
+          }
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    window.addEventListener('focus', onFocusSync);
+    return () => window.removeEventListener('focus', onFocusSync);
+  }, [currentUser]);
 
   const activeCourse = courses.find(c => c.id === activeCourseId || c.slug === activeCourseId) || courses[0] || MOCK_COURSES[0];
 
@@ -642,15 +711,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: loggedUser.name,
         email: loggedUser.email,
         avatar: loggedUser.avatar,
-        role: loggedUser.role,
+        role: isAdmin ? 'Admin' : (existing?.role || loggedUser.role),
         status: loggedUser.status,
-        validUntil: loggedUser.validUntil,
+        validUntil: isAdmin ? 'Lifetime VIP' : (existing?.validUntil || loggedUser.validUntil),
         streakDays: loggedUser.streakDays,
         bookmarks: loggedUser.bookmarks
       });
 
       if (dbUser) {
-        const finalUser = { ...loggedUser, id: dbUser.id || (dbUser as any)._id };
+        const finalUser: UserProfile = {
+          ...loggedUser,
+          id: dbUser.id || (dbUser as any)._id,
+          role: dbUser.role || loggedUser.role,
+          validUntil: dbUser.validUntil || loggedUser.validUntil,
+          status: dbUser.status || loggedUser.status
+        };
         saveUserSession(finalUser, rememberMe);
         setUsersList(prev => {
           const others = prev.filter(u => u.email.toLowerCase() !== emailClean);
@@ -700,13 +775,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: loggedUser.name,
         email: loggedUser.email,
         avatar: loggedUser.avatar,
-        role: loggedUser.role,
+        role: isAdmin ? 'Admin' : (existing?.role || loggedUser.role),
         status: loggedUser.status,
-        validUntil: loggedUser.validUntil,
+        validUntil: isAdmin ? 'Lifetime VIP' : (existing?.validUntil || loggedUser.validUntil),
         streakDays: loggedUser.streakDays
       });
       if (dbUser) {
-        const finalUser = { ...loggedUser, id: dbUser.id || (dbUser as any)._id };
+        const finalUser: UserProfile = {
+          ...loggedUser,
+          id: dbUser.id || (dbUser as any)._id,
+          role: dbUser.role || loggedUser.role,
+          validUntil: dbUser.validUntil || loggedUser.validUntil,
+          status: dbUser.status || loggedUser.status
+        };
         saveUserSession(finalUser, shouldRemember);
         setUsersList(prev => {
           const others = prev.filter(u => u.email.toLowerCase() !== emailClean);
