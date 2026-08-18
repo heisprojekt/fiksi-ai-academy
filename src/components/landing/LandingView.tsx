@@ -288,19 +288,6 @@ export const LandingView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Bottom Canvas Status Bar */}
-                <div className="flex items-center justify-between px-4 py-2.5 bg-[#13151D] border-t border-white/[0.08] text-[11px] font-mono text-slate-400">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    <span className="text-slate-300 font-semibold">deployed:</span>
-                    <span className="text-cyan-400 font-bold">fiksiai.my.id</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="hidden sm:inline text-slate-500">MongoDB Atlas: Connected</span>
-                    <span className="text-slate-300 font-bold">100% Zoom</span>
-                  </div>
-                </div>
-
               </div>
             </div>
           </motion.div>
