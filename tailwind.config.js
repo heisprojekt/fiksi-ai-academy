@@ -9,30 +9,36 @@ export default {
     extend: {
       colors: {
         background: {
-          DEFAULT: '#08090E',
-          secondary: '#0D0F18',
-          tertiary: '#121420'
+          DEFAULT: '#0B0C10',
+          secondary: '#101218',
+          tertiary: '#151720',
+          canvas: '#0D0E13'
         },
         card: {
-          DEFAULT: '#121420',
-          hover: '#181B2B',
-          border: 'rgba(255, 255, 255, 0.07)',
-          highlight: 'rgba(255, 255, 255, 0.12)'
+          DEFAULT: '#13151D',
+          hover: '#181B26',
+          border: 'rgba(255, 255, 255, 0.08)',
+          highlight: 'rgba(255, 77, 0, 0.15)'
         },
         accent: {
-          DEFAULT: '#8B5CF6',
-          hover: '#7C3AED',
-          light: '#A78BFA',
-          soft: '#DDD6FE',
-          purple: '#8B5CF6',
-          pink: '#A78BFA',
-          cyan: '#A78BFA',
-          blue: '#7C3AED',
-          electric: '#8B5CF6'
+          DEFAULT: '#FF4D00',
+          hover: '#FF5F1A',
+          light: '#FF7D40',
+          soft: '#FFD9C7',
+          dark: '#D93B00',
+          orange: '#FF4D00',
+          amber: '#FF8800',
+          ember: '#FF3700',
+          flame: '#FF5500',
+          purple: '#FF4D00',
+          cyan: '#FF7733',
+          blue: '#FF4D00',
+          pink: '#FF6036',
+          electric: '#FF4D00'
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       borderRadius: {
         '2xl': '16px',
@@ -40,10 +46,12 @@ export default {
         '4xl': '32px'
       },
       backgroundImage: {
-        'gradient-accent': 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)',
-        'gradient-glow': 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.12) 0%, transparent 70%)',
-        'gradient-card': 'linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%)',
-        'gradient-hero': 'radial-gradient(circle at 50% 10%, rgba(139, 92, 246, 0.15) 0%, rgba(8, 9, 14, 0) 70%)',
+        'gradient-accent': 'linear-gradient(135deg, #FF5500 0%, #E63600 100%)',
+        'gradient-ember': 'linear-gradient(135deg, #FF6600 0%, #FF3700 50%, #CC2200 100%)',
+        'gradient-glow': 'radial-gradient(circle at 50% 0%, rgba(255, 77, 0, 0.22) 0%, transparent 70%)',
+        'gradient-card': 'linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%)',
+        'gradient-hero': 'radial-gradient(circle at 50% 0%, rgba(255, 77, 0, 0.25) 0%, rgba(11, 12, 16, 0) 70%)',
+        'gradient-corner': 'radial-gradient(circle at 100% 0%, rgba(255, 77, 0, 0.15) 0%, transparent 50%)',
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

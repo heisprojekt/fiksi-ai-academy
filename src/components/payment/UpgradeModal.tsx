@@ -189,24 +189,24 @@ export const UpgradeModal: React.FC = () => {
               {TIER_PLANS.map((plan) => {
                 const isSelected = selectedPlan.id === plan.id;
                 return (
-                  <div
+                  <div 
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan)}
-                    className={`relative p-5 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between h-full ${
-                      isSelected
-                        ? 'bg-[#121838] border-accent-cyan shadow-xl shadow-accent-cyan/15 ring-2 ring-accent-cyan/40 scale-[1.02]'
-                        : 'bg-[#090e24] border-white/10 hover:border-white/20 hover:bg-[#0d1433]'
+                    className={`relative p-5 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between ${
+                      isSelected 
+                        ? 'bg-gradient-to-b from-[#1E1914] to-[#13151D] border-orange-500/80 shadow-[0_0_30px_rgba(255,77,0,0.22)] ring-1 ring-orange-500' 
+                        : 'bg-[#13151D]/90 border-white/[0.08] hover:border-white/20 hover:bg-[#181B26]'
                     }`}
                   >
                     {/* Floating Top Badge with safe spacing */}
                     {plan.isPopular && (
-                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-accent-cyan via-accent-blue to-accent-purple text-white text-[10px] font-black tracking-wider uppercase shadow-md flex items-center gap-1">
-                        <Flame className="w-3 h-3 fill-current text-amber-300" />
+                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-[#FF5500] to-[#E63600] text-white text-[10px] font-black tracking-wider uppercase shadow-lg shadow-orange-500/30 flex items-center gap-1">
+                        <Flame className="w-3 h-3 fill-current text-amber-200" />
                         <span>{plan.badge}</span>
                       </div>
                     )}
                     {plan.discountBadge && !plan.isPopular && (
-                      <div className="absolute -top-3.5 right-4 px-2.5 py-0.5 rounded-full bg-accent-purple border border-accent-purple/50 text-white text-[10px] font-extrabold shadow-md">
+                      <div className="absolute -top-3.5 right-4 px-2.5 py-0.5 rounded-full bg-orange-600/90 border border-orange-400/50 text-white text-[10px] font-extrabold shadow-md">
                         {plan.discountBadge}
                       </div>
                     )}
@@ -215,7 +215,7 @@ export const UpgradeModal: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <h3 className="text-base font-bold text-white">{plan.name}</h3>
                         <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all shrink-0 ${
-                          isSelected ? 'border-accent-cyan bg-accent-cyan text-black' : 'border-white/20 bg-white/5'
+                          isSelected ? 'border-orange-500 bg-orange-500 text-white' : 'border-white/20 bg-white/5'
                         }`}>
                           {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                         </div>
@@ -230,7 +230,7 @@ export const UpgradeModal: React.FC = () => {
                       <ul className="flex flex-col gap-2.5 text-xs text-slate-300 my-1">
                         {plan.features.map((feat, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isSelected ? 'text-accent-cyan' : 'text-slate-500'}`} />
+                            <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isSelected ? 'text-orange-400' : 'text-slate-500'}`} />
                             <span className="text-[11px] leading-relaxed text-slate-300">{feat}</span>
                           </li>
                         ))}
@@ -242,7 +242,7 @@ export const UpgradeModal: React.FC = () => {
                         type="button"
                         className={`w-full py-2.5 rounded-2xl text-xs font-bold transition-all shadow-sm ${
                           isSelected
-                            ? 'bg-gradient-accent text-white shadow-accent-purple/30'
+                            ? 'bg-[#FF4D00] text-white shadow-md shadow-orange-500/25 font-black'
                             : 'bg-white/5 text-slate-300 hover:bg-white/10'
                         }`}
                       >
@@ -287,7 +287,7 @@ export const UpgradeModal: React.FC = () => {
                 <ArrowLeft className="w-4 h-4" />
                 <span>Ganti Pilihan Paket</span>
               </button>
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent-cyan/15 border border-accent-cyan/40 text-accent-cyan text-xs font-mono font-bold">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-500/15 border border-orange-500/40 text-orange-300 text-xs font-mono font-bold">
                 <Clock className="w-3.5 h-3.5 animate-spin" />
                 <span>Batas Waktu Bayar: {formatTimer(timerSeconds)}</span>
               </div>
@@ -315,7 +315,7 @@ export const UpgradeModal: React.FC = () => {
                     className="w-48 h-48 object-contain rounded-lg"
                   />
                   <div className="absolute inset-0 m-auto w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-lg">
-                    <Zap className="w-5 h-5 text-accent-cyan" />
+                    <Zap className="w-5 h-5 text-orange-400" />
                   </div>
                 </div>
 
@@ -340,14 +340,14 @@ export const UpgradeModal: React.FC = () => {
               {/* Right Column: Order Details & Payment Submission */}
               <div className="md:col-span-7 flex flex-col justify-between gap-4">
                 {/* Order Summary Box */}
-                <div className="p-4.5 rounded-3xl bg-[#090e24] border border-white/10 flex flex-col gap-3">
+                <div className="p-4.5 rounded-3xl bg-[#13151D] border border-white/10 flex flex-col gap-3">
                   <div className="flex items-center justify-between text-xs pb-2 border-b border-white/10">
                     <span className="text-slate-400">Paket Upgrade:</span>
                     <span className="font-bold text-white">{selectedPlan.name} ({selectedPlan.period})</span>
                   </div>
                   <div className="flex items-center justify-between text-xs pb-2 border-b border-white/10">
                     <span className="text-slate-400">Akun Member:</span>
-                    <span className="font-bold text-accent-cyan font-mono">{currentUser?.email || 'member@email.com'}</span>
+                    <span className="font-bold text-orange-400 font-mono">{currentUser?.email || 'member@email.com'}</span>
                   </div>
                   <div className="flex items-center justify-between text-xs pb-2 border-b border-white/10">
                     <span className="text-slate-400">Kode Referensi:</span>

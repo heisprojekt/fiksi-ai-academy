@@ -39,7 +39,7 @@ export const Logo: React.FC<LogoProps> = ({
         <img
           src="/fiksi.png"
           alt="FIKSI AI Academy Logo"
-          className="w-full h-full object-contain max-h-full max-w-full drop-shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
+          className="w-full h-full object-contain max-h-full max-w-full drop-shadow-[0_4px_14px_rgba(255,77,0,0.35)]"
         />
       </div>
 
@@ -47,10 +47,10 @@ export const Logo: React.FC<LogoProps> = ({
       {showText && (
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <span className={`font-extrabold tracking-tight text-white transition-colors group-hover:text-violet-300 ${currentSize.text}`}>
+            <span className={`font-black tracking-tight text-white transition-colors group-hover:text-orange-300 ${currentSize.text}`}>
               FIKSI
             </span>
-            <span className={`px-2 py-0.5 rounded-full font-bold tracking-wider uppercase bg-violet-500/15 border border-violet-500/30 text-violet-300 ${currentSize.badge}`}>
+            <span className={`px-2 py-0.5 rounded-full font-black tracking-wider uppercase bg-orange-500/15 border border-orange-500/30 text-orange-400 ${currentSize.badge}`}>
               AI ACADEMY
             </span>
           </div>

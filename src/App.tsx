@@ -23,12 +23,12 @@ const ToolsView = lazy(() => import('./components/tools/ToolsView').then(m => ({
 const ViewLoadingFallback = () => (
   <div className="w-full min-h-[400px] flex flex-col items-center justify-center gap-4 p-8 animate-in fade-in duration-200">
     <div className="relative flex items-center justify-center">
-      <div className="w-10 h-10 rounded-full border-2 border-violet-500/20 border-t-violet-500 animate-spin" />
-      <div className="absolute w-4 h-4 rounded-full bg-violet-600/30 animate-pulse" />
+      <div className="w-10 h-10 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin" />
+      <div className="absolute w-4 h-4 rounded-full bg-orange-600/30 animate-pulse" />
     </div>
     <div className="flex flex-col items-center gap-1">
-      <span className="text-xs font-semibold text-slate-300 tracking-wider">Memuat workspace...</span>
-      <span className="text-[11px] text-slate-400 font-mono">FIKSI AI Academy</span>
+      <span className="text-xs font-bold text-slate-300 tracking-wider">Memuat studio canvas...</span>
+      <span className="text-[11px] text-orange-400 font-mono">FIKSI AI Studio</span>
     </div>
   </div>
 );
@@ -77,8 +77,13 @@ export const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#08090E] text-slate-100 selection:bg-violet-600/30 selection:text-violet-200">
+    <div className="min-h-screen flex flex-col bg-[#0B0C10] text-slate-100 selection:bg-orange-500/30 selection:text-orange-200 relative overflow-x-hidden">
       
+      {/* Studio Canvas Ambient Glows & Grid */}
+      <div className="fixed inset-0 canvas-grid pointer-events-none opacity-40 -z-10" />
+      <div className="fixed top-0 right-0 w-[600px] h-[500px] bg-gradient-to-b from-orange-500/10 via-orange-600/5 to-transparent blur-[120px] pointer-events-none -z-10" />
+      <div className="fixed bottom-0 left-0 w-[500px] h-[400px] bg-gradient-to-t from-orange-500/5 to-transparent blur-[120px] pointer-events-none -z-10" />
+
       {/* Sticky Top Navbar */}
       <Navbar />
 
@@ -89,7 +94,7 @@ export const MainContent: React.FC = () => {
           <Sidebar />
           
           {/* Main Workspace Area */}
-          <main className="flex-1 min-w-0 py-6">
+          <main className="flex-1 min-w-0 py-5">
             <Suspense fallback={<ViewLoadingFallback />}>
               <div key={currentView} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                 {renderCurrentView()}
@@ -98,18 +103,17 @@ export const MainContent: React.FC = () => {
           </main>
         </div>
       ) : (
-        /* Full Width Landing & Blog Area */
-        <main className="flex-1 w-full">
+        <main className="flex-1">
           <Suspense fallback={<ViewLoadingFallback />}>
-            <div key={currentView} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div key={currentView} className="animate-in fade-in duration-300">
               {renderCurrentView()}
             </div>
           </Suspense>
         </main>
       )}
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer on Landing & Public Views */}
+      {(currentView === 'landing' || currentView === 'blog') && <Footer />}
 
       {/* Toast Notifications Overlay */}
       <Toast />

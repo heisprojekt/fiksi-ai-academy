@@ -120,14 +120,14 @@ export const LandingView: React.FC = () => {
     <div className="w-full flex flex-col gap-24 py-8">
 
       {/* HERO SECTION */}
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 w-full">
+      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12 w-full">
         {/* Background Ambient Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-hero blur-[140px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[600px] bg-gradient-hero blur-[140px] pointer-events-none rounded-full" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           {/* Left Hero Text */}
-          <div className="lg:col-span-6 flex flex-col items-start gap-6 text-left z-10">
+          <div className="lg:col-span-5 flex flex-col items-start gap-6 text-left z-10">
             
             {/* Pill Badge */}
             <motion.div
@@ -135,9 +135,9 @@ export const LandingView: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent-purple/15 border border-accent-purple/30 text-slate-200 text-xs font-semibold backdrop-blur-md">
-                <Sparkles className="w-4 h-4 text-accent-pink animate-pulse" />
-                <span>Unlock Your Creativity with AI</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-300 text-xs font-bold backdrop-blur-md">
+                <Sparkles className="w-4 h-4 text-orange-400 animate-pulse" />
+                <span>Next-Gen AI Creator Studio</span>
               </div>
             </motion.div>
 
@@ -146,7 +146,7 @@ export const LandingView: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]"
+              className="text-4xl sm:text-5xl lg:text-5xl font-black tracking-tight text-white leading-[1.1]"
             >
               Belajar <span className="text-gradient">AI.</span><br />
               Buat Konten.<br />
@@ -158,9 +158,9 @@ export const LandingView: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl"
+              className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl"
             >
-              Kursus, prompt pack, dan resources premium untuk kreator modern yang ingin hasil lebih cepat, konsisten, dan berkualitas tinggi.
+              Studio belajar AI terintegrasi dengan 500+ formula prompt teruji, video masterclass sinematik, dan aset siap pakai untuk kreator modern.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -168,11 +168,9 @@ export const LandingView: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-wrap items-center gap-4 pt-2"
+              className="flex flex-wrap items-center gap-3 pt-1"
             >
-              <GradientButton
-                size="lg"
-                icon={<ArrowRight className="w-4 h-4" />}
+              <button
                 onClick={() => {
                   if (userRole === 'Guest') {
                     setAuthMode('register');
@@ -181,18 +179,19 @@ export const LandingView: React.FC = () => {
                     navigateTo('dashboard');
                   }
                 }}
+                className="px-6 py-3 rounded-2xl bg-[#FF4D00] hover:bg-[#FF5E19] text-white font-extrabold text-xs tracking-wider shadow-lg shadow-orange-500/30 flex items-center gap-2 transition-all active:scale-95"
               >
-                Mulai Sekarang
-              </GradientButton>
+                <span>Mulai Eksplorasi</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
 
-              <GradientButton
-                size="lg"
-                variant="secondary"
-                icon={<Play className="w-4 h-4 text-accent-cyan fill-accent-cyan" />}
+              <button
                 onClick={() => navigateTo('course-detail', 'omni-flash-masterclass')}
+                className="px-5 py-3 rounded-2xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 hover:border-white/20 text-slate-200 font-bold text-xs flex items-center gap-2 transition-all"
               >
-                Lihat Demo
-              </GradientButton>
+                <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                <span>Lihat Masterclass</span>
+              </button>
             </motion.div>
 
             {/* Feature Highlights Row */}
@@ -200,112 +199,119 @@ export const LandingView: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-white/[0.08] w-full"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-white/[0.08] w-full text-slate-300 text-xs font-semibold"
             >
-              <div className="flex items-center gap-2 text-xs text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-accent-cyan shrink-0" />
-                <span>Kursus Premium</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                <span>48+ Modul</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-accent-cyan shrink-0" />
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                 <span>500+ Prompt</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-accent-cyan shrink-0" />
-                <span>Update Mingguan</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                <span>Update Rutin</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-accent-cyan shrink-0" />
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                 <span>Akses Selamanya</span>
               </div>
             </motion.div>
 
           </div>
 
-          {/* Right Futuristic Dashboard Mockup (Matching image accurately) */}
+          {/* Right Forge macOS Studio Canvas Mockup (Matching Reference Image) */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+            initial={{ opacity: 0, scale: 0.94, y: 25 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="lg:col-span-6 relative z-10"
+            className="lg:col-span-7 relative z-10"
           >
-            <div className="relative rounded-3xl p-1 bg-gradient-accent shadow-[0_20px_80px_-15px_rgba(124,58,237,0.35)]">
-              <div className="rounded-[22px] bg-[#0B1020] p-4 sm:p-5 flex flex-col gap-4 overflow-hidden border border-white/10">
+            <div className="relative rounded-3xl p-1 bg-gradient-to-b from-orange-500/30 via-white/[0.08] to-transparent shadow-[0_20px_80px_-15px_rgba(255,77,0,0.25)]">
+              <div className="rounded-[22px] bg-[#0E1017] flex flex-col overflow-hidden border border-white/[0.08] text-slate-100">
                 
-                {/* Mockup Header bar */}
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-rose-500/80" />
-                    <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-                    <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                    <span className="text-[11px] text-slate-400 font-mono ml-2">fiksi.ai/dashboard</span>
-                  </div>
-                  <Badge variant="pro" size="sm">LIVE PREVIEW</Badge>
-                </div>
-
-                {/* Dashboard Inner Grid Preview */}
-                <div className="grid grid-cols-2 gap-3">
-                  
-                  {/* Card 1: Nano Banana */}
-                  <GlassCard hoverable className="p-3 flex flex-col gap-2 bg-[#101827]">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-white">Nano Banana</span>
-                      <span className="text-[10px] text-accent-cyan font-semibold">72%</span>
+                {/* macOS Studio Window Chrome Header */}
+                <div className="flex items-center justify-between px-4 py-3 bg-[#13151D] border-b border-white/[0.08]">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-full bg-[#FF5F56]" />
+                      <span className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+                      <span className="w-3 h-3 rounded-full bg-[#27C93F]" />
                     </div>
-                    <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                      <div className="bg-gradient-accent h-full w-[72%]" />
-                    </div>
-                  </GlassCard>
-
-                  {/* Card 2: Omni Flash */}
-                  <GlassCard hoverable className="p-3 flex flex-col gap-2 bg-[#101827]">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-white">Omni Flash</span>
-                      <span className="text-[10px] text-accent-pink font-semibold">20%</span>
-                    </div>
-                    <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                      <div className="bg-accent-pink h-full w-[20%]" />
-                    </div>
-                  </GlassCard>
-
-                </div>
-
-                {/* Video Player Preview Box */}
-                <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer border border-white/10">
-                  <img
-                    src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
-                    alt="Omni Flash Video Preview"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#060816] via-black/40 to-transparent flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-accent flex items-center justify-center text-white shadow-xl shadow-accent-purple/50 group-hover:scale-110 transition-transform">
-                      <Play className="w-6 h-6 fill-white ml-1" />
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0B0C10] border border-white/[0.06] text-[11px] font-mono text-slate-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                      <span>fiksi-studio.v2</span>
                     </div>
                   </div>
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
-                    <span className="font-bold text-white">Omni Flash Masterclass - Ep 3</span>
-                    <span className="text-[10px] bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md text-accent-cyan">24:15</span>
-                  </div>
-                </div>
 
-                {/* Popular Prompts Mini List */}
-                <div className="flex flex-col gap-2 pt-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Prompt Populer</span>
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:border-accent-cyan/40 transition-colors">
-                    <div className="flex items-center gap-2.5">
-                      <img
-                        src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=100&q=80"
-                        className="w-8 h-8 rounded-lg object-cover"
-                        alt="Prompt"
-                      />
-                      <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-white">UGC Product Review</span>
-                        <span className="text-[10px] text-slate-400">Omni Flash • UGC</span>
-                      </div>
-                    </div>
-                    <button className="px-2.5 py-1 text-[10px] font-bold text-accent-cyan bg-accent-cyan/10 rounded-lg border border-accent-cyan/30 hover:bg-accent-cyan/20">
-                      Copy
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-[11px] text-slate-400 hidden sm:inline font-mono">Desktop • 1920x1080</span>
+                    <button
+                      onClick={() => navigateTo('courses')}
+                      className="px-3 py-1 rounded-lg bg-[#FF4D00] hover:bg-[#FF5E19] text-white font-black text-xs shadow-md shadow-orange-500/25"
+                    >
+                      Launch
                     </button>
+                  </div>
+                </div>
+
+                {/* Studio Canvas Area (Reference Image Layout) */}
+                <div className="p-5 sm:p-6 bg-[#0B0C10] canvas-grid relative flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden">
+                  
+                  {/* Left Canvas Content */}
+                  <div className="flex-1 flex flex-col items-start gap-4 z-10">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono text-orange-400 font-bold tracking-wider uppercase">FIKSI STUDIO CANVAS</span>
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-orange-500/15 text-orange-400 border border-orange-500/30">PRO ENGINE</span>
+                    </div>
+
+                    <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+                      Design, build, ship, repeat.
+                    </h3>
+
+                    <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+                      Kreasikan visual AI, animasi sinematik, dan materi iklan otomatis. Terhubung langsung dengan MongoDB Atlas dan model AI generasi terbaru.
+                    </p>
+
+                    <div className="flex items-center gap-2.5 pt-1">
+                      <button
+                        onClick={() => navigateTo('prompts')}
+                        className="px-4 py-2 rounded-xl bg-[#FF4D00] hover:bg-[#FF5F1A] text-white text-xs font-black shadow-md shadow-orange-500/25 transition-all"
+                      >
+                        Explore Prompts
+                      </button>
+                      <button
+                        onClick={() => navigateTo('assets')}
+                        className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-slate-300 text-xs font-bold transition-all"
+                      >
+                        Download Assets
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right Glowing 3D Ember Orb Visual (from Generated Asset) */}
+                  <div className="w-48 sm:w-56 h-48 sm:h-56 shrink-0 relative flex items-center justify-center group">
+                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-orange-500/20 to-transparent blur-2xl group-hover:scale-110 transition-transform duration-500" />
+                    <img
+                      src="/ember-orb.jpg"
+                      alt="FIKSI AI 3D Ember Orb"
+                      className="w-full h-full object-cover rounded-2xl border border-orange-500/40 shadow-[0_0_35px_rgba(255,77,0,0.3)] relative z-10 transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+
+                </div>
+
+                {/* Bottom Canvas Status Bar */}
+                <div className="flex items-center justify-between px-4 py-2.5 bg-[#13151D] border-t border-white/[0.08] text-[11px] font-mono text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="text-slate-300 font-semibold">deployed:</span>
+                    <span className="text-orange-400 font-bold">fiksiai.my.id</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="hidden sm:inline text-slate-500">MongoDB Atlas: Connected</span>
+                    <span className="text-slate-300 font-bold">100% Zoom</span>
                   </div>
                 </div>
 

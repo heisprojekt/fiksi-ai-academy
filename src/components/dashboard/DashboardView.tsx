@@ -131,19 +131,15 @@ export const DashboardView: React.FC = () => {
 
       {/* ========================================================================= */}
       {/* DYNAMIC HERO SECTION: RETURNING USER RESUME VS NEW USER ONBOARDING ROADMAP */}
-      {/* ========================================================================= */}
       {isNewUser ? (
-        // -------------------------------------------------------------------------
-        // STATE A: NEW ACCOUNT ROADMAP & STARTER GUIDE
-        // -------------------------------------------------------------------------
-        <div className="flex flex-col gap-5 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-violet-950/40 via-[#121420] to-[#0d0f18] border border-violet-500/25 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-violet-600/10 blur-[100px] pointer-events-none" />
+        <div className="flex flex-col gap-5 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-orange-950/30 via-[#13151D] to-[#0B0C10] border border-orange-500/25 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-orange-600/10 blur-[100px] pointer-events-none" />
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-violet-500/15 border border-violet-500/30 text-[10px] font-mono font-bold text-violet-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3 h-3 text-violet-400" />
+                <span className="px-2.5 py-1 rounded-lg bg-orange-500/15 border border-orange-500/30 text-[10px] font-mono font-bold text-orange-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3 text-orange-400" />
                   Rekomendasi Akun Baru
                 </span>
                 <span className="text-xs text-slate-400 font-medium">Panduan 4 Langkah Mulai Cepat</span>
@@ -163,23 +159,23 @@ export const DashboardView: React.FC = () => {
             {/* Step 1: Masterclass Fondasi */}
             <div 
               onClick={() => navigateTo('course-detail', 'omni-flash-masterclass')}
-              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-violet-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
+              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-orange-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
             >
               <div className="flex items-center justify-between">
-                <span className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold flex items-center justify-center font-mono">
+                <span className="w-6 h-6 rounded-lg bg-orange-500/15 border border-orange-500/30 text-orange-300 text-xs font-bold flex items-center justify-center font-mono">
                   1
                 </span>
-                <Badge variant="purple" size="sm">Masterclass</Badge>
+                <Badge variant="orange" size="sm">Masterclass</Badge>
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors">
+                <h4 className="text-xs font-bold text-white group-hover:text-orange-300 transition-colors">
                   Fondasi Karakter AI
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                   Omni Flash Masterclass • Tonton episode 1 untuk dasar konsistensi wajah.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-violet-300 flex items-center gap-1">
+              <span className="text-[11px] font-semibold text-orange-300 flex items-center gap-1">
                 <span>Mulai Belajar</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -188,23 +184,23 @@ export const DashboardView: React.FC = () => {
             {/* Step 2: Formula Prompt Viral */}
             <div 
               onClick={() => navigateTo('prompts')}
-              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-violet-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
+              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-orange-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
             >
               <div className="flex items-center justify-between">
-                <span className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold flex items-center justify-center font-mono">
+                <span className="w-6 h-6 rounded-lg bg-orange-500/15 border border-orange-500/30 text-orange-300 text-xs font-bold flex items-center justify-center font-mono">
                   2
                 </span>
-                <Badge variant="purple" size="sm">Formula Prompt</Badge>
+                <Badge variant="orange" size="sm">Formula Prompt</Badge>
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors">
+                <h4 className="text-xs font-bold text-white group-hover:text-orange-300 transition-colors">
                   Salin Prompt Populer
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                   Gunakan formula prompt teruji untuk Midjourney, Flux, dan Kling AI.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-violet-300 flex items-center gap-1">
+              <span className="text-[11px] font-semibold text-orange-300 flex items-center gap-1">
                 <span>Eksplorasi Prompt</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -213,23 +209,23 @@ export const DashboardView: React.FC = () => {
             {/* Step 3: AI Tools Rekomendasi */}
             <div 
               onClick={() => navigateTo('tools')}
-              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-violet-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
+              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-orange-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
             >
               <div className="flex items-center justify-between">
-                <span className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold flex items-center justify-center font-mono">
+                <span className="w-6 h-6 rounded-lg bg-orange-500/15 border border-orange-500/30 text-orange-300 text-xs font-bold flex items-center justify-center font-mono">
                   3
                 </span>
                 <Badge variant="pro" size="sm">Tools AI</Badge>
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors">
+                <h4 className="text-xs font-bold text-white group-hover:text-orange-300 transition-colors">
                   Coba Tool Generator
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                   Daftar curated tools video AI, voice clone, dan upscaler terbaik.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-violet-300 flex items-center gap-1">
+              <span className="text-[11px] font-semibold text-orange-300 flex items-center gap-1">
                 <span>Buka Tools</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -238,24 +234,24 @@ export const DashboardView: React.FC = () => {
             {/* Step 4: Asset Pack Kreatif */}
             <div 
               onClick={() => navigateTo('assets')}
-              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-violet-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
+              className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-orange-500/40 transition-all cursor-pointer group flex flex-col justify-between gap-3"
             >
               <div className="flex items-center justify-between">
-                <span className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold flex items-center justify-center font-mono">
+                <span className="w-6 h-6 rounded-lg bg-orange-500/15 border border-orange-500/30 text-orange-300 text-xs font-bold flex items-center justify-center font-mono">
                   4
                 </span>
                 <Badge variant="outline" size="sm">Creative Assets</Badge>
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors">
-                  Ambil Starter Assets
+                <h4 className="text-xs font-bold text-white group-hover:text-orange-300 transition-colors">
+                  Download Asset Pack
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                  LUT color grading, overlay visual, dan template storyboard video.
+                  Unduh preset LUT, overlay PNG, dan storyboard template siap pakai.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-violet-300 flex items-center gap-1">
-                <span>Download Assets</span>
+              <span className="text-[11px] font-semibold text-orange-300 flex items-center gap-1">
+                <span>Download Aset</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </span>
             </div>
@@ -268,7 +264,7 @@ export const DashboardView: React.FC = () => {
         // -------------------------------------------------------------------------
         lastAccessed && (
           <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-violet-950/30 via-[#121420] to-[#0d0f18] border border-violet-500/25 shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-violet-600/10 blur-[90px] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-80 h-80 bg-orange-600/10 blur-[90px] pointer-events-none" />
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
               

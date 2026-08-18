@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'gradient' | 'cyan' | 'purple' | 'pro' | 'new' | 'outline' | 'dark' | 'green' | 'amber';
+  variant?: 'gradient' | 'cyan' | 'purple' | 'pro' | 'new' | 'outline' | 'dark' | 'green' | 'amber' | 'orange';
   size?: 'sm' | 'md';
   className?: string;
   icon?: React.ReactNode;
@@ -12,26 +12,27 @@ interface BadgeProps {
 
 export const Badge: React.FC<BadgeProps> = ({
   children,
-  variant = 'cyan',
+  variant = 'orange',
   size = 'sm',
   className,
   icon,
 }) => {
   const sizeClasses = {
-    sm: 'px-2.5 py-0.5 text-[11px] font-medium tracking-wide',
-    md: 'px-3 py-1 text-xs font-semibold tracking-wide',
+    sm: 'px-2.5 py-0.5 text-[10px] font-bold tracking-wider',
+    md: 'px-3 py-1 text-xs font-bold tracking-wider',
   };
 
   const variantClasses = {
-    gradient: 'bg-violet-500/15 text-violet-300 border border-violet-500/30',
-    cyan: 'bg-violet-500/10 text-violet-300 border border-violet-500/20',
-    purple: 'bg-violet-500/15 text-violet-300 border border-violet-500/30',
-    pro: 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold shadow-sm shadow-violet-600/20',
-    new: 'bg-violet-500/15 text-violet-300 border border-violet-500/30 font-bold',
-    green: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
-    amber: 'bg-amber-500/10 text-amber-300 border border-amber-500/20',
+    gradient: 'bg-gradient-to-r from-[#FF5500] to-[#E63600] text-white shadow-sm shadow-orange-500/25',
+    orange: 'bg-orange-500/15 text-orange-400 border border-orange-500/30',
+    cyan: 'bg-orange-500/10 text-orange-300 border border-orange-500/20',
+    purple: 'bg-orange-500/15 text-orange-400 border border-orange-500/30',
+    pro: 'bg-gradient-to-r from-[#FF5500] to-[#E63600] text-white font-extrabold shadow-sm shadow-orange-500/30',
+    new: 'bg-orange-500/20 text-orange-300 border border-orange-500/40 font-black',
+    green: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25',
+    amber: 'bg-amber-500/10 text-amber-300 border border-amber-500/25',
     outline: 'bg-white/[0.04] text-slate-300 border border-white/10',
-    dark: 'bg-[#0D0F18] text-slate-300 border border-white/10'
+    dark: 'bg-[#12141C] text-slate-300 border border-white/10'
   };
 
   return (

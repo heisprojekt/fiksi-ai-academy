@@ -297,15 +297,15 @@ export const AuthModal: React.FC = () => {
 
             {/* Simulated Live OTP Banner */}
             {generatedOtp && (
-              <div className="p-3 rounded-2xl bg-violet-500/10 border border-violet-500/30 flex items-center justify-between gap-3">
+              <div className="p-3 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-xs text-slate-200">
-                  <Sparkles className="w-4 h-4 text-violet-400 shrink-0 animate-pulse" />
-                  <span>Kode Simulasi: <strong className="text-violet-300 font-mono text-sm tracking-widest">{generatedOtp}</strong></span>
+                  <Sparkles className="w-4 h-4 text-orange-400 shrink-0 animate-pulse" />
+                  <span>Kode Simulasi: <strong className="text-orange-300 font-mono text-sm tracking-widest">{generatedOtp}</strong></span>
                 </div>
                 <button
                   type="button"
                   onClick={handleAutoFillOtp}
-                  className="px-2.5 py-1 rounded-lg bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 text-[11px] font-bold transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 text-[11px] font-bold transition-colors"
                 >
                   Tempel
                 </button>
@@ -325,7 +325,7 @@ export const AuthModal: React.FC = () => {
                   onChange={(e) => handleOtpChange(idx, e.target.value)}
                   onKeyDown={(e) => handleOtpKeyDown(idx, e)}
                   autoFocus={idx === 0}
-                  className="w-11 h-13 sm:w-12 sm:h-14 text-center text-lg sm:text-xl font-bold font-mono rounded-2xl bg-[#08090E] border border-white/20 text-white focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all"
+                  className="w-11 h-13 sm:w-12 sm:h-14 text-center text-lg sm:text-xl font-bold font-mono rounded-2xl bg-[#0B0C10] border border-white/20 text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"
                 />
               ))}
             </div>
@@ -337,7 +337,7 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={generateNewOtp}
-                  className="text-violet-300 font-bold hover:underline flex items-center gap-1"
+                  className="text-orange-300 font-bold hover:underline flex items-center gap-1"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Kirim Ulang OTP</span>
@@ -375,7 +375,7 @@ export const AuthModal: React.FC = () => {
           <>
             {/* Header Title */}
             <div className="flex flex-col items-center text-center gap-1.5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-600/25 text-white mb-1">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#E63600] flex items-center justify-center shadow-lg shadow-orange-500/25 text-white mb-1">
                 <Sparkles className="w-6 h-6" />
               </div>
               <h2 className="text-2xl font-extrabold text-white tracking-tight">
@@ -389,13 +389,13 @@ export const AuthModal: React.FC = () => {
             </div>
 
             {/* Tab Switcher */}
-            <div className="grid grid-cols-2 p-1 rounded-2xl bg-[#08090E] border border-white/10">
+            <div className="grid grid-cols-2 p-1 rounded-2xl bg-[#0B0C10] border border-white/10">
               <button
                 type="button"
                 onClick={() => setAuthMode('login')}
                 className={`py-2 text-xs font-bold rounded-xl transition-all ${
                   authMode === 'login'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/25'
+                    ? 'bg-[#FF4D00] text-white shadow-md shadow-orange-500/25'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -406,7 +406,7 @@ export const AuthModal: React.FC = () => {
                 onClick={() => setAuthMode('register')}
                 className={`py-2 text-xs font-bold rounded-xl transition-all ${
                   authMode === 'register'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/25'
+                    ? 'bg-[#FF4D00] text-white shadow-md shadow-orange-500/25'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
