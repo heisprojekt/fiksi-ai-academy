@@ -144,6 +144,46 @@ export const api = {
     }
   },
 
+  async createAsset(asset: Omit<DownloadAsset, 'id'>): Promise<DownloadAsset | null> {
+    try {
+      const res = await fetch(`${API_BASE}/assets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(asset)
+      });
+      if (!res.ok) throw new Error('Failed to create asset');
+      return await res.json();
+    } catch (e) {
+      console.warn('API Create asset failed:', e);
+      return null;
+    }
+  },
+
+  async updateAsset(id: string, asset: Partial<DownloadAsset>): Promise<DownloadAsset | null> {
+    try {
+      const res = await fetch(`${API_BASE}/assets/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(asset)
+      });
+      if (!res.ok) throw new Error('Failed to update asset');
+      return await res.json();
+    } catch (e) {
+      console.warn('API Update asset failed:', e);
+      return null;
+    }
+  },
+
+  async deleteAsset(id: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE}/assets/${id}`, { method: 'DELETE' });
+      return res.ok;
+    } catch (e) {
+      console.warn('API Delete asset failed:', e);
+      return false;
+    }
+  },
+
   // TOOLS
   async getTools(): Promise<ExternalTool[] | null> {
     try {
@@ -153,6 +193,46 @@ export const api = {
     } catch (e) {
       console.warn('API Tools fetch failed:', e);
       return null;
+    }
+  },
+
+  async createTool(tool: Omit<ExternalTool, 'id'>): Promise<ExternalTool | null> {
+    try {
+      const res = await fetch(`${API_BASE}/tools`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tool)
+      });
+      if (!res.ok) throw new Error('Failed to create tool');
+      return await res.json();
+    } catch (e) {
+      console.warn('API Create tool failed:', e);
+      return null;
+    }
+  },
+
+  async updateTool(id: string, tool: Partial<ExternalTool>): Promise<ExternalTool | null> {
+    try {
+      const res = await fetch(`${API_BASE}/tools/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tool)
+      });
+      if (!res.ok) throw new Error('Failed to update tool');
+      return await res.json();
+    } catch (e) {
+      console.warn('API Update tool failed:', e);
+      return null;
+    }
+  },
+
+  async deleteTool(id: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE}/tools/${id}`, { method: 'DELETE' });
+      return res.ok;
+    } catch (e) {
+      console.warn('API Delete tool failed:', e);
+      return false;
     }
   },
 

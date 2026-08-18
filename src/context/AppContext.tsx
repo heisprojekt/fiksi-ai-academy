@@ -24,6 +24,7 @@ import {
   MOCK_WEEKLY_UPDATES,
   MOCK_EXTERNAL_TOOLS 
 } from '../data/mockData';
+import { NOTION_PROMPTS } from '../data/notionPrompts';
 import { api } from '../services/api';
 
 export const ADMIN_EMAILS = ['heisprojekt@gmail.com', 'fiksiaiai@gmail.com'];
@@ -952,7 +953,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(updated)); } catch {}
       return updated;
     });
-    api.createCourse(courseData).catch(err => console.warn('Failed to create course in DB:', err));
+    api.createCourse(courseData).catch((err: any) => console.warn('Failed to create course in DB:', err));
     showToast('success', 'Kursus Ditambahkan', `"${newCourse.title}" sekarang live dan dapat diakses public.`);
     return newCourse;
   };
@@ -963,7 +964,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(list)); } catch {}
       return list;
     });
-    api.updateCourse(id, updated).catch(err => console.warn('Failed to update course in DB:', err));
+    api.updateCourse(id, updated).catch((err: any) => console.warn('Failed to update course in DB:', err));
     showToast('success', 'Kursus Diperbarui', 'Perubahan kursus berhasil disimpan.');
   };
 
@@ -973,7 +974,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(updated)); } catch {}
       return updated;
     });
-    api.deleteCourse(id).catch(err => console.warn('Failed to delete course in DB:', err));
+    api.deleteCourse(id).catch((err: any) => console.warn('Failed to delete course in DB:', err));
     showToast('info', 'Kursus Dihapus', 'Kursus berhasil dihapus dari sistem & database.');
   };
 
@@ -992,7 +993,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.PROMPTS, JSON.stringify(updated)); } catch {}
       return updated;
     });
-    api.createPrompt(promptData).catch(err => console.warn('Failed to create prompt in DB:', err));
+    api.createPrompt(promptData).catch((err: any) => console.warn('Failed to create prompt in DB:', err));
     showToast('success', 'Prompt Ditambahkan', `"${newPrompt.title}" berhasil diterbitkan.`);
     return newPrompt;
   };
@@ -1003,7 +1004,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.PROMPTS, JSON.stringify(list)); } catch {}
       return list;
     });
-    api.updatePrompt(id, updated).catch(err => console.warn('Failed to update prompt in DB:', err));
+    api.updatePrompt(id, updated).catch((err: any) => console.warn('Failed to update prompt in DB:', err));
     showToast('success', 'Prompt Diperbarui', 'Perubahan prompt berhasil disimpan.');
   };
 
@@ -1013,7 +1014,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.PROMPTS, JSON.stringify(updated)); } catch {}
       return updated;
     });
-    api.deletePrompt(id).catch(err => console.warn('Failed to delete prompt in DB:', err));
+    api.deletePrompt(id).catch((err: any) => console.warn('Failed to delete prompt in DB:', err));
     showToast('info', 'Prompt Dihapus', 'Prompt dihapus dari katalog & database.');
   };
 
@@ -1040,7 +1041,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(updated)); } catch {}
       return updated;
     });
-    api.createAsset(assetData).catch(err => console.warn('Failed to create asset in DB:', err));
+    api.createAsset(assetData).catch((err: any) => console.warn('Failed to create asset in DB:', err));
     showToast('success', 'Aset Ditambahkan', `"${newAsset.title}" sekarang live di Assets.`);
     return newAsset;
   };
@@ -1051,7 +1052,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(list)); } catch {}
       return list;
     });
-    api.updateAsset(id, updated).catch(err => console.warn('Failed to update asset in DB:', err));
+    api.updateAsset(id, updated).catch((err: any) => console.warn('Failed to update asset in DB:', err));
     showToast('success', 'Aset Diperbarui', 'Perubahan aset berhasil disimpan.');
   };
 
@@ -1061,7 +1062,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(updated)); } catch {}
       return updated;
     });
-    api.deleteAsset(id).catch(err => console.warn('Failed to delete asset in DB:', err));
+    api.deleteAsset(id).catch((err: any) => console.warn('Failed to delete asset in DB:', err));
     showToast('info', 'Aset Dihapus', 'Aset berhasil dihapus dari katalog.');
   };
 
@@ -1077,7 +1078,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(updated)); } catch {}
       return updated;
     });
-    api.createTool(toolData).catch(err => console.warn('Failed to create tool in DB:', err));
+    api.createTool(toolData).catch((err: any) => console.warn('Failed to create tool in DB:', err));
     showToast('success', 'Tool AI Ditambahkan', `"${newTool.name}" berhasil diterbitkan ke direktori.`);
     return newTool;
   };
@@ -1088,7 +1089,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(list)); } catch {}
       return list;
     });
-    api.updateTool(id, updated).catch(err => console.warn('Failed to update tool in DB:', err));
+    api.updateTool(id, updated).catch((err: any) => console.warn('Failed to update tool in DB:', err));
     showToast('success', 'Tool AI Diperbarui', 'Perubahan data tool berhasil disimpan.');
   };
 
@@ -1098,7 +1099,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try { localStorage.setItem(STORAGE_KEYS.TOOLS, JSON.stringify(updated)); } catch {}
       return updated;
     });
-    api.deleteTool(id).catch(err => console.warn('Failed to delete tool in DB:', err));
+    api.deleteTool(id).catch((err: any) => console.warn('Failed to delete tool in DB:', err));
     showToast('info', 'Tool Dihapus', 'Tool eksternal telah dihapus dari direktori.');
   };
 
