@@ -85,9 +85,9 @@ interface AppContextType {
   paymentTransactions: QRISPaymentTransaction[];
   isUpgradeModalOpen: boolean;
   setIsUpgradeModalOpen: (open: boolean) => void;
-  createQRISPayment: (plan: { id: string; name: string; amount: number; formattedAmount: string }, proofImage?: string) => Promise<QRISPaymentTransaction>;
-  approveQRISPayment: (transactionId: string) => void;
-  rejectQRISPayment: (transactionId: string, reason?: string) => void;
+  createQRISPayment: (plan: { id: string; name: string; amount: number; formattedAmount: string }, proofImage?: string, customQrisRef?: string) => Promise<QRISPaymentTransaction>;
+  approveQRISPayment: (transactionId: string) => Promise<void>;
+  rejectQRISPayment: (transactionId: string, reason?: string) => Promise<void>;
 
   // Refresh Users from DB
   refreshUsers: () => Promise<void>;
@@ -901,18 +901,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateUserRole = (emailOrId: string, newRole: UserRole) => {
     let targetUser: UserProfile | undefined;
     setUsersList(prev => prev.map(u => {
-      if (u.id === emailOrId || u.email === emailOrId) {
+      if (u.id === emailOrId || u.email.toLowerCase() === emailOrId.toLowerCase()) {
         targetUser = { ...u, role: newRole };
         return targetUser;
       }
       return u;
     }));
 
-    if (targetUser && targetUser.id) {
-      api.updateUser(targetUser.id, { role: newRole }).catch(err => console.warn('Failed to update role in MongoDB:', err));
-    }
+    const identifier = targetUser?.id || targetUser?.email || emailOrId;
+    api.updateUser(identifier, { role: newRole }).catch(err => console.warn('Failed to update role in MongoDB:', err));
 
-    if (currentUser && (currentUser.id === emailOrId || currentUser.email === emailOrId)) {
+    if (currentUser && (currentUser.id === emailOrId || currentUser.email.toLowerCase() === emailOrId.toLowerCase())) {
       setCurrentUser(prev => prev ? { ...prev, role: newRole } : null);
     }
     showToast('success', 'Role Diperbarui', `Role user berhasil diubah menjadi ${newRole}.`);
@@ -920,58 +919,66 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateUserTier = (emailOrId: string, newRole: UserRole, validUntil?: string, status?: string) => {
     let targetUser: UserProfile | undefined;
+    const computedValidUntil = validUntil !== undefined 
+      ? validUntil 
+      : (newRole === 'Admin' ? 'Lifetime VIP' : newRole === 'Pro Member' ? '1 Tahun (17 Agu 2027)' : 'Free Tier');
+    const computedStatus = status !== undefined ? status : 'Aktif';
+
     setUsersList(prev => prev.map(u => {
-      if (u.id === emailOrId || u.email === emailOrId) {
+      if (u.id === emailOrId || u.email.toLowerCase() === emailOrId.toLowerCase()) {
         targetUser = {
           ...u,
           role: newRole,
-          validUntil: validUntil !== undefined ? validUntil : (newRole === 'Admin' ? 'Lifetime VIP' : newRole === 'Pro Member' ? '1 Tahun' : 'Free Tier'),
-          status: status !== undefined ? status : u.status || 'Aktif'
+          validUntil: computedValidUntil,
+          status: computedStatus
         };
         return targetUser;
       }
       return u;
     }));
 
-    if (targetUser && targetUser.id) {
-      api.updateUser(targetUser.id, {
-        role: targetUser.role,
-        validUntil: targetUser.validUntil,
-        status: targetUser.status
-      }).catch(err => console.warn('Failed to update tier in MongoDB:', err));
-    }
+    const identifier = targetUser?.id || targetUser?.email || emailOrId;
+    api.updateUser(identifier, {
+      role: newRole,
+      validUntil: computedValidUntil,
+      status: computedStatus
+    }).catch(err => console.warn('Failed to update tier in MongoDB:', err));
 
-    if (currentUser && (currentUser.id === emailOrId || currentUser.email === emailOrId)) {
+    if (currentUser && (currentUser.id === emailOrId || currentUser.email.toLowerCase() === emailOrId.toLowerCase())) {
       setCurrentUser(prev => prev ? {
         ...prev,
         role: newRole,
-        validUntil: validUntil !== undefined ? validUntil : (newRole === 'Admin' ? 'Lifetime VIP' : newRole === 'Pro Member' ? '1 Tahun' : 'Free Tier'),
-        status: status !== undefined ? status : prev.status || 'Aktif'
+        validUntil: computedValidUntil,
+        status: computedStatus
       } : null);
     }
 
-    showToast('success', 'Tier Member Diperbarui', `Status member diubah ke ${newRole} (${validUntil || 'Aktif'}).`);
+    showToast('success', 'Tier Member Diperbarui', `Status member diubah ke ${newRole} (${computedValidUntil}).`);
   };
 
   const deleteUser = (emailOrId: string) => {
-    const target = usersList.find(u => u.id === emailOrId || u.email === emailOrId);
-    setUsersList(prev => prev.filter(u => u.id !== emailOrId && u.email !== emailOrId));
-    if (target && target.id) {
-      api.deleteUser(target.id).catch(err => console.warn('Failed to delete user in MongoDB:', err));
-    }
+    const target = usersList.find(u => u.id === emailOrId || u.email.toLowerCase() === emailOrId.toLowerCase());
+    setUsersList(prev => prev.filter(u => u.id !== emailOrId && u.email.toLowerCase() !== emailOrId.toLowerCase()));
+    const identifier = target?.id || target?.email || emailOrId;
+    api.deleteUser(identifier).catch(err => console.warn('Failed to delete user in MongoDB:', err));
     showToast('info', 'User Dihapus', 'Data pengguna berhasil dihapus.');
   };
 
   // QRIS Payment Checkout Operations
-  const createQRISPayment = async (plan: { id: string; name: string; amount: number; formattedAmount: string }, proofImage?: string): Promise<QRISPaymentTransaction> => {
+  const createQRISPayment = async (
+    plan: { id: string; name: string; amount: number; formattedAmount: string }, 
+    proofImage?: string,
+    customQrisRef?: string
+  ): Promise<QRISPaymentTransaction> => {
     const user = currentUser || {
       id: `u-${Date.now()}`,
       name: 'Member Baru',
       email: 'member@email.com'
     };
 
-    const newTransaction: QRISPaymentTransaction = {
-      id: `trx-${Date.now()}`,
+    const qrisRef = customQrisRef || `QRIS-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    const newTrxData: Partial<QRISPaymentTransaction> = {
       userId: user.id || `u-${Date.now()}`,
       userName: user.name,
       userEmail: user.email,
@@ -979,25 +986,48 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       planName: plan.name,
       amount: plan.amount,
       formattedAmount: plan.formattedAmount,
-      qrisRef: `QRIS-${Math.floor(100000 + Math.random() * 900000)}`,
+      qrisRef: qrisRef,
       paymentMethod: 'QRIS',
       proofImage: proofImage || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=400&q=80',
       status: 'Pending',
-      createdAt: 'Baru saja',
       notes: 'Pembayaran QRIS via E-Wallet / Mobile Banking'
     };
 
-    setPaymentTransactions(prev => [newTransaction, ...prev]);
+    let finalTransaction: QRISPaymentTransaction;
+    try {
+      const saved = await api.createTransaction(newTrxData);
+      if (saved) {
+        finalTransaction = {
+          ...saved,
+          createdAt: typeof saved.createdAt === 'string' ? saved.createdAt : 'Baru saja'
+        };
+      } else {
+        finalTransaction = {
+          id: `trx-${Date.now()}`,
+          ...(newTrxData as any),
+          createdAt: 'Baru saja'
+        };
+      }
+    } catch (e) {
+      console.warn('API createTransaction failed, using local fallback:', e);
+      finalTransaction = {
+        id: `trx-${Date.now()}`,
+        ...(newTrxData as any),
+        createdAt: 'Baru saja'
+      };
+    }
+
+    setPaymentTransactions(prev => [finalTransaction, ...prev.filter(t => t.id !== finalTransaction.id)]);
     showToast('success', 'Pembayaran QRIS Terkirim', 'Transaksi kamu sedang menunggu verifikasi admin. Tier Pro akan segera aktif.');
-    return newTransaction;
+    return finalTransaction;
   };
 
-  const approveQRISPayment = (transactionId: string) => {
+  const approveQRISPayment = async (transactionId: string) => {
     let targetUserEmail = '';
     let targetPlanName = '';
 
     setPaymentTransactions(prev => prev.map(t => {
-      if (t.id === transactionId) {
+      if (t.id === transactionId || t.qrisRef === transactionId) {
         targetUserEmail = t.userEmail;
         targetPlanName = t.planName;
         return { ...t, status: 'Approved' };
@@ -1005,10 +1035,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return t;
     }));
 
+    // Update Transaction status in MongoDB Atlas
+    api.updateTransaction(transactionId, { status: 'Approved' })
+      .catch(err => console.warn('Failed to update transaction status in MongoDB:', err));
+
     if (targetUserEmail) {
       const isLifetime = targetPlanName.toLowerCase().includes('lifetime');
       const validityString = isLifetime ? 'Lifetime VIP' : '1 Tahun (17 Agu 2027)';
       
+      // Update local state
       setUsersList(prev => prev.map(u => {
         if (u.email.toLowerCase() === targetUserEmail.toLowerCase()) {
           return {
@@ -1020,6 +1055,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
         return u;
       }));
+
+      // Update user in MongoDB Atlas
+      api.updateUser(targetUserEmail, {
+        role: 'Pro Member',
+        validUntil: validityString,
+        status: 'Active'
+      }).catch(err => console.warn('Failed to upgrade user in MongoDB:', err));
 
       if (currentUser && currentUser.email.toLowerCase() === targetUserEmail.toLowerCase()) {
         setCurrentUser(prev => prev ? {
@@ -1034,13 +1076,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('success', 'Pembayaran Disetujui', `User ${targetUserEmail} berhasil diupgrade ke Pro Member!`);
   };
 
-  const rejectQRISPayment = (transactionId: string, reason?: string) => {
+  const rejectQRISPayment = async (transactionId: string, reason?: string) => {
     setPaymentTransactions(prev => prev.map(t => {
-      if (t.id === transactionId) {
+      if (t.id === transactionId || t.qrisRef === transactionId) {
         return { ...t, status: 'Rejected', notes: reason ? `Ditolak: ${reason}` : 'Ditolak oleh admin' };
       }
       return t;
     }));
+
+    api.updateTransaction(transactionId, {
+      status: 'Rejected',
+      notes: reason ? `Ditolak: ${reason}` : 'Ditolak oleh admin'
+    }).catch(err => console.warn('Failed to reject transaction in MongoDB:', err));
 
     showToast('info', 'Pembayaran Ditolak', 'Status transaksi diubah menjadi Ditolak.');
   };

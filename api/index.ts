@@ -472,24 +472,78 @@ router.post('/auth/google', async (req: Request, res: Response) => {
 
 router.put('/users/:id', async (req: Request, res: Response) => {
   try {
-    const id = getIdParam(req);
+    const idOrEmail = getIdParam(req);
+    const { id: _ignoredId, _id: _ignoredUnderscoreId, createdAt: _ignoredCreated, ...updateData } = req.body;
+
+    let existing = null;
+    if (idOrEmail.includes('@')) {
+      existing = await prisma.user.findUnique({ where: { email: idOrEmail.toLowerCase().trim() } });
+    } else if (/^[0-9a-fA-F]{24}$/.test(idOrEmail)) {
+      existing = await prisma.user.findUnique({ where: { id: idOrEmail } });
+    }
+
+    if (!existing && updateData.email) {
+      existing = await prisma.user.findUnique({ where: { email: updateData.email.toLowerCase().trim() } });
+    }
+
+    if (!existing) {
+      if (/^[0-9a-fA-F]{24}$/.test(idOrEmail)) {
+        const updated = await prisma.user.update({
+          where: { id: idOrEmail },
+          data: { ...updateData, updatedAt: new Date() }
+        });
+        return res.json(updated);
+      }
+      if (updateData.email || idOrEmail.includes('@')) {
+        const emailToUse = (updateData.email || idOrEmail).toLowerCase().trim();
+        const created = await prisma.user.create({
+          data: {
+            email: emailToUse,
+            name: updateData.name || emailToUse.split('@')[0],
+            role: updateData.role || 'Free Member',
+            validUntil: updateData.validUntil || 'Free Tier',
+            status: updateData.status || 'Active',
+            ...updateData
+          }
+        });
+        return res.json(created);
+      }
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     const updated = await prisma.user.update({
-      where: { id },
-      data: req.body
+      where: { id: existing.id },
+      data: {
+        ...updateData,
+        updatedAt: new Date()
+      }
     });
+    console.log(`[MongoDB Atlas] ✅ User updated (${existing.email}): Role -> ${updated.role}, ValidUntil -> ${updated.validUntil}`);
     res.json(updated);
   } catch (error: any) {
+    console.error('Failed to update user in MongoDB:', error.message);
     res.status(500).json({ error: 'Failed to update user', details: error.message });
   }
 });
 
 router.delete('/users/:id', async (req: Request, res: Response) => {
   try {
-    const id = getIdParam(req);
-    await prisma.user.delete({
-      where: { id }
-    });
-    res.json({ success: true, id });
+    const idOrEmail = getIdParam(req);
+    let existing = null;
+    if (idOrEmail.includes('@')) {
+      existing = await prisma.user.findUnique({ where: { email: idOrEmail.toLowerCase().trim() } });
+    } else if (/^[0-9a-fA-F]{24}$/.test(idOrEmail)) {
+      existing = await prisma.user.findUnique({ where: { id: idOrEmail } });
+    }
+
+    if (existing) {
+      await prisma.user.delete({ where: { id: existing.id } });
+      return res.json({ success: true, id: existing.id });
+    } else if (/^[0-9a-fA-F]{24}$/.test(idOrEmail)) {
+      await prisma.user.delete({ where: { id: idOrEmail } });
+      return res.json({ success: true, id: idOrEmail });
+    }
+    res.json({ success: true, id: idOrEmail });
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to delete user', details: error.message });
   }
@@ -502,29 +556,151 @@ router.get('/transactions', async (_req: Request, res: Response) => {
     });
     res.json(trxs);
   } catch (error: any) {
+    console.error('[MongoDB Error] Failed to fetch transactions:', error.message);
     res.status(500).json({ error: 'Failed to fetch transactions', details: error.message });
   }
 });
 
 router.post('/transactions', async (req: Request, res: Response) => {
   try {
-    const trx = await prisma.qRISPaymentTransaction.create({ data: req.body });
-    res.status(201).json(trx);
+    const { 
+      userId, 
+      userName, 
+      userEmail, 
+      planId, 
+      planName, 
+      amount, 
+      formattedAmount, 
+      qrisRef, 
+      paymentMethod, 
+      proofImage, 
+      status, 
+      notes 
+    } = req.body;
+
+    if (!userEmail || !planName) {
+      return res.status(400).json({ error: 'userEmail and planName are required' });
+    }
+
+    const cleanEmail = userEmail.trim().toLowerCase();
+    const cleanQrisRef = qrisRef || `QRIS-${Math.floor(100000 + Math.random() * 900000)}`;
+    const cleanAmount = typeof amount === 'number' ? amount : (parseInt(amount, 10) || 0);
+
+    const newTrx = await prisma.qRISPaymentTransaction.create({
+      data: {
+        userId: userId || `u-${Date.now()}`,
+        userName: userName || cleanEmail.split('@')[0],
+        userEmail: cleanEmail,
+        planName: planName,
+        amount: cleanAmount,
+        qrisRef: cleanQrisRef,
+        proofImage: proofImage || null,
+        status: status || 'Pending'
+      }
+    });
+
+    const responseTrx = {
+      ...newTrx,
+      planId: planId || 'pro-membership',
+      formattedAmount: formattedAmount || `Rp ${cleanAmount.toLocaleString('id-ID')}`,
+      paymentMethod: paymentMethod || 'QRIS',
+      notes: notes || 'Pembayaran QRIS via E-Wallet / Mobile Banking'
+    };
+
+    console.log(`[MongoDB Atlas] 💳 Created QRIS Transaction: ${newTrx.id} for ${cleanEmail} (${planName})`);
+    res.status(201).json(responseTrx);
   } catch (error: any) {
+    console.error('[MongoDB Atlas Error] in POST /api/transactions:', error.message);
     res.status(500).json({ error: 'Failed to create transaction', details: error.message });
   }
 });
 
 router.put('/transactions/:id', async (req: Request, res: Response) => {
   try {
-    const id = getIdParam(req);
+    const idParam = getIdParam(req);
+    const { id: _ignoredId, _id: _ignoredUnderscoreId, createdAt: _ignoredCreated, ...updateData } = req.body;
+
+    let existing = null;
+    if (/^[0-9a-fA-F]{24}$/.test(idParam)) {
+      existing = await prisma.qRISPaymentTransaction.findUnique({ where: { id: idParam } });
+    } else {
+      existing = await prisma.qRISPaymentTransaction.findFirst({
+        where: { OR: [{ qrisRef: idParam }, { id: idParam }] }
+      });
+    }
+
+    const targetId = existing ? existing.id : idParam;
+
     const updated = await prisma.qRISPaymentTransaction.update({
-      where: { id },
-      data: req.body
+      where: { id: targetId },
+      data: {
+        ...updateData,
+        updatedAt: new Date()
+      }
     });
+
+    console.log(`[MongoDB Atlas] 💳 Transaction updated: ${targetId} -> Status: ${updated.status}`);
+
+    // If transaction is approved, automatically upgrade user to Pro Member in MongoDB!
+    if (updated.status === 'Approved' && updated.userEmail) {
+      const emailClean = updated.userEmail.toLowerCase().trim();
+      const isLifetime = (updated.planName || '').toLowerCase().includes('lifetime');
+      const validity = isLifetime ? 'Lifetime VIP' : '1 Tahun (17 Agu 2027)';
+
+      try {
+        await prisma.user.upsert({
+          where: { email: emailClean },
+          update: {
+            role: 'Pro Member',
+            validUntil: validity,
+            status: 'Active',
+            updatedAt: new Date()
+          },
+          create: {
+            email: emailClean,
+            name: updated.userName || emailClean.split('@')[0],
+            role: 'Pro Member',
+            validUntil: validity,
+            status: 'Active',
+            joinedDate: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+            coursesCompleted: 0,
+            savedPrompts: 0,
+            totalDownloads: 0,
+            streakDays: 1,
+            bookmarks: [],
+            completedEpisodes: []
+          }
+        });
+        console.log(`[MongoDB Atlas] 🌟 User ${emailClean} automatically upgraded to Pro Member on transaction approval!`);
+      } catch (userErr: any) {
+        console.warn('Failed to auto-upgrade user on transaction approval:', userErr.message);
+      }
+    }
+
     res.json(updated);
   } catch (error: any) {
+    console.error('Failed to update transaction in MongoDB:', error.message);
     res.status(500).json({ error: 'Failed to update transaction', details: error.message });
+  }
+});
+
+router.delete('/transactions/:id', async (req: Request, res: Response) => {
+  try {
+    const idParam = getIdParam(req);
+    let existing = null;
+    if (/^[0-9a-fA-F]{24}$/.test(idParam)) {
+      existing = await prisma.qRISPaymentTransaction.findUnique({ where: { id: idParam } });
+    } else {
+      existing = await prisma.qRISPaymentTransaction.findFirst({
+        where: { OR: [{ qrisRef: idParam }, { id: idParam }] }
+      });
+    }
+
+    const targetId = existing ? existing.id : idParam;
+    await prisma.qRISPaymentTransaction.delete({ where: { id: targetId } });
+    res.json({ success: true, id: targetId });
+  } catch (error: any) {
+    res.status(500).json({ error: 'Failed to delete transaction', details: error.message });
   }
 });
 

@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-3.0.x", "rhel-openssl-1.0.x", "debian-openssl-3.0.x"]
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -150,17 +150,21 @@ model ExternalTool {
 }
 
 model QRISPaymentTransaction {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId     String
-  userName   String
-  userEmail  String
-  planName   String
-  amount     Int
-  qrisRef    String
-  proofImage String?
-  status     String   @default("Pending") // Pending | Approved | Rejected
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String?
+  userName        String
+  userEmail       String
+  planId          String?
+  planName        String
+  amount          Int
+  formattedAmount String?
+  qrisRef         String
+  paymentMethod   String?  @default("QRIS")
+  proofImage      String?
+  status          String   @default("Pending") // Pending | Approved | Rejected
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@map("qris_transactions")
 }

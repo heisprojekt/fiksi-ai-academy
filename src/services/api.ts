@@ -251,7 +251,7 @@ export const api = {
     }
   },
 
-  async createTransaction(trx: Omit<QRISPaymentTransaction, 'id'>): Promise<QRISPaymentTransaction | null> {
+  async createTransaction(trx: Partial<QRISPaymentTransaction>): Promise<QRISPaymentTransaction | null> {
     try {
       const res = await fetch(`${API_BASE}/transactions`, {
         method: 'POST',
@@ -263,6 +263,31 @@ export const api = {
     } catch (e) {
       console.warn('API Create transaction failed:', e);
       return null;
+    }
+  },
+
+  async updateTransaction(id: string, trx: Partial<QRISPaymentTransaction>): Promise<QRISPaymentTransaction | null> {
+    try {
+      const res = await fetch(`${API_BASE}/transactions/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(trx)
+      });
+      if (!res.ok) throw new Error('Failed to update transaction');
+      return await res.json();
+    } catch (e) {
+      console.warn('API Update transaction failed:', e);
+      return null;
+    }
+  },
+
+  async deleteTransaction(id: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE}/transactions/${id}`, { method: 'DELETE' });
+      return res.ok;
+    } catch (e) {
+      console.warn('API Delete transaction failed:', e);
+      return false;
     }
   },
 

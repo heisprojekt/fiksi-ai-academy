@@ -149,7 +149,7 @@ export const UpgradeModal: React.FC = () => {
         name: `${selectedPlan.name} (${selectedPlan.period})`,
         amount: selectedPlan.price,
         formattedAmount: selectedPlan.formattedPrice
-      }, proofImage);
+      }, proofImage, qrisReference);
       setStep('success-pending');
     } finally {
       setIsSubmitting(false);
