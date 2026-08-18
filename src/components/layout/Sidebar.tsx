@@ -10,22 +10,17 @@ import {
   Wrench, 
   Settings, 
   ShieldCheck, 
-  Flame,
-  Search,
-  BookOpen,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Home,
-  FileCode2,
-  Layers,
-  ChevronRight,
-  Zap
+  Search, 
+  BookOpen, 
+  PanelLeftClose, 
+  PanelLeftOpen, 
+  Home, 
+  ChevronRight, 
+  Zap 
 } from 'lucide-react';
-import { GlassCard } from '../ui/GlassCard';
 
 export const Sidebar: React.FC = () => {
   const { currentView, navigateTo, bookmarks, userRole, setIsUpgradeModalOpen } = useApp();
-  const [activeTab, setActiveTab] = useState<'pages' | 'components'>('pages');
   const [filterQuery, setFilterQuery] = useState('');
 
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
@@ -59,21 +54,13 @@ export const Sidebar: React.FC = () => {
     { id: 'bookmarks' as ViewMode, label: '/bookmarks', icon: Bookmark, badge: bookmarks.length > 0 ? String(bookmarks.length) : undefined },
   ];
 
-  const componentsPages = [
-    { id: 'courses' as ViewMode, label: '/modules', icon: Layers },
-    { id: 'prompts' as ViewMode, label: '/templates', icon: Sparkles },
-    { id: 'assets' as ViewMode, label: '/downloads', icon: FolderDown },
-    { id: 'profile' as ViewMode, label: '/settings', icon: Settings },
-  ];
-
   if (userRole === 'Admin') {
     mainPages.push({ id: 'admin' as ViewMode, label: '/admin-cms', icon: ShieldCheck, badge: 'ADMIN' });
   }
 
-  const currentList = activeTab === 'pages' ? mainPages : componentsPages;
   const filteredList = filterQuery 
-    ? currentList.filter(item => item.label.toLowerCase().includes(filterQuery.toLowerCase()))
-    : currentList;
+    ? mainPages.filter(item => item.label.toLowerCase().includes(filterQuery.toLowerCase()))
+    : mainPages;
 
   return (
     <aside className={`shrink-0 hidden md:flex flex-col justify-between border-r border-slate-200 dark:border-white/[0.08] bg-slate-50/60 dark:bg-[#0C0E14] min-h-[calc(100vh-64px)] transition-all duration-300 ${isCollapsed ? 'w-18 px-2 py-4' : 'w-60 lg:w-64 px-3 py-4'}`}>
@@ -82,35 +69,17 @@ export const Sidebar: React.FC = () => {
         {/* Studio Sidebar Container */}
         <div className="flex flex-col gap-2 p-2 rounded-2xl bg-white/90 dark:bg-[#12141C]/80 border border-slate-200 dark:border-white/[0.06] backdrop-blur-xl shadow-sm dark:shadow-lg">
           
-          {/* Header Segmented Pill Control: [ Pages | Components ] */}
+          {/* Header Bar with Filter & Collapse */}
           {!isCollapsed ? (
             <div className="flex flex-col gap-2 pb-2 border-b border-slate-200/80 dark:border-white/[0.06]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center p-0.5 rounded-xl bg-slate-100 dark:bg-[#0B0C10] border border-slate-200/80 dark:border-white/[0.06] w-full">
-                  <button
-                    onClick={() => setActiveTab('pages')}
-                    className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
-                      activeTab === 'pages'
-                        ? 'bg-white dark:bg-[#1C1F2B] text-slate-900 dark:text-white shadow-sm'
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                    }`}
-                  >
-                    Pages
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('components')}
-                    className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
-                      activeTab === 'components'
-                        ? 'bg-white dark:bg-[#1C1F2B] text-slate-900 dark:text-white shadow-sm'
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                    }`}
-                  >
-                    Components
-                  </button>
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+                  <span>Navigasi</span>
                 </div>
                 <button
                   onClick={toggleCollapse}
-                  className="ml-1.5 p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors"
                   title="Lipat Sidebar"
                 >
                   <PanelLeftClose className="w-3.5 h-3.5" />
@@ -122,7 +91,7 @@ export const Sidebar: React.FC = () => {
                 <Search className="absolute left-2.5 w-3 h-3 text-slate-400 dark:text-slate-500 pointer-events-none" />
                 <input
                   type="text"
-                  placeholder="Filter pages..."
+                  placeholder="Filter menu..."
                   value={filterQuery}
                   onChange={(e) => setFilterQuery(e.target.value)}
                   className="w-full pl-7 pr-3 py-1 text-[11px] rounded-lg bg-slate-100 dark:bg-[#0B0C10] border border-slate-200/80 dark:border-white/[0.06] text-slate-800 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-cyan-500/50"
