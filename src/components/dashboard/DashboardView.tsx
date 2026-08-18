@@ -93,17 +93,17 @@ export const DashboardView: React.FC = () => {
       {/* ========================================================================= */}
       {/* HEADER GREETING SECTION                                                   */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/[0.07]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-white/[0.07]">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Halo, {userName}
             </h1>
             <Badge variant={userRole === 'Admin' ? 'purple' : userRole === 'Pro Member' ? 'pro' : 'outline'} size="sm">
               {userRole.toUpperCase()}
             </Badge>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
             {isNewUser 
               ? 'Selamat datang di FIKSI AI Academy! Berikut rekomendasi kurikulum starter untuk memulai.' 
               : `Selamat datang kembali! Lanjutkan progres belajar dan eksplorasi prompt AI terbarumu.`}

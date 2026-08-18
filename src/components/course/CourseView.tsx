@@ -140,16 +140,16 @@ export const CourseView: React.FC = () => {
                 <div className="flex flex-col gap-1">
                   <h3 
                     onClick={() => navigateTo('course-detail', c.id)}
-                    className="text-base font-bold text-white group-hover:text-accent-cyan transition-colors cursor-pointer line-clamp-1"
+                    className="text-base font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors cursor-pointer line-clamp-1"
                   >
                     {c.title}
                   </h3>
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
                     {c.subtitle}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-white/10">
                   <div className="flex items-center gap-2">
                     <img
                       src={c.instructor.avatar}
@@ -158,26 +158,26 @@ export const CourseView: React.FC = () => {
                       decoding="async"
                       className="w-6 h-6 rounded-full object-cover"
                     />
-                    <span className="text-[11px] text-slate-300 font-medium">{c.instructor.name}</span>
+                    <span className="text-[11px] text-slate-700 dark:text-slate-300 font-medium">{c.instructor.name}</span>
                   </div>
-                  <span className="text-[11px] font-mono text-accent-cyan font-bold">
+                  <span className="text-[11px] font-mono text-cyan-600 dark:text-accent-cyan font-bold">
                     {c.episodes?.length || c.totalEpisodes || 0} Episode
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => toggleBookmark(c.id)}
                   className={`p-2.5 rounded-2xl border transition-all ${
                     bookmarks.includes(c.id)
-                      ? 'bg-accent-purple/20 border-accent-purple text-accent-pink'
-                      : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                      ? 'bg-purple-500/20 border-purple-500 text-purple-600 dark:text-pink-400'
+                      : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={bookmarks.includes(c.id) ? 'Hapus Bookmark' : 'Simpan Kursus'}
                 >
-                  <Bookmark className={`w-4 h-4 ${bookmarks.includes(c.id) ? 'fill-accent-pink' : ''}`} />
+                  <Bookmark className={`w-4 h-4 ${bookmarks.includes(c.id) ? 'fill-current text-purple-600 dark:text-pink-400' : ''}`} />
                 </button>
 
                 <GradientButton

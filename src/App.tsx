@@ -23,12 +23,12 @@ const ToolsView = lazy(() => import('./components/tools/ToolsView').then(m => ({
 const ViewLoadingFallback = () => (
   <div className="w-full min-h-[400px] flex flex-col items-center justify-center gap-4 p-8 animate-in fade-in duration-200">
     <div className="relative flex items-center justify-center">
-      <div className="w-10 h-10 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin" />
-      <div className="absolute w-4 h-4 rounded-full bg-orange-600/30 animate-pulse" />
+      <div className="w-10 h-10 rounded-full border-2 border-cyan-500/20 border-t-cyan-500 animate-spin" />
+      <div className="absolute w-4 h-4 rounded-full bg-cyan-500/30 animate-pulse" />
     </div>
     <div className="flex flex-col items-center gap-1">
-      <span className="text-xs font-bold text-slate-300 tracking-wider">Memuat studio canvas...</span>
-      <span className="text-[11px] text-orange-400 font-mono">FIKSI AI Studio</span>
+      <span className="text-xs font-bold text-slate-700 dark:text-slate-300 tracking-wider">Memuat studio canvas...</span>
+      <span className="text-[11px] text-cyan-600 dark:text-cyan-400 font-mono">FIKSI AI Studio</span>
     </div>
   </div>
 );
@@ -77,7 +77,7 @@ export const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B0C10] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#0B0C10] text-slate-900 dark:text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200 relative overflow-x-hidden transition-colors duration-200">
       
       {/* Studio Canvas Ambient Glows & Grid */}
       <div className="fixed inset-0 canvas-grid pointer-events-none opacity-40 -z-10" />

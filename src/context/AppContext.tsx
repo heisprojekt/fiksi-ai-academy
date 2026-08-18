@@ -12,7 +12,8 @@ import {
   RegisterData,
   QRISPaymentTransaction,
   ExternalTool,
-  RecentActivityItem
+  RecentActivityItem,
+  ThemeMode
 } from '../types';
 import { 
   MOCK_COURSES, 
@@ -28,6 +29,11 @@ import { api } from '../services/api';
 export const ADMIN_EMAILS = ['heisprojekt@gmail.com', 'fiksiaiai@gmail.com'];
 
 interface AppContextType {
+  // Theme Mode
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
+  toggleTheme: () => void;
+
   // Navigation & View
   currentView: ViewMode;
   setCurrentView: (view: ViewMode) => void;
@@ -134,6 +140,7 @@ const STORAGE_KEYS = {
   COMPLETED_EPISODES: 'fiksi_academy_completed_episodes',
   TRANSACTIONS: 'fiksi_academy_transactions',
   RECENT_ACTIVITY: 'fiksi_academy_recent_activity',
+  THEME: 'fiksi_academy_theme',
 };
 
 const INITIAL_TRANSACTIONS: QRISPaymentTransaction[] = [
@@ -217,6 +224,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const initialRoute = getViewFromPathname();
   const [currentView, setCurrentView] = useState<ViewMode>(initialRoute.view);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState<boolean>(false);
+
+  // Theme mode: 'dark' | 'light'
+  const [theme, setThemeState] = useState<ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.THEME);
+      if (saved === 'light' || saved === 'dark') return saved as ThemeMode;
+      return 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  const setTheme = (newTheme: ThemeMode) => {
+    setThemeState(newTheme);
+    try {
+      localStorage.setItem(STORAGE_KEYS.THEME, newTheme);
+    } catch {}
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const root = document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(theme);
+      root.setAttribute('data-theme', theme);
+      root.style.colorScheme = theme;
+      if (theme === 'light') {
+        document.body.classList.remove('bg-[#0B0C10]', 'text-slate-100');
+        document.body.classList.add('bg-[#F8FAFC]', 'text-slate-900');
+      } else {
+        document.body.classList.remove('bg-[#F8FAFC]', 'text-slate-900');
+        document.body.classList.add('bg-[#0B0C10]', 'text-slate-100');
+      }
+    }
+  }, [theme]);
 
   // Load persistent transactions or fallback
   const [paymentTransactions, setPaymentTransactions] = useState<QRISPaymentTransaction[]>(() => {
@@ -1307,6 +1353,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <AppContext.Provider value={{
+      theme,
+      setTheme,
+      toggleTheme,
       currentView,
       setCurrentView,
       navigateTo,

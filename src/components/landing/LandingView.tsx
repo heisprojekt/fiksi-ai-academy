@@ -135,8 +135,8 @@ export const LandingView: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-300 text-xs font-bold backdrop-blur-md">
-                <Sparkles className="w-4 h-4 text-orange-400 animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 text-xs font-bold backdrop-blur-md">
+                <Sparkles className="w-4 h-4 text-cyan-600 dark:text-cyan-400 animate-pulse" />
                 <span>Next-Gen AI Creator Studio</span>
               </div>
             </motion.div>
@@ -146,7 +146,7 @@ export const LandingView: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-5xl font-black tracking-tight text-white leading-[1.1]"
+              className="text-4xl sm:text-5xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]"
             >
               Belajar <span className="text-gradient">AI.</span><br />
               Buat Konten.<br />
@@ -158,7 +158,7 @@ export const LandingView: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl"
+              className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl"
             >
               Studio belajar AI terintegrasi dengan 500+ formula prompt teruji, video masterclass sinematik, dan aset siap pakai untuk kreator modern.
             </motion.p>

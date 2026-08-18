@@ -211,34 +211,34 @@ export const PromptLibrary: React.FC = () => {
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <Badge variant="purple" icon={<Sparkles className="w-3.5 h-3.5" />}>PROMPT ENGINE</Badge>
-          <span className="text-xs text-slate-400 font-mono">• {prompts.length}+ Formula Multi-Model & Realisme</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">• {prompts.length}+ Formula Multi-Model & Realisme</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">Prompt Library</h1>
-        <p className="text-xs sm:text-sm text-slate-400">
+        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Prompt Library</h1>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
           Koleksi formula prompt sinematik terstruktur berdasarkan grouping Notion resmi FIKSI AI. Formula Free siap disalin langsung, dan Formula Pro VIP dilengkapi parameter eksklusif.
         </p>
       </div>
 
       {/* Search & Filter Controls Bar */}
-      <div className="flex flex-col gap-3.5 p-4 rounded-3xl bg-[#121420]/80 border border-white/[0.07] backdrop-blur-xl">
+      <div className="flex flex-col gap-3.5 p-4 rounded-3xl bg-white dark:bg-[#121420]/80 border border-slate-200 dark:border-white/[0.07] backdrop-blur-xl shadow-sm dark:shadow-none">
         
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           {/* Search input */}
           <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 dark:text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari prompt, tag, atau style..."
-              className="w-full pl-10 pr-4 py-2 rounded-2xl bg-[#0B0C10] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30"
+              className="w-full pl-10 pr-4 py-2 rounded-2xl bg-slate-100 dark:bg-[#0B0C10] border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30"
             />
           </div>
 
           {/* Tier Filter & Model Filters */}
           <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
             {/* Access Tier Quick Filter */}
-            <div className="flex items-center gap-1 p-1 rounded-2xl bg-[#0B0C10] border border-white/10 text-xs shrink-0">
+            <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-[#0B0C10] border border-slate-200 dark:border-white/10 text-xs shrink-0">
               {[
                 { id: 'All', label: 'Semua Tier' },
                 { id: 'Free', label: 'Free' },
@@ -251,7 +251,7 @@ export const PromptLibrary: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl font-bold transition-all whitespace-nowrap ${
                     selectedTier === t.id
                       ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm shadow-cyan-500/25'
-                      : 'text-slate-400 hover:text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {t.label}
@@ -264,10 +264,10 @@ export const PromptLibrary: React.FC = () => {
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
-                className="px-3 py-2 rounded-2xl bg-[#0B0C10] border border-white/10 text-xs text-cyan-300 font-bold focus:outline-none cursor-pointer"
+                className="px-3 py-2 rounded-2xl bg-slate-100 dark:bg-[#0B0C10] border border-slate-200 dark:border-white/10 text-xs text-cyan-700 dark:text-cyan-300 font-bold focus:outline-none cursor-pointer"
               >
                 {aiModels.map(m => (
-                  <option key={m} value={m} className="bg-[#13151D] text-slate-200">
+                  <option key={m} value={m} className="bg-white dark:bg-[#13151D] text-slate-800 dark:text-slate-200">
                     {m === 'All' ? 'Semua Model AI' : m}
                   </option>
                 ))}
@@ -290,13 +290,13 @@ export const PromptLibrary: React.FC = () => {
                 onClick={() => handleCategoryChange(cat)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
                   selectedCategory === cat
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                    : 'bg-white/[0.03] text-slate-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.05]'
+                    ? 'bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-sm'
+                    : 'bg-slate-100 dark:bg-white/[0.03] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/[0.06] border border-slate-200 dark:border-white/[0.05]'
                 }`}
               >
                 <span>{cat}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                  selectedCategory === cat ? 'bg-cyan-500/40 text-cyan-100' : 'bg-white/10 text-slate-400'
+                  selectedCategory === cat ? 'bg-cyan-500/40 text-cyan-900 dark:text-cyan-100' : 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400'
                 }`}>
                   {count}
                 </span>
@@ -509,13 +509,13 @@ export const PromptLibrary: React.FC = () => {
 
       {/* Bottom Pagination Navigation */}
       {totalPages > 1 && (
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-6 pb-2 border-t border-white/[0.06]">
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-6 pb-2 border-t border-slate-200 dark:border-white/[0.06]">
           {/* First Page */}
           <button
             type="button"
             onClick={() => handlePageChange(1)}
             disabled={validCurrentPage === 1}
-            className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm dark:shadow-none"
             title="Halaman Pertama"
           >
             <ChevronsLeft className="w-4 h-4" />
@@ -526,7 +526,7 @@ export const PromptLibrary: React.FC = () => {
             type="button"
             onClick={() => handlePageChange(validCurrentPage - 1)}
             disabled={validCurrentPage === 1}
-            className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 transition-all"
+            className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 transition-all shadow-sm dark:shadow-none"
           >
             <ChevronLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Sebelumnya</span>
@@ -537,7 +537,7 @@ export const PromptLibrary: React.FC = () => {
             {getPaginationNumbers().map((num, idx) => {
               if (num === '...') {
                 return (
-                  <span key={`dots-${idx}`} className="px-2 text-slate-600 text-xs font-mono select-none">
+                  <span key={`dots-${idx}`} className="px-2 text-slate-400 dark:text-slate-600 text-xs font-mono select-none">
                     ...
                   </span>
                 );
@@ -553,8 +553,8 @@ export const PromptLibrary: React.FC = () => {
                   onClick={() => handlePageChange(pageNum)}
                   className={`w-9 h-9 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-center ${
                     isActive
-                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/30 scale-105'
-                      : 'bg-white/[0.04] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08]'
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/30 scale-105'
+                      : 'bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/[0.08] shadow-sm dark:shadow-none'
                   }`}
                 >
                   {pageNum}
@@ -568,7 +568,7 @@ export const PromptLibrary: React.FC = () => {
             type="button"
             onClick={() => handlePageChange(validCurrentPage + 1)}
             disabled={validCurrentPage === totalPages}
-            className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 transition-all"
+            className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 transition-all shadow-sm dark:shadow-none"
           >
             <span className="hidden sm:inline">Berikutnya</span>
             <ChevronRight className="w-4 h-4" />
@@ -579,7 +579,7 @@ export const PromptLibrary: React.FC = () => {
             type="button"
             onClick={() => handlePageChange(totalPages)}
             disabled={validCurrentPage === totalPages}
-            className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm dark:shadow-none"
             title="Halaman Terakhir"
           >
             <ChevronsRight className="w-4 h-4" />

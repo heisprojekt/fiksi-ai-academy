@@ -76,23 +76,23 @@ export const Sidebar: React.FC = () => {
     : currentList;
 
   return (
-    <aside className={`shrink-0 hidden md:flex flex-col justify-between border-r border-white/[0.08] bg-[#0C0E14] min-h-[calc(100vh-64px)] transition-all duration-300 ${isCollapsed ? 'w-18 px-2 py-4' : 'w-60 lg:w-64 px-3 py-4'}`}>
+    <aside className={`shrink-0 hidden md:flex flex-col justify-between border-r border-slate-200 dark:border-white/[0.08] bg-slate-50/60 dark:bg-[#0C0E14] min-h-[calc(100vh-64px)] transition-all duration-300 ${isCollapsed ? 'w-18 px-2 py-4' : 'w-60 lg:w-64 px-3 py-4'}`}>
       <div className="flex flex-col gap-3">
 
         {/* Studio Sidebar Container */}
-        <div className="flex flex-col gap-2 p-2 rounded-2xl bg-[#12141C]/80 border border-white/[0.06] backdrop-blur-xl shadow-lg">
+        <div className="flex flex-col gap-2 p-2 rounded-2xl bg-white/90 dark:bg-[#12141C]/80 border border-slate-200 dark:border-white/[0.06] backdrop-blur-xl shadow-sm dark:shadow-lg">
           
           {/* Header Segmented Pill Control: [ Pages | Components ] */}
           {!isCollapsed ? (
-            <div className="flex flex-col gap-2 pb-2 border-b border-white/[0.06]">
+            <div className="flex flex-col gap-2 pb-2 border-b border-slate-200/80 dark:border-white/[0.06]">
               <div className="flex items-center justify-between">
-                <div className="flex items-center p-0.5 rounded-xl bg-[#0B0C10] border border-white/[0.06] w-full">
+                <div className="flex items-center p-0.5 rounded-xl bg-slate-100 dark:bg-[#0B0C10] border border-slate-200/80 dark:border-white/[0.06] w-full">
                   <button
                     onClick={() => setActiveTab('pages')}
                     className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
                       activeTab === 'pages'
-                        ? 'bg-[#1C1F2B] text-white shadow-sm'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-white dark:bg-[#1C1F2B] text-slate-900 dark:text-white shadow-sm'
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
                     Pages
@@ -101,8 +101,8 @@ export const Sidebar: React.FC = () => {
                     onClick={() => setActiveTab('components')}
                     className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
                       activeTab === 'components'
-                        ? 'bg-[#1C1F2B] text-white shadow-sm'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-white dark:bg-[#1C1F2B] text-slate-900 dark:text-white shadow-sm'
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
                     Components
@@ -110,7 +110,7 @@ export const Sidebar: React.FC = () => {
                 </div>
                 <button
                   onClick={toggleCollapse}
-                  className="ml-1.5 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  className="ml-1.5 p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors"
                   title="Lipat Sidebar"
                 >
                   <PanelLeftClose className="w-3.5 h-3.5" />
@@ -119,21 +119,21 @@ export const Sidebar: React.FC = () => {
 
               {/* Filter Search Input */}
               <div className="relative flex items-center">
-                <Search className="absolute left-2.5 w-3 h-3 text-slate-500 pointer-events-none" />
+                <Search className="absolute left-2.5 w-3 h-3 text-slate-400 dark:text-slate-500 pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Filter pages..."
                   value={filterQuery}
                   onChange={(e) => setFilterQuery(e.target.value)}
-                  className="w-full pl-7 pr-3 py-1 text-[11px] rounded-lg bg-[#0B0C10] border border-white/[0.06] text-slate-300 placeholder-slate-600 focus:outline-none focus:border-cyan-500/50"
+                  className="w-full pl-7 pr-3 py-1 text-[11px] rounded-lg bg-slate-100 dark:bg-[#0B0C10] border border-slate-200/80 dark:border-white/[0.06] text-slate-800 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
             </div>
           ) : (
-            <div className="flex justify-center pb-2 border-b border-white/[0.06]">
+            <div className="flex justify-center pb-2 border-b border-slate-200/80 dark:border-white/[0.06]">
               <button
                 onClick={toggleCollapse}
-                className="p-1.5 rounded-lg text-cyan-400 hover:bg-white/[0.06] transition-colors"
+                className="p-1.5 rounded-lg text-cyan-600 dark:text-cyan-400 hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors"
                 title="Buka Sidebar"
               >
                 <PanelLeftOpen className="w-4 h-4" />
@@ -157,12 +157,12 @@ export const Sidebar: React.FC = () => {
                   } ${
                     isActive
                       ? 'bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white shadow-md shadow-cyan-500/25 font-extrabold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
                   }`}
                 >
                   <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
                     <Icon className={`w-3.5 h-3.5 transition-transform group-hover:scale-110 ${
-                      isActive ? 'text-white' : 'text-slate-500 group-hover:text-cyan-400'
+                      isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500 group-hover:text-cyan-600 dark:group-hover:text-cyan-400'
                     }`} />
                     {!isCollapsed && (
                       <span className="font-mono tracking-tight text-[12px]">{item.label}</span>
@@ -173,7 +173,7 @@ export const Sidebar: React.FC = () => {
                     <span className={`px-1.5 py-0.2 text-[9px] font-black rounded-md ${
                       isActive
                         ? 'bg-white/20 text-white'
-                        : 'bg-white/5 text-slate-400 group-hover:bg-cyan-500/20 group-hover:text-cyan-300'
+                        : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 group-hover:bg-cyan-500/20 group-hover:text-cyan-600 dark:group-hover:text-cyan-300'
                     }`}>
                       {item.badge}
                     </span>
@@ -183,7 +183,7 @@ export const Sidebar: React.FC = () => {
             })}
           </div>
 
-          <div className="my-0.5 border-t border-white/[0.06]" />
+          <div className="my-0.5 border-t border-slate-200/80 dark:border-white/[0.06]" />
 
           {/* Settings Link */}
           <button
@@ -194,11 +194,11 @@ export const Sidebar: React.FC = () => {
             } ${
               currentView === 'profile'
                 ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-md shadow-cyan-500/25'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
             }`}
           >
             <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
-              <Settings className={`w-3.5 h-3.5 ${currentView === 'profile' ? 'text-white' : 'text-slate-500 group-hover:text-cyan-400'}`} />
+              <Settings className={`w-3.5 h-3.5 ${currentView === 'profile' ? 'text-white' : 'text-slate-400 dark:text-slate-500 group-hover:text-cyan-600 dark:group-hover:text-cyan-400'}`} />
               {!isCollapsed && <span className="font-mono text-[12px]">/settings</span>}
             </div>
             {!isCollapsed && <ChevronRight className="w-3 h-3 opacity-40" />}
@@ -209,12 +209,12 @@ export const Sidebar: React.FC = () => {
 
       {/* Bottom Studio Member / Guest Card */}
       {!isCollapsed ? (
-        <div className="p-3 rounded-2xl bg-[#12141C] border border-white/[0.06] flex items-center justify-between text-xs shadow-md mt-4">
+        <div className="p-3 rounded-2xl bg-white dark:bg-[#12141C] border border-slate-200 dark:border-white/[0.06] flex items-center justify-between text-xs shadow-sm dark:shadow-md mt-4">
           <div className="flex flex-col">
-            <span className="text-[10px] text-slate-500 font-mono">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
               {userRole === 'Pro Member' ? 'PRO VIP ACCOUNT' : userRole === 'Admin' ? 'ADMIN ACCESS' : 'GUEST CREATOR'}
             </span>
-            <span className="text-xs font-bold text-slate-200 truncate max-w-[120px]">
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[120px]">
               {userRole === 'Pro Member' ? 'Unlimited Access' : 'Free Sandbox'}
             </span>
           </div>
@@ -226,7 +226,7 @@ export const Sidebar: React.FC = () => {
               Upgrade
             </button>
           ) : (
-            <Zap className="w-4 h-4 text-cyan-400 fill-current" />
+            <Zap className="w-4 h-4 text-cyan-600 dark:text-cyan-400 fill-current" />
           )}
         </div>
       ) : null}

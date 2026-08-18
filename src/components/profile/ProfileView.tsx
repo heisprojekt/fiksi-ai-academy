@@ -13,7 +13,9 @@ import {
   Bookmark, 
   Download, 
   GraduationCap,
-  LogOut
+  LogOut,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { GradientButton } from '../ui/GradientButton';
@@ -21,6 +23,8 @@ import { Badge } from '../ui/Badge';
 
 export const ProfileView: React.FC = () => {
   const { 
+    theme,
+    setTheme,
     currentUser, 
     userRole, 
     setUserRole, 
@@ -53,16 +57,16 @@ export const ProfileView: React.FC = () => {
           />
           <div className="flex flex-col gap-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-2">
-              <h1 className="text-2xl font-extrabold text-white">{name}</h1>
+              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{name}</h1>
               <Badge variant={userRole === 'Admin' ? 'purple' : userRole === 'Pro Member' ? 'pro' : 'outline'} icon={<Crown className="w-3.5 h-3.5" />}>
                 {userRole}
               </Badge>
             </div>
-            <span className="text-xs text-slate-400 font-mono">{email}</span>
-            <div className="flex items-center gap-4 text-xs text-slate-400 mt-2">
-              <span>Bergabung sejak: <strong className="text-white">{currentUser?.joinedDate || '01 Jan 2025'}</strong></span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">{email}</span>
+            <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 mt-2">
+              <span>Bergabung sejak: <strong className="text-slate-900 dark:text-white">{currentUser?.joinedDate || '01 Jan 2025'}</strong></span>
               <span>•</span>
-              <span>Berakhir pada: <strong className="text-accent-cyan">{currentUser?.validUntil || 'Lifetime VIP'}</strong></span>
+              <span>Berakhir pada: <strong className="text-cyan-600 dark:text-accent-cyan">{currentUser?.validUntil || 'Lifetime VIP'}</strong></span>
             </div>
           </div>
         </div>
@@ -102,33 +106,33 @@ export const ProfileView: React.FC = () => {
       {/* Stats Counters Section */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <GlassCard className="p-4 flex flex-col items-center justify-center text-center gap-1">
-          <span className="text-2xl font-extrabold text-white">{currentUser?.coursesCompleted || 12}</span>
-          <span className="text-xs text-slate-400 flex items-center gap-1">
-            <GraduationCap className="w-3.5 h-3.5 text-accent-cyan" />
+          <span className="text-2xl font-extrabold text-slate-900 dark:text-white">{currentUser?.coursesCompleted || 12}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <GraduationCap className="w-3.5 h-3.5 text-cyan-600 dark:text-accent-cyan" />
             Courses Selesai
           </span>
         </GlassCard>
 
         <GlassCard className="p-4 flex flex-col items-center justify-center text-center gap-1">
-          <span className="text-2xl font-extrabold text-accent-cyan">{bookmarks.length || 156}</span>
-          <span className="text-xs text-slate-400 flex items-center gap-1">
-            <Bookmark className="w-3.5 h-3.5 text-accent-cyan" />
+          <span className="text-2xl font-extrabold text-cyan-600 dark:text-accent-cyan">{bookmarks.length || 156}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <Bookmark className="w-3.5 h-3.5 text-cyan-600 dark:text-accent-cyan" />
             Prompt Disimpan
           </span>
         </GlassCard>
 
         <GlassCard className="p-4 flex flex-col items-center justify-center text-center gap-1">
-          <span className="text-2xl font-extrabold text-accent-purple">{currentUser?.totalDownloads || 32}</span>
-          <span className="text-xs text-slate-400 flex items-center gap-1">
-            <Download className="w-3.5 h-3.5 text-accent-purple" />
+          <span className="text-2xl font-extrabold text-purple-600 dark:text-accent-purple">{currentUser?.totalDownloads || 32}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <Download className="w-3.5 h-3.5 text-purple-600 dark:text-accent-purple" />
             Downloads
           </span>
         </GlassCard>
 
         <GlassCard className="p-4 flex flex-col items-center justify-center text-center gap-1">
-          <span className="text-2xl font-extrabold text-amber-400">{currentUser?.streakDays || 24} Hari</span>
-          <span className="text-xs text-slate-400 flex items-center gap-1">
-            <Flame className="w-3.5 h-3.5 text-amber-400" />
+          <span className="text-2xl font-extrabold text-amber-500 dark:text-amber-400">{currentUser?.streakDays || 24} Hari</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <Flame className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
             Streak Belajar
           </span>
         </GlassCard>
@@ -138,11 +142,11 @@ export const ProfileView: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         
         {/* Left Settings Sidebar Tabs */}
-        <div className="md:col-span-4 flex flex-col gap-2 p-2 rounded-3xl bg-[#101827]/40 border border-white/[0.06]">
+        <div className="md:col-span-4 flex flex-col gap-2 p-2 rounded-3xl bg-slate-100/80 dark:bg-[#101827]/40 border border-slate-200 dark:border-white/[0.06] shadow-sm dark:shadow-none">
           <button
             onClick={() => setActiveTab('account')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
-              activeTab === 'account' ? 'bg-gradient-accent text-white' : 'text-slate-400 hover:text-white'
+              activeTab === 'account' ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-md shadow-cyan-500/25' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/5'
             }`}
           >
             <User className="w-4 h-4" />
@@ -152,7 +156,7 @@ export const ProfileView: React.FC = () => {
           <button
             onClick={() => setActiveTab('billing')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
-              activeTab === 'billing' ? 'bg-gradient-accent text-white' : 'text-slate-400 hover:text-white'
+              activeTab === 'billing' ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-md shadow-cyan-500/25' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/5'
             }`}
           >
             <CreditCard className="w-4 h-4" />
@@ -162,7 +166,7 @@ export const ProfileView: React.FC = () => {
           <button
             onClick={() => setActiveTab('notifications')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
-              activeTab === 'notifications' ? 'bg-gradient-accent text-white' : 'text-slate-400 hover:text-white'
+              activeTab === 'notifications' ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-md shadow-cyan-500/25' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/5'
             }`}
           >
             <Bell className="w-4 h-4" />
@@ -172,7 +176,7 @@ export const ProfileView: React.FC = () => {
           <button
             onClick={() => setActiveTab('security')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
-              activeTab === 'security' ? 'bg-gradient-accent text-white' : 'text-slate-400 hover:text-white'
+              activeTab === 'security' ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-md shadow-cyan-500/25' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/5'
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
@@ -187,33 +191,77 @@ export const ProfileView: React.FC = () => {
               <form onSubmit={handleSaveProfile} className="flex flex-col gap-4">
                 <h3 className="text-base font-bold text-white border-b border-white/10 pb-3">Informasi Akun</h3>
                 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Nama Lengkap</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="p-3 rounded-2xl bg-[#060816] border border-white/10 text-xs text-white focus:outline-none focus:border-accent-purple/60"
-                  />
-                </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Nama Lengkap</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="p-3 rounded-2xl bg-slate-100 dark:bg-[#0B0C10] border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/60"
+                    />
+                  </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Email Utama</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="p-3 rounded-2xl bg-[#060816] border border-white/10 text-xs text-white focus:outline-none focus:border-accent-purple/60"
-                  />
-                </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Email Utama</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="p-3 rounded-2xl bg-slate-100 dark:bg-[#0B0C10] border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/60"
+                    />
+                  </div>
 
-                <div className="flex justify-end pt-2">
-                  <GradientButton size="sm" type="submit">
-                    Simpan Perubahan
-                  </GradientButton>
-                </div>
-              </form>
-            )}
+                  {/* Theme Mode Preference Selector */}
+                  <div className="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-white/10">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Preferensi Tampilan (Theme Mode)</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setTheme('dark')}
+                        className={`p-3 rounded-2xl border flex items-center justify-between transition-all ${
+                          theme === 'dark'
+                            ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-300 shadow-sm ring-1 ring-cyan-500/30'
+                            : 'bg-slate-100 dark:bg-[#0B0C10] border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Moon className="w-4 h-4 text-cyan-400" />
+                          <div className="flex flex-col text-left">
+                            <span className="text-xs font-bold">Dark Mode</span>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400">Obsidian studio sleek</span>
+                          </div>
+                        </div>
+                        {theme === 'dark' && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setTheme('light')}
+                        className={`p-3 rounded-2xl border flex items-center justify-between transition-all ${
+                          theme === 'light'
+                            ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-700 dark:text-cyan-300 shadow-sm ring-1 ring-cyan-500/30'
+                            : 'bg-slate-100 dark:bg-[#0B0C10] border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Sun className="w-4 h-4 text-amber-500" />
+                          <div className="flex flex-col text-left">
+                            <span className="text-xs font-bold">Light Mode</span>
+                            <span className="text-[10px] text-slate-500">Clean crisp daylight</span>
+                          </div>
+                        </div>
+                        {theme === 'light' && <CheckCircle2 className="w-4 h-4 text-cyan-600" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <GradientButton size="sm" type="submit">
+                      Simpan Perubahan
+                    </GradientButton>
+                  </div>
+                </form>
+              )}
 
             {activeTab === 'billing' && (
               <div className="flex flex-col gap-5">

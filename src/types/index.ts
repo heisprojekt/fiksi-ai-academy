@@ -240,3 +240,5 @@ export const buildFullPromptFormula = (prompt: PromptPack): string => {
 
   return sections.join('\n\n');
 };
+
+export type ThemeMode = 'light' | 'dark';
