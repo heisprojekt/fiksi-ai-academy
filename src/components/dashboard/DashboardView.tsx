@@ -61,18 +61,26 @@ export const DashboardView: React.FC = () => {
   } = useApp();
 
   const latestUpdate = MOCK_WEEKLY_UPDATES[0];
-  const userName = currentUser?.name || 'Kreator AI';
+  const userName = currentUser?.name || (userRole === 'Guest' ? 'Tamu / Kreator AI' : 'Kreator AI');
   
   // A new user has no recent activities, no completed episodes, and no bookmarks
   const isNewUser = recentActivity.length === 0 && Object.keys(completedEpisodes || {}).length === 0;
 
-  // Check if returning user has ever started or joined any masterclass
+  // Check if user (guest or registered) has ever started or made progress in any masterclass
   const hasStartedMasterclass = useMemo(() => {
     const hasCourseInRecent = recentActivity.some(item => item.type === 'course');
-    const hasCompletedEp = Object.keys(completedEpisodes || {}).length > 0;
+    const hasCompletedEp = Object.keys(completedEpisodes || {}).some(k => !!completedEpisodes[k]);
     const hasCourseProgress = courses.some(c => (c.progressPercentage || 0) > 0);
     return hasCourseInRecent || hasCompletedEp || hasCourseProgress;
   }, [recentActivity, completedEpisodes, courses]);
+
+  // Courses currently in progress or completed
+  const coursesInProgress = useMemo(() => {
+    const active = courses.filter(c => (c.progressPercentage || 0) > 0);
+    if (active.length > 0) return active;
+    const courseActivityIds = recentActivity.filter(i => i.type === 'course').map(i => i.targetId || i.id);
+    return courses.filter(c => courseActivityIds.includes(c.id));
+  }, [courses, recentActivity]);
 
   // Last accessed activity item
   const lastAccessed = recentActivity[0] as RecentActivityItem | undefined;
@@ -106,7 +114,7 @@ export const DashboardView: React.FC = () => {
     return matching.length >= 2 ? matching.slice(0, 4) : prompts.filter(p => p.isPopular).slice(0, 4);
   }, [lastAccessed, prompts]);
 
-  // Recommended beginner starter courses for new users
+  // Recommended beginner starter courses for new users or users with no masterclass started
   const beginnerStarterCourses = useMemo(() => {
     const list = courses.length > 0 ? courses : MOCK_COURSES;
     const beginners = list.filter(c => c.level === 'Pemula');
@@ -470,82 +478,151 @@ export const DashboardView: React.FC = () => {
       {/* CONTINUE LEARNING OR RECOMMENDED STARTER COURSES                          */}
       {/* ========================================================================= */}
       <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
             <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-              {isNewUser || !hasStartedMasterclass
+              {!hasStartedMasterclass
                 ? 'Rekomendasi Masterclass Fondasi (Cocok untuk Pemula)' 
                 : 'Progres Masterclass & Modul Lanjutan'}
             </h2>
           </div>
           <button 
             onClick={() => navigateTo('courses')}
-            className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 self-start sm:self-auto"
           >
             <span>Lihat Semua Kursus</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {(isNewUser || !hasStartedMasterclass ? beginnerStarterCourses : courses.slice(0, 3)).map((course) => (
-            <GlassCard key={course.id} hoverable className="p-5 flex flex-col justify-between gap-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={course.thumbnail}
-                    alt={course.title}
-                    className="w-12 h-12 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-white/10"
-                  />
-                  <div className="flex flex-col">
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">{course.title}</h3>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      <span>{course.category}</span>
-                      <span>•</span>
-                      <span className="text-cyan-600 dark:text-cyan-300 font-medium">{course.level}</span>
+        {!hasStartedMasterclass ? (
+          /* =================================================================== */
+          /* CASE A: USER BELUM PERNAH MEMBUKA MASTERCLASS -> REKOMENDASI STARTER*/
+          /* =================================================================== */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {beginnerStarterCourses.map((course) => (
+              <GlassCard key={course.id} hoverable className="p-5 flex flex-col justify-between gap-4 group">
+                <div className="flex flex-col gap-3">
+                  <div className="relative aspect-video rounded-xl overflow-hidden ring-1 ring-slate-200 dark:ring-white/10 group-hover:ring-cyan-500/50 transition-all">
+                    <img
+                      src={course.thumbnail}
+                      alt={course.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-3 justify-between">
+                      <Badge variant={course.level === 'Pemula' ? 'cyan' : course.level === 'Menengah' ? 'purple' : 'pro'} size="sm">
+                        {course.level}
+                      </Badge>
+                      <span className="text-[10px] font-mono text-white/90 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md">
+                        {course.episodes?.length || course.totalEpisodes || 4} Episode
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider font-mono">
+                      {course.category}
+                    </span>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
+                      {course.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">
+                      {course.subtitle || course.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <img
+                      src={course.instructor?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'}
+                      alt={course.instructor?.name || 'Mentor'}
+                      className="w-6 h-6 rounded-full object-cover shrink-0 ring-1 ring-white/20"
+                    />
+                    <span className="text-[11px] text-slate-600 dark:text-slate-400 truncate">
+                      {course.instructor?.name || 'FIKSI Mentor'}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => navigateTo('course-detail', course.id)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold shadow-md shadow-cyan-500/20 transition-all shrink-0 group-hover:translate-x-0.5"
+                  >
+                    <span>Mulai Belajar</span>
+                    <Play className="w-3 h-3 fill-current ml-0.5" />
+                  </button>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        ) : (
+          /* =================================================================== */
+          /* CASE B: USER MEMILIKI KURSUS YANG SEDANG BERJALAN -> PROGRES RIIL   */
+          /* =================================================================== */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {(coursesInProgress.length > 0 ? coursesInProgress.slice(0, 3) : courses.slice(0, 3)).map((course) => (
+              <GlassCard key={course.id} hoverable className="p-5 flex flex-col justify-between gap-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <img
+                      src={course.thumbnail}
+                      alt={course.title}
+                      className="w-12 h-12 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-white/10 shrink-0"
+                    />
+                    <div className="flex flex-col min-w-0">
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">{course.title}</h3>
+                      <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        <span>{course.category}</span>
+                        <span>•</span>
+                        <span className="text-cyan-600 dark:text-cyan-300 font-medium">{course.level}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400 text-[11px]">Progres Masterclass</span>
-                  <span className="font-bold text-cyan-600 dark:text-cyan-300 text-[11px]">{course.progressPercentage || 0}%</span>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-500 dark:text-slate-400 text-[11px]">
+                      {course.completedEpisodes !== undefined && course.totalEpisodes 
+                        ? `${course.completedEpisodes} dari ${course.totalEpisodes} Episode Selesai`
+                        : 'Progres Masterclass'}
+                    </span>
+                    <span className="font-bold text-cyan-600 dark:text-cyan-300 text-[11px]">{course.progressPercentage || 0}%</span>
+                  </div>
+                  <div className="w-full bg-slate-200 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 h-full transition-all duration-500" 
+                      style={{ width: `${course.progressPercentage || 0}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-slate-200 dark:bg-white/10 h-2 rounded-full overflow-hidden">
-                  <div 
-                    className="bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 h-full transition-all duration-500" 
-                    style={{ width: `${course.progressPercentage || 0}%` }}
-                  />
-                </div>
-              </div>
 
-              <button
-                onClick={() => navigateTo('course-detail', course.id)}
-                className={`w-full flex items-center justify-between px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-                  course.progressPercentage === 100
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
-                    : 'bg-slate-100 dark:bg-white/[0.04] text-slate-700 dark:text-slate-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-600 hover:text-white border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none'
-                }`}
-              >
-                <span>
-                  {course.progressPercentage === 100 
-                    ? 'Review Masterclass' 
-                    : course.progressPercentage > 0 
-                      ? 'Lanjutkan Episode' 
-                      : 'Mulai Episode 1'}
-                </span>
-                {course.progressPercentage === 100 ? (
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                ) : (
-                  <ArrowRight className="w-3.5 h-3.5" />
-                )}
-              </button>
-            </GlassCard>
-          ))}
-        </div>
+                <button
+                  onClick={() => navigateTo('course-detail', course.id)}
+                  className={`w-full flex items-center justify-between px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    course.progressPercentage === 100
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+                      : 'bg-slate-100 dark:bg-white/[0.04] text-slate-700 dark:text-slate-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-600 hover:text-white border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none'
+                  }`}
+                >
+                  <span>
+                    {course.progressPercentage === 100 
+                      ? 'Review Masterclass' 
+                      : (course.progressPercentage || 0) > 0 
+                        ? 'Lanjutkan Episode' 
+                        : 'Mulai Episode 1'}
+                  </span>
+                  {course.progressPercentage === 100 ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </GlassCard>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ========================================================================= */}

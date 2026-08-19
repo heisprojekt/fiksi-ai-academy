@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { 
   ViewMode, 
   UserRole, 
@@ -502,21 +502,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [completedEpisodes, setCompletedEpisodes] = useState<Record<string, boolean>>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.COMPLETED_EPISODES);
-      return saved ? JSON.parse(saved) : {
-        'omni-flash-masterclass-ep-1': true,
-        'omni-flash-masterclass-ep-2': true,
-        'nano-banana-starter-nb-1': true,
-        'nano-banana-starter-nb-2': true,
-      };
+      const userKey = initialUser ? `${STORAGE_KEYS.COMPLETED_EPISODES}_${initialUser.id}` : `${STORAGE_KEYS.COMPLETED_EPISODES}_guest`;
+      const saved = localStorage.getItem(userKey);
+      if (saved) return JSON.parse(saved);
+      // Fallback for legacy key if present
+      const legacy = localStorage.getItem(STORAGE_KEYS.COMPLETED_EPISODES);
+      if (legacy) return JSON.parse(legacy);
     } catch {
-      return {};
+      // ignore
     }
+    return {};
   });
+
+  // Reload completed episodes on user login / switch
+  useEffect(() => {
+    try {
+      const userKey = currentUser ? `${STORAGE_KEYS.COMPLETED_EPISODES}_${currentUser.id}` : `${STORAGE_KEYS.COMPLETED_EPISODES}_guest`;
+      const saved = localStorage.getItem(userKey);
+      setCompletedEpisodes(saved ? JSON.parse(saved) : {});
+    } catch {
+      setCompletedEpisodes({});
+    }
+  }, [currentUser?.id]);
 
   const [recentActivity, setRecentActivity] = useState<RecentActivityItem[]>(() => {
     try {
-      const userKey = initialUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${initialUser.id}` : STORAGE_KEYS.RECENT_ACTIVITY;
+      const userKey = initialUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${initialUser.id}` : `${STORAGE_KEYS.RECENT_ACTIVITY}_guest`;
       const saved = localStorage.getItem(userKey);
       return saved ? JSON.parse(saved) : [];
     } catch {
@@ -527,7 +538,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Reload recent activity on user login/switch
   useEffect(() => {
     try {
-      const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : STORAGE_KEYS.RECENT_ACTIVITY;
+      const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : `${STORAGE_KEYS.RECENT_ACTIVITY}_guest`;
       const saved = localStorage.getItem(userKey);
       setRecentActivity(saved ? JSON.parse(saved) : []);
     } catch {
@@ -541,7 +552,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const newItem: RecentActivityItem = { ...item, timestamp: Date.now() };
       const updated = [newItem, ...filtered].slice(0, 10);
       try {
-        const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : STORAGE_KEYS.RECENT_ACTIVITY;
+        const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : `${STORAGE_KEYS.RECENT_ACTIVITY}_guest`;
         localStorage.setItem(userKey, JSON.stringify(updated));
       } catch {
         // ignore
@@ -553,7 +564,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const clearRecentActivity = () => {
     setRecentActivity([]);
     try {
-      const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : STORAGE_KEYS.RECENT_ACTIVITY;
+      const userKey = currentUser ? `${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}` : `${STORAGE_KEYS.RECENT_ACTIVITY}_guest`;
       localStorage.removeItem(userKey);
     } catch {
       // ignore
@@ -592,8 +603,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [bookmarks]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.COMPLETED_EPISODES, JSON.stringify(completedEpisodes));
-  }, [completedEpisodes]);
+    const userKey = currentUser ? `${STORAGE_KEYS.COMPLETED_EPISODES}_${currentUser.id}` : `${STORAGE_KEYS.COMPLETED_EPISODES}_guest`;
+    localStorage.setItem(userKey, JSON.stringify(completedEpisodes));
+  }, [completedEpisodes, currentUser?.id]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(paymentTransactions));
@@ -713,12 +725,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => window.removeEventListener('focus', onFocusSync);
   }, [currentUser]);
 
-  const activeCourse = courses.find(c => c.id === activeCourseId || c.slug === activeCourseId) || courses[0] || MOCK_COURSES[0];
+  // Dynamically compute progress for each course based on user's completedEpisodes
+  const enrichedCourses = useMemo(() => {
+    return courses.map(course => {
+      const episodes = course.episodes || [];
+      const totalEpisodes = episodes.length;
+      if (totalEpisodes === 0) {
+        return {
+          ...course,
+          totalEpisodes: 0,
+          completedEpisodes: 0,
+          progressPercentage: 0
+        };
+      }
+      const completedCount = episodes.filter(ep => !!completedEpisodes[`${course.id}-${ep.id}`]).length;
+      const progressPercentage = Math.round((completedCount / totalEpisodes) * 100);
+      const updatedEpisodes = episodes.map(ep => ({
+        ...ep,
+        completed: !!completedEpisodes[`${course.id}-${ep.id}`]
+      }));
+
+      return {
+        ...course,
+        totalEpisodes,
+        completedEpisodes: completedCount,
+        progressPercentage,
+        episodes: updatedEpisodes
+      };
+    });
+  }, [courses, completedEpisodes]);
+
+  const activeCourse = enrichedCourses.find(c => c.id === activeCourseId || c.slug === activeCourseId) || enrichedCourses[0] || MOCK_COURSES[0];
 
   const setActiveCourseId = (id: string) => {
     setActiveCourseIdState(id);
     setCurrentView('course-detail');
-    const foundCourse = courses.find(c => c.id === id || c.slug === id);
+    const foundCourse = enrichedCourses.find(c => c.id === id || c.slug === id);
     if (foundCourse) {
       trackRecentActivity({
         id: foundCourse.id,
@@ -1436,7 +1478,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.removeItem(STORAGE_KEYS.ASSETS);
     localStorage.removeItem(STORAGE_KEYS.TOOLS);
     localStorage.removeItem(STORAGE_KEYS.RECENT_ACTIVITY);
+    localStorage.removeItem(`${STORAGE_KEYS.RECENT_ACTIVITY}_guest`);
+    localStorage.removeItem(STORAGE_KEYS.COMPLETED_EPISODES);
+    localStorage.removeItem(`${STORAGE_KEYS.COMPLETED_EPISODES}_guest`);
+    if (currentUser?.id) {
+      localStorage.removeItem(`${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}`);
+      localStorage.removeItem(`${STORAGE_KEYS.COMPLETED_EPISODES}_${currentUser.id}`);
+    }
     setRecentActivity([]);
+    setCompletedEpisodes({});
     showToast('info', 'Data Direset', 'Semua data telah dikembalikan ke standar awal.');
   };
 
@@ -1459,7 +1509,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       loginWithEmail,
       registerWithEmail,
       logout,
-      courses,
+      courses: enrichedCourses,
       activeCourse,
       setActiveCourseId,
       addCourse,

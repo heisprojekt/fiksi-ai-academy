@@ -274,7 +274,7 @@ export const CourseView: React.FC = () => {
               <div className="flex flex-col gap-2 max-h-[480px] overflow-y-auto pr-1">
                 {currentCourse?.episodes?.map((ep, idx) => {
                   const isCurrent = idx === activeEpisodeIndex;
-                  const isDone = !!completedEpisodes[`${currentCourse.id}-${ep.id}`] || ep.completed;
+                  const isDone = !!completedEpisodes[`${currentCourse.id}-${ep.id}`];
 
                   return (
                     <button

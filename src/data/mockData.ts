@@ -23,9 +23,9 @@ export const MOCK_COURSES: Course[] = [
     bannerImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80',
     category: 'AI Video & Visual',
     level: 'Menengah',
-    progressPercentage: 35,
+    progressPercentage: 0,
     totalEpisodes: 6,
-    completedEpisodes: 2,
+    completedEpisodes: 0,
     instructor: {
       name: 'Rian Antigravity',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
@@ -37,7 +37,7 @@ export const MOCK_COURSES: Course[] = [
         id: 'ep-1',
         title: 'Episode 1: Pengenalan & Workflow Karakter AI',
         duration: '12:45',
-        completed: true,
+        completed: false,
         videoUrl: 'https://drive.google.com/file/d/1jg0t4FgM25ei0JdJPmowjqQeimtx9rGT/view?usp=sharing',
         description: 'Panduan langkah demi langkah membuat prompt karakter konsisten dan generate visual pertama.',
         keyTopics: ['Omni Flash Architecture', 'Model Parameters', 'Prompt Base Setup'],
@@ -85,7 +85,7 @@ Setelah gambar karakter siap, langkah berikutnya adalah menganimasikan visual me
         id: 'ep-2',
         title: 'Episode 2: Dasar Prompting & Seed Control',
         duration: '18:20',
-        completed: true,
+        completed: false,
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
         description: 'Cara menyusun prompt terstruktur untuk menghindari distorsi anatomi dan artifacts.',
         keyTopics: ['Prompt Weighting', 'Negative Prompt Master', 'Seed Locking'],
@@ -186,9 +186,9 @@ Workflow finishing video agar jernih dan bebas blur saat diunggah ke platform me
     bannerImage: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1600&q=80',
     category: 'Commercial AI',
     level: 'Pemula',
-    progressPercentage: 72,
-    totalEpisodes: 5,
-    completedEpisodes: 3,
+    progressPercentage: 0,
+    totalEpisodes: 4,
+    completedEpisodes: 0,
     instructor: {
       name: 'Sarah Wijaya',
       avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
@@ -200,23 +200,42 @@ Workflow finishing video agar jernih dan bebas blur saat diunggah ke platform me
         id: 'nb-1',
         title: 'Episode 1: Setup Nano Banana Model',
         duration: '10:15',
-        completed: true,
+        completed: false,
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnTheGrid.mp4',
-        description: 'Inisialisasi environment dan API Nano Banana.',
-        keyTopics: ['API Setup', 'Model Parameters']
+        description: 'Inisialisasi environment dan API Nano Banana untuk generasi iklan cepat.',
+        keyTopics: ['API Setup', 'Model Parameters', 'Quickstart Guide']
       },
       {
         id: 'nb-2',
         title: 'Episode 2: UGC Product Review Automation',
         duration: '16:00',
-        completed: true,
+        completed: false,
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
         description: 'Bikin script voiceover AI dan sync dengan avatar manusia hiper-realistis.',
         keyTopics: ['Avatar Lipsync', 'Scripting AI', 'Commercial Lighting']
+      },
+      {
+        id: 'nb-3',
+        title: 'Episode 3: B-Roll Product Animation & Sound Design',
+        duration: '14:30',
+        completed: false,
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoytimes.mp4',
+        description: 'Menambahkan transisi visual dynamic dan audio sound effect viral.',
+        keyTopics: ['B-Roll Generation', 'Audio Sync', 'Viral Hooks']
+      },
+      {
+        id: 'nb-4',
+        title: 'Episode 4: Export Format TikTok Ads & Instagram Reels',
+        duration: '11:45',
+        completed: false,
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        description: 'Formula aspect ratio 9:16 dan setting kompresi bitrate tertinggi.',
+        keyTopics: ['Aspect Ratio 9:16', 'Bitrate Optimization', 'Ad Creative Strategy']
       }
     ],
     resources: [
-      { title: 'UGC Script Templates', type: 'DOCX', size: '1.1 MB', downloadUrl: '#' }
+      { title: 'UGC Script Templates', type: 'DOCX', size: '1.1 MB', downloadUrl: '#' },
+      { title: 'TikTok Ad Hook Cheatsheet', type: 'PDF', size: '2.4 MB', downloadUrl: '#' }
     ]
   },
   {
@@ -227,17 +246,57 @@ Workflow finishing video agar jernih dan bebas blur saat diunggah ke platform me
     bannerImage: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=1600&q=80',
     category: '3D Animation',
     level: 'Lanjutan',
-    progressPercentage: 100,
-    totalEpisodes: 8,
-    completedEpisodes: 8,
+    progressPercentage: 0,
+    totalEpisodes: 4,
+    completedEpisodes: 0,
     instructor: {
       name: 'Kevin Pratama',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
       role: '3D AI Artist'
     },
     description: 'Kuasai teknik rendering animasi Seedance 3D untuk iklan komersial, klip musik, dan teaser film.',
-    episodes: [],
-    resources: []
+    episodes: [
+      {
+        id: 'sd-1',
+        title: 'Episode 1: Fondasi Motion 3D & Physics Prompting',
+        duration: '15:20',
+        completed: false,
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        description: 'Memahami prinsip gravitasi, particle collision, dan prompt rigging 3D di AI model.',
+        keyTopics: ['Physics Simulation', 'Prompt Weighting', 'Camera Orbits']
+      },
+      {
+        id: 'sd-2',
+        title: 'Episode 2: Character Rigging & Complex Movement',
+        duration: '22:10',
+        completed: false,
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+        description: 'Mengarahkan gerakan anggota tubuh tanpa distorsi mesh.',
+        keyTopics: ['Mesh Stability', 'Skeletal Motion', 'Keyframe Injection']
+      },
+      {
+        id: 'sd-3',
+        title: 'Episode 3: Cinematic Lighting & Octane Shader Style',
+        duration: '18:50',
+        completed: false,
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+        description: 'Shader glassmorphism, metallic chrome, dan neon subsurface scattering.',
+        keyTopics: ['Raytracing Prompts', 'Subsurface Scattering', 'Shader Textures']
+      },
+      {
+        id: 'sd-4',
+        title: 'Episode 4: Final 60fps Motion Render & Compositing',
+        duration: '20:15',
+        completed: false,
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+        description: 'Compositing di After Effects dan color balancing.',
+        keyTopics: ['Compositing Passes', '60fps Flow', 'Final Studio Grade']
+      }
+    ],
+    resources: [
+      { title: '3D Shader Preset Library', type: 'ZIP', size: '24.8 MB', downloadUrl: '#' },
+      { title: 'Seedance Motion Cheat Sheet', type: 'PDF', size: '3.1 MB', downloadUrl: '#' }
+    ]
   }
 ];
 
