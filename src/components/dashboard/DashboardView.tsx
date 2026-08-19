@@ -769,23 +769,37 @@ export const DashboardView: React.FC = () => {
               <div className="flex flex-col p-3 rounded-xl bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06]">
                 <span className="text-xs text-slate-500 dark:text-slate-400">Streak Belajar</span>
                 <span className="text-xl font-extrabold text-amber-500 dark:text-amber-400 mt-1">
-                  {currentUser?.streakDays || 1} Hari 🔥
+                  {currentUser ? `${currentUser.streakDays || 1} Hari 🔥` : '0 Hari'}
                 </span>
               </div>
-              <div className="flex flex-col p-3 rounded-xl bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06]">
-                <span className="text-xs text-slate-500 dark:text-slate-400">Saved Prompts</span>
+              <div 
+                onClick={() => navigateTo('bookmarks')}
+                className="flex flex-col p-3 rounded-xl bg-slate-100/70 dark:bg-white/[0.03] hover:bg-slate-200/60 dark:hover:bg-white/[0.06] border border-slate-200 dark:border-white/[0.06] hover:border-cyan-500/40 transition-all cursor-pointer group"
+                title="Buka Koleksi Bookmark"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Saved Prompts</span>
+                  <ArrowRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
                 <span className="text-xl font-extrabold text-cyan-600 dark:text-cyan-300 mt-1">{bookmarks.length}</span>
               </div>
-              <div className="flex flex-col p-3 rounded-xl bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06]">
-                <span className="text-xs text-slate-500 dark:text-slate-400">Kursus Selesai</span>
+              <div 
+                onClick={() => navigateTo('courses')}
+                className="flex flex-col p-3 rounded-xl bg-slate-100/70 dark:bg-white/[0.03] hover:bg-slate-200/60 dark:hover:bg-white/[0.06] border border-slate-200 dark:border-white/[0.06] hover:border-cyan-500/40 transition-all cursor-pointer group"
+                title="Buka Katalog Kursus"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Kursus Selesai</span>
+                  <ArrowRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
                 <span className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">
-                  {courses.filter(c => c.progressPercentage === 100).length}
+                  {courses.filter(c => (c.progressPercentage || 0) === 100).length}
                 </span>
               </div>
               <div className="flex flex-col p-3 rounded-xl bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06]">
                 <span className="text-xs text-slate-500 dark:text-slate-400">Total Aktivitas</span>
                 <span className="text-xl font-extrabold text-purple-600 dark:text-purple-300 mt-1">
-                  {recentActivity.length > 0 ? recentActivity.length : 1}
+                  {recentActivity.length}
                 </span>
               </div>
             </div>

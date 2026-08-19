@@ -493,12 +493,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [bookmarks, setBookmarks] = useState<string[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.BOOKMARKS);
-      return saved ? JSON.parse(saved) : ['prompt-1', 'prompt-4'];
+      const userKey = initialUser ? `${STORAGE_KEYS.BOOKMARKS}_${initialUser.id}` : `${STORAGE_KEYS.BOOKMARKS}_guest`;
+      const saved = localStorage.getItem(userKey);
+      if (saved) return JSON.parse(saved);
     } catch {
-      return ['prompt-1', 'prompt-4'];
+      // ignore
     }
+    return [];
   });
+
+  // Reload bookmarks on user login / switch
+  useEffect(() => {
+    try {
+      const userKey = currentUser ? `${STORAGE_KEYS.BOOKMARKS}_${currentUser.id}` : `${STORAGE_KEYS.BOOKMARKS}_guest`;
+      const saved = localStorage.getItem(userKey);
+      setBookmarks(saved ? JSON.parse(saved) : (currentUser?.bookmarks || []));
+    } catch {
+      setBookmarks([]);
+    }
+  }, [currentUser?.id]);
 
   const [completedEpisodes, setCompletedEpisodes] = useState<Record<string, boolean>>(() => {
     try {
@@ -599,8 +612,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [usersList]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(bookmarks));
-  }, [bookmarks]);
+    const userKey = currentUser ? `${STORAGE_KEYS.BOOKMARKS}_${currentUser.id}` : `${STORAGE_KEYS.BOOKMARKS}_guest`;
+    localStorage.setItem(userKey, JSON.stringify(bookmarks));
+  }, [bookmarks, currentUser?.id]);
 
   useEffect(() => {
     const userKey = currentUser ? `${STORAGE_KEYS.COMPLETED_EPISODES}_${currentUser.id}` : `${STORAGE_KEYS.COMPLETED_EPISODES}_guest`;
@@ -1481,12 +1495,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.removeItem(`${STORAGE_KEYS.RECENT_ACTIVITY}_guest`);
     localStorage.removeItem(STORAGE_KEYS.COMPLETED_EPISODES);
     localStorage.removeItem(`${STORAGE_KEYS.COMPLETED_EPISODES}_guest`);
+    localStorage.removeItem(STORAGE_KEYS.BOOKMARKS);
+    localStorage.removeItem(`${STORAGE_KEYS.BOOKMARKS}_guest`);
     if (currentUser?.id) {
       localStorage.removeItem(`${STORAGE_KEYS.RECENT_ACTIVITY}_${currentUser.id}`);
       localStorage.removeItem(`${STORAGE_KEYS.COMPLETED_EPISODES}_${currentUser.id}`);
+      localStorage.removeItem(`${STORAGE_KEYS.BOOKMARKS}_${currentUser.id}`);
     }
     setRecentActivity([]);
     setCompletedEpisodes({});
+    setBookmarks([]);
     showToast('info', 'Data Direset', 'Semua data telah dikembalikan ke standar awal.');
   };
 
